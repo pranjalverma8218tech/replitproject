@@ -8,6 +8,7 @@ import {
   Award, Image, Gift
 } from "lucide-react";
 import { CATEGORIES } from "@/data/products";
+import logoSrc from "@/assets/logo-transparent.png";
 
 /* ─── Category SVG Thumbnails ─── */
 function CategorySVG({ slug }: { slug: string }) {
@@ -286,69 +287,89 @@ export default function HomePage() {
           <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full opacity-8 blur-3xl" style={{ background: "radial-gradient(circle,#e53e3e 0%,transparent 70%)" }}/>
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
-          <div className="max-w-4xl">
+          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+
+            {/* ── Left: Text Content ── */}
+            <div className="flex-1 min-w-0">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+                className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold"
+                style={{ borderColor: "rgba(196,150,42,0.35)", background: "rgba(196,150,42,0.1)", color: "#C4962A" }}
+              >
+                <Zap size={14}/> Mathura's #1 Custom Printing Studio
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tight mb-8 text-white"
+              >
+                Print Your Brand{" "}
+                <span style={{ color: "#C4962A" }}>On Anything</span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-lg sm:text-xl md:text-2xl text-gray-300 font-light mb-10 max-w-2xl leading-relaxed"
+              >
+                Custom T-shirts, mugs, caps, pens and more — printed with your logo or design in hours. Bulk-friendly, no minimums.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
+                className="flex flex-col sm:flex-row gap-4 mb-14"
+              >
+                <Link href="/customize">
+                  <motion.button
+                    whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+                    className="flex items-center gap-3 px-8 py-4 rounded-2xl font-extrabold text-lg text-white"
+                    style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 6px 28px rgba(229,62,62,0.4)" }}
+                  >
+                    Start Designing <ArrowRight size={20}/>
+                  </motion.button>
+                </Link>
+                <Link href="/categories">
+                  <motion.button
+                    whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+                    className="flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-base border text-white hover:bg-white/5 transition-all"
+                    style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                  >
+                    Browse Products <ChevronRight size={18}/>
+                  </motion.button>
+                </Link>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.5 }}
+                className="flex flex-wrap items-center gap-x-8 gap-y-3"
+              >
+                {[
+                  { icon: <Users size={16}/>, label: "10,000+ Customers" },
+                  { icon: <Star size={16} className="fill-yellow-400 text-yellow-400"/>, label: "4.8 / 5 Rating" },
+                  { icon: <Truck size={16}/>, label: "Pan India Delivery" },
+                ].map(item => (
+                  <div key={item.label} className="flex items-center gap-2 text-gray-400 text-sm">
+                    <span style={{ color: "#C4962A" }}>{item.icon}</span>
+                    {item.label}
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* ── Right: Circular Brand Logo ── */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold"
-              style={{ borderColor: "rgba(196,150,42,0.35)", background: "rgba(196,150,42,0.1)", color: "#C4962A" }}
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="flex-shrink-0 flex items-center justify-center w-full lg:w-auto"
             >
-              <Zap size={14}/> Mathura's #1 Custom Printing Studio
+              <img
+                src={logoSrc}
+                alt="Radhe Digital"
+                className="w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 object-contain"
+                style={{ display: "block", filter: "drop-shadow(0 0 40px rgba(196,150,42,0.25))" }}
+              />
             </motion.div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tight mb-8 text-white"
-            >
-              Print Your Brand{" "}
-              <span style={{ color: "#C4962A" }}>On Anything</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg sm:text-xl md:text-2xl text-gray-300 font-light mb-10 max-w-2xl leading-relaxed"
-            >
-              Custom T-shirts, mugs, caps, pens and more — printed with your logo or design in hours. Bulk-friendly, no minimums.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4 mb-14"
-            >
-              <Link href="/customize">
-                <motion.button
-                  whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                  className="flex items-center gap-3 px-8 py-4 rounded-2xl font-extrabold text-lg text-white"
-                  style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 6px 28px rgba(229,62,62,0.4)" }}
-                >
-                  Start Designing <ArrowRight size={20}/>
-                </motion.button>
-              </Link>
-              <Link href="/categories">
-                <motion.button
-                  whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                  className="flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-base border text-white hover:bg-white/5 transition-all"
-                  style={{ borderColor: "rgba(255,255,255,0.2)" }}
-                >
-                  Browse Products <ChevronRight size={18}/>
-                </motion.button>
-              </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.5 }}
-              className="flex flex-wrap items-center gap-x-8 gap-y-3"
-            >
-              {[
-                { icon: <Users size={16}/>, label: "10,000+ Customers" },
-                { icon: <Star size={16} className="fill-yellow-400 text-yellow-400"/>, label: "4.8 / 5 Rating" },
-                { icon: <Truck size={16}/>, label: "Pan India Delivery" },
-              ].map(item => (
-                <div key={item.label} className="flex items-center gap-2 text-gray-400 text-sm">
-                  <span style={{ color: "#C4962A" }}>{item.icon}</span>
-                  {item.label}
-                </div>
-              ))}
-            </motion.div>
           </div>
         </div>
       </section>
