@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
+import logoSrc from "@/assets/logo-transparent.png";
 import {
   Menu, X, Search, ShoppingCart, User, ChevronDown,
   Shirt, Coffee, HardHat, Pen, Award, Gift, Image,
@@ -80,14 +81,14 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
-          {/* ── Brand Logo (text only, compact) ── */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0 group">
-            <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-black text-xs leading-none">RD</span>
-            </div>
-            <span className="text-white font-extrabold text-lg tracking-tight leading-none">
-              Radhe <span className="text-primary">Digital</span>
-            </span>
+          {/* ── Brand Logo ── */}
+          <Link href="/" className="flex items-center flex-shrink-0">
+            <img
+              src={logoSrc}
+              alt="Radhe Digital"
+              className="h-10 w-auto max-w-[160px] sm:max-w-[180px] object-contain"
+              style={{ display: "block" }}
+            />
           </Link>
 
           {/* ── Desktop Navigation ── */}
