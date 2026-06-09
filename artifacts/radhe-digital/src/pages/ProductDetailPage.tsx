@@ -234,17 +234,17 @@ export default function ProductDetailPage() {
               </div>
             </motion.div>
 
-            <div className="grid grid-cols-5 gap-2">
+            <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none", msOverflowStyle: "none" } as React.CSSProperties}>
               {galleryViews.map((view, i) => (
                 <button
                   key={i}
                   onClick={() => setActiveView(i)}
-                  className={`aspect-square rounded-xl overflow-hidden border transition-all duration-200 ${
+                  className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border transition-all duration-200 ${
                     activeView === i
                       ? "ring-2 shadow-lg"
                       : "border-gray-200 hover:border-gray-400"
                   }`}
-                  style={activeView === i ? { borderColor: "#C4962A", ringColor: "#C4962A", boxShadow: "0 2px 12px rgba(196,150,42,0.25)" } : {}}
+                  style={activeView === i ? { borderColor: "#C4962A", boxShadow: "0 2px 12px rgba(196,150,42,0.25)" } : {}}
                 >
                   <GallerySVG
                     slug={slug ?? ""}

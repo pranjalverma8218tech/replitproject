@@ -166,21 +166,23 @@ function ProductCard({ product, slug, categoryLabel, index }: {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              onClick={e => { e.preventDefault(); e.stopPropagation(); setShowModal(true); }}
-              className="flex items-center justify-center gap-1 py-2.5 rounded-xl text-xs font-bold text-white bg-gray-900 hover:bg-gray-800 transition-all duration-200"
-            >
-              <ShoppingBag size={13} /> Buy
-            </button>
-            <Link href={`/categories/${slug}/${product.id}`}>
-              <button className="w-full flex items-center justify-center gap-1 py-2.5 rounded-xl text-xs font-bold text-gray-700 border border-gray-200 hover:border-gray-400 transition-all duration-200">
-                <Eye size={13} /> Details
+          <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={e => { e.preventDefault(); e.stopPropagation(); setShowModal(true); }}
+                className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-white bg-gray-900 hover:bg-gray-800 transition-all duration-200"
+              >
+                <ShoppingBag size={13} /> Buy Now
               </button>
-            </Link>
+              <Link href={`/categories/${slug}/${product.id}`}>
+                <button className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-gray-700 border border-gray-200 hover:border-gray-400 transition-all duration-200">
+                  <Eye size={13} /> Details
+                </button>
+              </Link>
+            </div>
             <Link href={`/customize/${slug}`}>
-              <button className="w-full flex items-center justify-center gap-1 py-2.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-red-700 transition-all duration-200">
-                <Palette size={13} /> Custom
+              <button className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-red-700 transition-all duration-200">
+                <Palette size={13} /> Customize This
               </button>
             </Link>
           </div>
@@ -284,22 +286,27 @@ export default function CategoryPage() {
       </section>
 
       {/* Category Quick Nav */}
-      <section className="bg-white border-b border-gray-100 overflow-x-auto no-scrollbar" style={{ WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-1 py-3 min-w-max">
-            {CATEGORIES.map(cat => (
-              <Link key={cat.slug} href={`/categories/${cat.slug}`}>
-                <button className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
-                  cat.slug === slug
-                    ? "text-white"
-                    : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-                }`}
-                style={cat.slug === slug ? { background: "linear-gradient(135deg, #C4962A, #A07820)", boxShadow: "0 2px 12px rgba(196,150,42,0.3)" } : {}}
-                >
-                  {cat.label}
-                </button>
-              </Link>
-            ))}
+      <section className="bg-white border-b border-gray-100 relative">
+        {/* Right fade to hint horizontal scroll on mobile */}
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 z-10 lg:hidden" style={{ background: "linear-gradient(to left, white 30%, transparent)" }} />
+        <div className="overflow-x-auto no-scrollbar" style={{ WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-1 py-3 min-w-max">
+              {CATEGORIES.map(cat => (
+                <Link key={cat.slug} href={`/categories/${cat.slug}`}>
+                  <button
+                    className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+                      cat.slug === slug
+                        ? "text-white"
+                        : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                    }`}
+                    style={cat.slug === slug ? { background: "linear-gradient(135deg, #C4962A, #A07820)", boxShadow: "0 2px 12px rgba(196,150,42,0.3)" } : {}}
+                  >
+                    {cat.label}
+                  </button>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
