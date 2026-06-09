@@ -14,6 +14,7 @@ import HomePage from "@/pages/HomePage";
 import CategoriesPage from "@/pages/CategoriesPage";
 import CategoryPage from "@/pages/CategoryPage";
 import CustomizePage from "@/pages/CustomizePage";
+import CustomizeProductPage from "@/pages/CustomizeProductPage";
 import AboutPage from "@/pages/AboutPage";
 import ContactPage from "@/pages/ContactPage";
 import NotFound from "@/pages/not-found";
@@ -39,6 +40,7 @@ function Router() {
       <Route path="/categories" component={CategoriesPage} />
       <Route path="/categories/:slug" component={CategoryPage} />
       <Route path="/customize" component={CustomizePage} />
+      <Route path="/customize/:category" component={CustomizeProductPage} />
       <Route path="/about" component={AboutPage} />
       <Route path="/contact" component={ContactPage} />
       <Route component={NotFound} />
