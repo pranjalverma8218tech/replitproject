@@ -8,7 +8,7 @@ import {
   Award, Image, Gift
 } from "lucide-react";
 import { CATEGORIES } from "@/data/products";
-import logoSrc from "@/assets/logo-transparent.png";
+import logoSrc from "@assets/f6e27559-1690-4a6b-8f98-a83af78055c3_1781011729899.png";
 
 /* ─── Category SVG Thumbnails ─── */
 function CategorySVG({ slug }: { slug: string }) {
@@ -361,41 +361,50 @@ export default function HomePage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.35, ease: "easeOut" }}
               className="flex-shrink-0 flex items-center justify-center w-full lg:w-auto"
+              style={{ maxWidth: "360px" }}
             >
-              {/* Floating wrapper */}
+              {/* Slow floating wrapper */}
               <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                 className="relative flex items-center justify-center"
               >
-                {/* Outer glow — gold */}
+                {/* Layered glow rings — gold outer, red inner */}
+                <div className="absolute pointer-events-none" style={{
+                  inset: "-20%",
+                  borderRadius: "50%",
+                  background: "radial-gradient(circle, rgba(196,150,42,0.35) 0%, rgba(229,62,62,0.18) 40%, transparent 68%)",
+                  filter: "blur(28px)",
+                }} />
+                <div className="absolute pointer-events-none" style={{
+                  inset: "-8%",
+                  borderRadius: "50%",
+                  background: "radial-gradient(circle, rgba(196,150,42,0.2) 0%, transparent 60%)",
+                  filter: "blur(14px)",
+                }} />
+
+                {/* Circular clip container — removes only the square PNG corners,
+                    the full white circular ring border and all design details are preserved */}
                 <div
-                  className="absolute rounded-full pointer-events-none"
+                  className="relative z-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-72 lg:h-72"
                   style={{
-                    width: "110%", height: "110%",
-                    background: "radial-gradient(circle, rgba(196,150,42,0.22) 0%, transparent 70%)",
-                    filter: "blur(18px)",
+                    borderRadius: "50%",
+                    overflow: "hidden",
+                    boxShadow: "0 8px 40px rgba(0,0,0,0.65), 0 0 30px rgba(196,150,42,0.22), 0 0 60px rgba(196,150,42,0.1)",
                   }}
-                />
-                {/* Inner glow — red */}
-                <div
-                  className="absolute rounded-full pointer-events-none"
-                  style={{
-                    width: "85%", height: "85%",
-                    background: "radial-gradient(circle, rgba(229,62,62,0.15) 0%, transparent 65%)",
-                    filter: "blur(12px)",
-                  }}
-                />
-                {/* Logo image — unmodified, full original artwork */}
-                <img
-                  src={logoSrc}
-                  alt="Radhe Digital"
-                  className="relative z-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 object-contain"
-                  style={{
-                    display: "block",
-                    filter: "drop-shadow(0 8px 32px rgba(0,0,0,0.55)) drop-shadow(0 0 18px rgba(196,150,42,0.2))",
-                  }}
-                />
+                >
+                  <img
+                    src={logoSrc}
+                    alt="Radhe Digital"
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center",
+                    }}
+                  />
+                </div>
               </motion.div>
             </motion.div>
 
