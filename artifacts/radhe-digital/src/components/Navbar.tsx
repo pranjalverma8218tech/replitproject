@@ -86,8 +86,8 @@ export function Navbar() {
             <img
               src={logoSrc}
               alt="Radhe Digital"
-              className="h-10 w-auto max-w-[160px] sm:max-w-[180px] object-contain"
-              style={{ display: "block" }}
+              className="h-12 sm:h-14 lg:h-16 w-auto object-contain"
+              style={{ display: "block", maxHeight: "64px" }}
             />
           </Link>
 
