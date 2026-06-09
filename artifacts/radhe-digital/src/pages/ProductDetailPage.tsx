@@ -3,11 +3,12 @@ import { Link, useParams, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import {
   ChevronRight, ShoppingCart, Palette, ShoppingBag,
-  CheckCircle, Truck, Shield, Star, ArrowRight, Package
+  Truck, Shield, Star, ArrowRight, Package, CheckCircle
 } from "lucide-react";
-import { CATEGORY_MAP, CATEGORIES, type Product, type Category } from "@/data/products";
+import { CATEGORY_MAP, type Product } from "@/data/products";
 import { CATEGORY_DETAILS, type GalleryView } from "@/data/productDetails";
 import { useCart } from "@/context/CartContext";
+import { ProductOptionsModal } from "@/components/ProductOptionsModal";
 
 /* ─── Gallery SVGs (angle-specific per category) ─── */
 function GallerySVG({
@@ -420,8 +421,6 @@ function RelatedCard({ product, slug, catLabel, index }: {
 export default function ProductDetailPage() {
   const { slug, productId } = useParams<{ slug: string; productId: string }>();
   const [, setLocation] = useLocation();
-  const { addItem, openCart } = useCart();
-
   const category = CATEGORY_MAP[slug ?? ""];
   const product = category?.products.find(p => p.id === productId);
 
@@ -429,7 +428,7 @@ export default function ProductDetailPage() {
 
   const [activeView, setActiveView] = useState(0);
   const [activeColor, setActiveColor] = useState(0);
-  const [cartAdded, setCartAdded] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   if (!category || !product) {
     return (
@@ -448,35 +447,6 @@ export default function ProductDetailPage() {
   const selectedColorHex = details?.colors[activeColor]?.hex ?? "#e53e3e";
 
   const related = category.products.filter(p => p.id !== product.id).slice(0, 4);
-
-  const handleAddToCart = () => {
-    addItem({
-      productId: product.id,
-      productName: product.name,
-      categorySlug: slug ?? "",
-      categoryLabel: category.label,
-      price: product.price,
-      priceLabel: product.priceLabel,
-      isCustomized: false,
-      quantity: 1,
-    });
-    setCartAdded(true);
-    setTimeout(() => { setCartAdded(false); openCart(); }, 1500);
-  };
-
-  const handleBuyNow = () => {
-    addItem({
-      productId: product.id,
-      productName: product.name,
-      categorySlug: slug ?? "",
-      categoryLabel: category.label,
-      price: product.price,
-      priceLabel: product.priceLabel,
-      isCustomized: false,
-      quantity: 1,
-    });
-    openCart();
-  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -647,18 +617,18 @@ export default function ProductDetailPage() {
             <div className="space-y-3 pt-2">
               <div className="grid grid-cols-2 gap-3">
                 <motion.button
-                  onClick={handleBuyNow}
+                  onClick={() => setShowModal(true)}
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   className="flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-black bg-white hover:bg-gray-100 transition-all text-sm"
                 >
                   <ShoppingBag size={17} /> Buy Now
                 </motion.button>
                 <motion.button
-                  onClick={handleAddToCart}
+                  onClick={() => setShowModal(true)}
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   className="flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-white border border-white/20 hover:border-primary/50 hover:bg-primary/10 transition-all text-sm"
                 >
-                  {cartAdded ? <><CheckCircle size={17} className="text-green-400" /> Added!</> : <><ShoppingCart size={17} /> Add to Cart</>}
+                  <ShoppingCart size={17} /> Add to Cart
                 </motion.button>
               </div>
               <motion.button
@@ -676,6 +646,16 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Product Options Modal ── */}
+      {showModal && (
+        <ProductOptionsModal
+          product={product}
+          categorySlug={slug ?? ""}
+          categoryLabel={category.label}
+          onClose={() => setShowModal(false)}
+        />
+      )}
 
       {/* ── Specifications ── */}
       {details?.specs && (

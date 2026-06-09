@@ -2,11 +2,11 @@ import React, { useState, useMemo } from "react";
 import { Link, useParams } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Search, SlidersHorizontal, ShoppingCart, Palette, ChevronRight,
-  X, ArrowRight, Package, ShoppingBag, Sparkles, CheckCircle, Eye
+  Search, SlidersHorizontal, Palette, ChevronRight,
+  X, ArrowRight, Package, ShoppingBag, Eye
 } from "lucide-react";
 import { CATEGORY_MAP, CATEGORIES, type Product } from "@/data/products";
-import { useCart } from "@/context/CartContext";
+import { ProductOptionsModal } from "@/components/ProductOptionsModal";
 
 /* ─── SVG Product Illustrations ─── */
 function ProductSVG({ slug, index }: { slug: string; index: number }) {
@@ -100,57 +100,22 @@ const BADGE_STYLES: Record<string, string> = {
   "Eco": "bg-green-500/80 text-white",
 };
 
-/* ─── Toast notification ─── */
-function Toast({ show, name }: { show: boolean; name: string }) {
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ opacity: 0, y: 40, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0.95 }}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[80] flex items-center gap-3 px-5 py-3 rounded-2xl text-white text-sm font-semibold shadow-2xl"
-          style={{ background: "rgba(20,20,20,0.95)", border: "1px solid rgba(229,62,62,0.4)", backdropFilter: "blur(20px)" }}
-        >
-          <CheckCircle size={18} className="text-primary flex-shrink-0" />
-          <span><strong>{name}</strong> added to cart!</span>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
 /* ─── Product Card ─── */
 function ProductCard({ product, slug, categoryLabel, index }: {
   product: Product; slug: string; categoryLabel: string; index: number;
 }) {
-  const { addItem } = useCart();
-  const [toastVisible, setToastVisible] = useState(false);
-
-  const showToast = () => {
-    setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 2500);
-  };
-
-  const handleBuyNow = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addItem({
-      productId: product.id,
-      productName: product.name,
-      categorySlug: slug,
-      categoryLabel,
-      price: product.price,
-      priceLabel: product.priceLabel,
-      isCustomized: false,
-      quantity: 1,
-    });
-    showToast();
-  };
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <>
-      <Toast show={toastVisible} name={product.name} />
+      {showModal && (
+        <ProductOptionsModal
+          product={product}
+          categorySlug={slug}
+          categoryLabel={categoryLabel}
+          onClose={() => setShowModal(false)}
+        />
+      )}
       <motion.div
         className="group bg-[#111] border border-white/8 rounded-2xl overflow-hidden flex flex-col hover:border-primary/40 transition-all duration-300"
         initial={{ opacity: 0, y: 30 }}
@@ -209,7 +174,7 @@ function ProductCard({ product, slug, categoryLabel, index }: {
           {/* Action Buttons */}
           <div className="grid grid-cols-3 gap-2">
             <button
-              onClick={handleBuyNow}
+              onClick={e => { e.preventDefault(); e.stopPropagation(); setShowModal(true); }}
               className="flex items-center justify-center gap-1 py-2.5 rounded-xl text-xs font-bold text-black bg-white hover:bg-gray-100 transition-all duration-200"
             >
               <ShoppingBag size={13} /> Buy

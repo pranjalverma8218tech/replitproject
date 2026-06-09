@@ -1,0 +1,105 @@
+Update the Buy Now flow for all products and ensure customers can select product variations before proceeding to checkout.
+
+Current Issue:
+
+When a customer clicks View Details and then Buy Now, the system directly redirects to checkout without asking for required product options such as size, color, or quantity.
+
+Required Changes:
+
+Before proceeding to checkout, the Buy Now flow must ask customers to select all necessary product options.
+
+For T-Shirts:
+
+Display:
+
+* Size Selection
+
+  * S
+  * M
+  * L
+  * XL
+  * XXL
+
+* Color Selection
+
+  * White
+  * Black
+  * Red
+  * Blue
+  * Yellow
+  * Custom Color (Optional)
+
+* Gender Type
+
+  * Men
+  * Women
+  * Unisex
+
+Quantity Selection:
+
+Customers should be able to:
+
+* Increase quantity using (+) button.
+* Decrease quantity using (-) button.
+* Manually enter quantity in an input field.
+
+The quantity field and buttons must always stay synchronized.
+
+For Multiple Sizes:
+
+Allow customers to order multiple sizes in one order.
+
+Example:
+
+S = 5
+M = 10
+L = 8
+XL = 4
+XXL = 2
+
+Automatically calculate:
+
+Total Quantity = 29
+
+For Other Products:
+
+Mugs:
+
+* Quantity Selection
+* Color/Variant Selection (if available)
+
+Caps:
+
+* Quantity Selection
+* Color Selection (if available)
+
+Pens:
+
+* Quantity Selection
+* Variant Selection (if available)
+
+Badges:
+
+* Quantity Selection
+
+Photo Frames:
+
+* Quantity Selection
+* Size Selection (if applicable)
+
+Corporate Gifts:
+
+* Quantity Selection
+* Variant Selection (if applicable)
+
+Updated Buy Now Flow:
+
+Products → View Details → Select Required Options → Select Quantity → Buy Now → Checkout
+
+Important:
+
+* Do not redirect customers directly to checkout.
+* Require all necessary product selections before purchase.
+* Use the same size, color, and quantity logic in Buy Now that is already available in Customize Now.
+* Keep the process simple, mobile-friendly, and user-friendly.
+* Ensure quantity can be adjusted both manually and through + / - buttons.

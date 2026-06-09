@@ -2,7 +2,11 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 
 export interface CartCustomization {
   color?: string;
+  colorHex?: string;
   size?: string;
+  sizeBreakdown?: Record<string, number>;
+  gender?: string;
+  variant?: string;
   quantity?: number;
   position?: string;
   designDesc?: string;

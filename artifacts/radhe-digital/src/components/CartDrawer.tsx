@@ -9,10 +9,27 @@ export function CartDrawer() {
   const buildWhatsApp = () => {
     if (items.length === 0) return "#";
     const lines = items.map((item, i) => {
-      const custom = item.isCustomized && item.customization
-        ? `\n   ↳ Customized | Color: ${item.customization.color ?? "-"} | Size: ${item.customization.size ?? "-"} | Qty: ${item.quantity}${item.customization.designDesc ? ` | Note: ${item.customization.designDesc}` : ""}`
-        : `\n   ↳ As-Is | Qty: ${item.quantity}`;
-      return `${i + 1}. ${item.productName} (${item.categoryLabel}) — ${item.priceLabel}/pc${custom}`;
+      const c = item.customization;
+      let optLine = "";
+      if (c) {
+        const parts: string[] = [];
+        if (c.color) parts.push(`Colour: ${c.color}`);
+        if (c.gender) parts.push(`Gender: ${c.gender}`);
+        if (c.sizeBreakdown && Object.keys(c.sizeBreakdown).length > 0) {
+          const sb = Object.entries(c.sizeBreakdown).map(([s, q]) => `${s}×${q}`).join(", ");
+          parts.push(`Sizes: ${sb}`);
+        } else if (c.size) {
+          parts.push(`Size: ${c.size}`);
+        }
+        if (c.variant) parts.push(`Variant: ${c.variant}`);
+        if (c.designDesc) parts.push(`Note: ${c.designDesc}`);
+        if (c.uploadedFileName) parts.push(`Design File: ${c.uploadedFileName}`);
+        if (c.customText) parts.push(`Text: "${c.customText}"`);
+        if (parts.length > 0) optLine = `\n   ↳ ${parts.join(" | ")} | Qty: ${item.quantity}`;
+      }
+      if (!optLine) optLine = `\n   ↳ Qty: ${item.quantity}`;
+      const label = item.isCustomized ? "Customized" : "Standard";
+      return `${i + 1}. [${label}] ${item.productName} (${item.categoryLabel}) — ${item.priceLabel}/pc${optLine}`;
     });
     const total = `₹${totalPrice.toLocaleString("en-IN")}`;
     const msg = `Hello Radhe Digital! 🛒 I'd like to place an order:\n\n${lines.join("\n\n")}\n\n*Total: ${total}*\n\nPlease confirm availability and share payment details. Thank you!`;
@@ -121,27 +138,59 @@ export function CartDrawer() {
                             </button>
                           </div>
 
-                          {/* Customization badge */}
+                          {/* Badge */}
                           {item.isCustomized ? (
                             <span className="inline-flex items-center gap-1 mt-2 text-[11px] font-semibold text-primary bg-primary/12 border border-primary/25 px-2 py-0.5 rounded-full">
                               <Palette size={10} /> Customized Design
                             </span>
+                          ) : item.customization ? (
+                            <span className="inline-flex items-center gap-1 mt-2 text-[11px] font-semibold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">
+                              ✓ Options Selected
+                            </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 mt-2 text-[11px] font-semibold text-gray-400 bg-white/6 border border-white/10 px-2 py-0.5 rounded-full">
-                              As-Is Purchase
+                              Standard Purchase
                             </span>
                           )}
 
-                          {/* Customization details */}
-                          {item.isCustomized && item.customization && (
-                            <div className="mt-2 text-xs text-gray-500 space-y-0.5">
-                              {item.customization.color && <span className="mr-3">Color: {item.customization.color}</span>}
-                              {item.customization.size && <span className="mr-3">Size: {item.customization.size}</span>}
+                          {/* Options / Customization details */}
+                          {item.customization && (
+                            <div className="mt-2 space-y-0.5">
+                              {(item.customization.color || item.customization.gender) && (
+                                <div className="flex flex-wrap gap-x-3 text-xs text-gray-500">
+                                  {item.customization.color && (
+                                    <span className="flex items-center gap-1">
+                                      {item.customization.colorHex && (
+                                        <span className="w-2.5 h-2.5 rounded-full border border-white/20 inline-block flex-shrink-0"
+                                          style={{ backgroundColor: item.customization.colorHex }} />
+                                      )}
+                                      {item.customization.color}
+                                    </span>
+                                  )}
+                                  {item.customization.gender && <span>{item.customization.gender}</span>}
+                                  {item.customization.variant && <span>{item.customization.variant}</span>}
+                                  {item.customization.size && !item.customization.sizeBreakdown && (
+                                    <span>Size: {item.customization.size}</span>
+                                  )}
+                                </div>
+                              )}
+                              {item.customization.sizeBreakdown && Object.keys(item.customization.sizeBreakdown).length > 0 && (
+                                <div className="flex flex-wrap gap-1.5 mt-1">
+                                  {Object.entries(item.customization.sizeBreakdown).map(([size, count]) => (
+                                    <span key={size} className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-white/8 border border-white/10 text-gray-300">
+                                      {size} × {count}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
                               {item.customization.uploadedFileName && (
-                                <span className="block text-green-500 truncate">📎 {item.customization.uploadedFileName}</span>
+                                <p className="text-xs text-green-500 truncate">📎 {item.customization.uploadedFileName}</p>
                               )}
                               {item.customization.customText && (
-                                <span className="block text-gray-400 truncate">Text: "{item.customization.customText}"</span>
+                                <p className="text-xs text-gray-400 truncate">Text: "{item.customization.customText}"</p>
+                              )}
+                              {item.customization.designDesc && (
+                                <p className="text-xs text-gray-500 truncate">Note: {item.customization.designDesc}</p>
                               )}
                             </div>
                           )}
