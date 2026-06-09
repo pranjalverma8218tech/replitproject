@@ -99,7 +99,7 @@ export function Navbar() {
                     onClick={() => setServicesOpen(!servicesOpen)}
                     className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                       servicesOpen
-                        ? "text-primary bg-primary/10"
+                        ? "bg-[#C4962A]/10 text-[#C4962A]"
                         : "text-gray-300 hover:text-white hover:bg-white/8"
                     }`}
                   >
@@ -147,7 +147,7 @@ export function Navbar() {
                   href={link.href}
                   className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                     isActive(link.href)
-                      ? "text-primary bg-primary/10"
+                      ? "text-[#C4962A] bg-[#C4962A]/10"
                       : "text-gray-300 hover:text-white hover:bg-white/8"
                   }`}
                 >
@@ -325,7 +325,7 @@ export function Navbar() {
                     onClick={() => setMobileOpen(false)}
                     className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
                       isActive(link.href)
-                        ? "text-primary bg-primary/10"
+                        ? "text-[#C4962A] bg-[#C4962A]/10"
                         : "text-gray-300 hover:text-white hover:bg-white/8"
                     }`}
                   >

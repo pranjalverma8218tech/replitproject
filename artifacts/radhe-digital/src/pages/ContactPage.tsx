@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="bg-black text-white py-10 lg:py-24">
+    <div className="min-h-screen bg-[#f7f7f5] pb-20">
+      <div className="text-white py-10 lg:py-24" style={{ background: "linear-gradient(135deg, #0a0a0a 0%, #1a1010 100%)" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-5xl font-bold mb-4">Get In Touch</h1>
           <p className="text-base sm:text-xl text-gray-300 max-w-2xl mx-auto">
@@ -21,11 +21,11 @@ export default function ContactPage() {
           {/* Contact Details */}
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full">
-              <h3 className="text-2xl font-bold text-black mb-8">Contact Information</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-8">Contact Information</h3>
               
               <div className="space-y-8 flex-1">
                 <div className="flex items-start gap-4">
-                  <div className="bg-red-50 p-3 rounded-full text-primary shrink-0">
+                  <div className="p-3 rounded-full shrink-0" style={{ background: "rgba(196,150,42,0.1)", color: "#C4962A" }}>
                     <Phone size={24} />
                   </div>
                   <div>
@@ -35,7 +35,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="bg-red-50 p-3 rounded-full text-primary shrink-0">
+                  <div className="p-3 rounded-full shrink-0" style={{ background: "rgba(196,150,42,0.1)", color: "#C4962A" }}>
                     <Mail size={24} />
                   </div>
                   <div>
@@ -45,7 +45,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="bg-red-50 p-3 rounded-full text-primary shrink-0">
+                  <div className="p-3 rounded-full shrink-0" style={{ background: "rgba(196,150,42,0.1)", color: "#C4962A" }}>
                     <MapPin size={24} />
                   </div>
                   <div>
@@ -59,7 +59,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="bg-gray-100 p-3 rounded-full text-gray-700 shrink-0">
+                  <div className="p-3 rounded-full bg-gray-100 text-gray-600 shrink-0">
                     <Clock size={24} />
                   </div>
                   <div>
@@ -82,13 +82,13 @@ export default function ContactPage() {
           {/* Map Placeholder */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-full overflow-hidden min-h-[500px] flex flex-col relative group">
-              <div className="absolute inset-0 bg-gray-200" style={{ backgroundImage: 'radial-gradient(#d1d5db 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/40 backdrop-blur-[2px]">
-                <div className="bg-white p-6 rounded-full shadow-xl mb-4 text-primary animate-bounce">
+              <div className="absolute inset-0 bg-gray-100" style={{ backgroundImage: 'radial-gradient(#d1d5db 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/50 backdrop-blur-[2px]">
+                <div className="bg-white p-6 rounded-full shadow-xl mb-4 animate-bounce" style={{ color: "#C4962A" }}>
                   <MapPin size={48} />
                 </div>
                 <div className="bg-white py-3 px-6 rounded-xl shadow-lg border border-gray-100 text-center">
-                  <h3 className="font-bold text-black text-lg">Radhe Digital</h3>
+                  <h3 className="font-bold text-gray-900 text-lg">Radhe Digital</h3>
                   <p className="text-gray-600 text-sm">DD Plaza, Sonkh Adda, Near Petrol Pump, Mathura, U.P - 281001</p>
                   <Button variant="outline" size="sm" className="mt-3 w-full">Get Directions</Button>
                 </div>

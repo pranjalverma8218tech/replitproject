@@ -5,7 +5,7 @@ import { FaWhatsapp } from "react-icons/fa";
 
 export function Footer() {
   return (
-    <footer className="bg-black text-white pt-16 pb-8 border-t-4 border-primary">
+    <footer className="pt-16 pb-8 border-t-4 border-primary" style={{ background: "#0f0f0f", color: "#fff" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-1">
@@ -21,30 +21,30 @@ export function Footer() {
               Premium custom T-shirt printing for businesses, events, and individuals. Bold prints, fast delivery, zero hassle.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors">
+              <a href="#" className="text-gray-400 hover:text-[#C4962A] transition-colors">
                 <Instagram size={24} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors">
+              <a href="#" className="text-gray-400 hover:text-[#C4962A] transition-colors">
                 <Facebook size={24} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors">
+              <a href="#" className="text-gray-400 hover:text-[#C4962A] transition-colors">
                 <FaWhatsapp size={24} />
               </a>
             </div>
           </div>
 
           <div>
-            <h3 className="text-lg font-bold mb-6 text-white uppercase tracking-wider">Quick Links</h3>
+            <h3 className="text-lg font-bold mb-6 uppercase tracking-wider" style={{ color: "#C4962A" }}>Quick Links</h3>
             <ul className="space-y-4 text-gray-400">
-              <li><Link href="/" className="hover:text-primary transition-colors">Home</Link></li>
-              <li><Link href="/categories" className="hover:text-primary transition-colors">T-Shirt Categories</Link></li>
-              <li><Link href="/customize" className="hover:text-primary transition-colors">Start Customizing</Link></li>
-              <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
+              <li><Link href="/" className="hover:text-[#C4962A] transition-colors">Home</Link></li>
+              <li><Link href="/categories" className="hover:text-[#C4962A] transition-colors">T-Shirt Categories</Link></li>
+              <li><Link href="/customize" className="hover:text-[#C4962A] transition-colors">Start Customizing</Link></li>
+              <li><Link href="/about" className="hover:text-[#C4962A] transition-colors">About Us</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-lg font-bold mb-6 text-white uppercase tracking-wider">Services</h3>
+            <h3 className="text-lg font-bold mb-6 uppercase tracking-wider" style={{ color: "#C4962A" }}>Services</h3>
             <ul className="space-y-4 text-gray-400">
               <li>Collar T-Shirts</li>
               <li>Round Neck T-Shirts</li>
@@ -54,18 +54,18 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-lg font-bold mb-6 text-white uppercase tracking-wider">Contact Us</h3>
+            <h3 className="text-lg font-bold mb-6 uppercase tracking-wider" style={{ color: "#C4962A" }}>Contact Us</h3>
             <ul className="space-y-4 text-gray-400">
               <li className="flex items-start gap-3">
-                <MapPin className="text-primary shrink-0 mt-1" size={20} />
+                <MapPin className="shrink-0 mt-1" size={20} style={{ color: "#C4962A" }} />
                 <span>DD Plaza, Sonkh Adda, Near Petrol Pump, Mathura, U.P - 281001</span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="text-primary shrink-0" size={20} />
+                <Phone className="shrink-0" size={20} style={{ color: "#C4962A" }} />
                 <span>+91 9319903380</span>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="text-primary shrink-0" size={20} />
+                <Mail className="shrink-0" size={20} style={{ color: "#C4962A" }} />
                 <span>contact@radhedigital.com</span>
               </li>
             </ul>

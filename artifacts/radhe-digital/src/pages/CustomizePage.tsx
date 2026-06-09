@@ -36,7 +36,7 @@ const CATEGORIES = [
     label: "Badges",
     desc: "Name badges, button badges",
     icon: Award,
-    color: "#f6e05e",
+    color: "#C4962A",
   },
   {
     slug: "photo-frames",
@@ -50,7 +50,7 @@ const CATEGORIES = [
     label: "Corporate Gifts",
     desc: "Branded gift sets & combos",
     icon: Gift,
-    color: "#fc8181",
+    color: "#C4962A",
   },
 ];
 
@@ -58,17 +58,19 @@ export default function CustomizePage() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <section className="bg-[#0a0a0a] border-b border-white/8 py-12">
+    <div className="min-h-screen bg-white text-gray-900">
+      {/* Header Banner */}
+      <section style={{ background: "linear-gradient(135deg, #0a0a0a 0%, #1a1010 100%)", borderBottom: "1px solid rgba(196,150,42,0.15)" }} className="py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-primary px-3 py-1 rounded-full border border-primary/30 bg-primary/10 mb-4">
+          <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full border mb-4" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.35)", background: "rgba(196,150,42,0.1)" }}>
             Step 1 of 2
           </span>
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-3">What would you like to customize?</h1>
+          <h1 className="text-3xl md:text-4xl font-extrabold mb-3 text-white">What would you like to customize?</h1>
           <p className="text-gray-400 text-base">Choose a product category to get started.</p>
         </div>
       </section>
 
+      {/* Category Grid */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {CATEGORIES.map((cat, i) => {
@@ -80,31 +82,41 @@ export default function CustomizePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.06 }}
                 onClick={() => setLocation(`/customize/${cat.slug}`)}
-                className="group relative flex items-center gap-4 p-5 bg-[#111] border border-white/8 rounded-2xl text-left hover:border-white/20 hover:bg-[#161616] transition-all duration-200"
+                className="group relative flex items-center gap-4 p-5 bg-white border border-gray-100 rounded-2xl text-left transition-all duration-200"
+                style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 28px rgba(196,150,42,0.18)";
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.4)";
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)";
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)";
+                }}
               >
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110"
                   style={{ background: `${cat.color}18`, border: `1px solid ${cat.color}30` }}
                 >
                   <Icon size={22} style={{ color: cat.color }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-bold text-base leading-snug">{cat.label}</p>
+                  <p className="text-gray-900 font-bold text-base leading-snug">{cat.label}</p>
                   <p className="text-gray-500 text-xs mt-0.5 truncate">{cat.desc}</p>
                 </div>
                 <ArrowRight
                   size={16}
-                  className="text-gray-600 group-hover:text-white group-hover:translate-x-1 transition-all duration-200 flex-shrink-0"
+                  className="flex-shrink-0 transition-all duration-200 group-hover:translate-x-1"
+                  style={{ color: "#C4962A" }}
                 />
               </motion.button>
             );
           })}
         </div>
 
-        <div className="mt-10 flex items-start gap-3 bg-primary/8 border border-primary/20 rounded-xl p-4 max-w-lg mx-auto">
-          <span className="text-primary text-lg flex-shrink-0">💡</span>
-          <p className="text-gray-300 text-sm leading-relaxed">
-            You can upload your own design <strong className="text-white">or</strong> describe what you want — our team will create it for you.
+        <div className="mt-10 flex items-start gap-3 rounded-xl p-4 max-w-lg mx-auto border" style={{ background: "rgba(196,150,42,0.06)", borderColor: "rgba(196,150,42,0.2)" }}>
+          <span className="text-lg flex-shrink-0" style={{ color: "#C4962A" }}>💡</span>
+          <p className="text-gray-600 text-sm leading-relaxed">
+            You can upload your own design <strong className="text-gray-900">or</strong> describe what you want — our team will create it for you.
           </p>
         </div>
       </div>
