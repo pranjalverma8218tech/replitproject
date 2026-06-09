@@ -1,0 +1,42 @@
+Agar aap Replit AI ya Cursor AI ko prompt dena chahte hain, to ye professional prompt use kar sakte hain:
+
+---
+
+**Prompt:**
+
+> Add the existing Radhe Digital logo (already available in the project) as a premium centerpiece on the homepage hero section without changing the brand identity.
+>
+> ### Requirements:
+>
+> * Place the logo exactly in the center of the hero section as the first visual element visitors notice.
+> * When the website loads, the logo should appear with a smooth **fade-in + slight scale animation** (opacity: 0 → 1 and scale: 0.9 → 1).
+> * Add a subtle floating effect (very slow up-down movement of 4-6px) to make the page feel modern and premium.
+> * Keep the animation elegant and lightweight (CSS animations only if possible).
+> * Add a soft glowing shadow behind the logo using the brand colors (red + white) but avoid excessive effects.
+> * After the logo animation completes (around 1.2s), smoothly reveal the heading and subheading with a staggered fade-up animation.
+> * Ensure the design looks professional on desktop, tablet, and mobile devices.
+> * Do not redesign or replace the existing layout, navbar, colors, or content.
+> * Maintain the current branding and simply enhance the first impression of the homepage.
+>
+> ### Animation Sequence:
+>
+> 1. Page loads with hero background visible.
+> 2. Logo fades in and scales up smoothly.
+> 3. Logo performs a gentle floating animation.
+> 4. Hero title and subtitle fade upward one after another.
+> 5. CTA button ("Order Now") appears with a subtle fade and hover lift effect.
+>
+> ### Styling:
+>
+> * Premium, modern, and clean.
+> * Smooth transitions (ease-in-out).
+> * No flashy effects, glassmorphism, or unnecessary redesign.
+> * Keep loading experience elegant and professional like a high-end printing brand website.
+>
+> Use Framer Motion (if React) or pure CSS animations for optimal performance.
+
+---
+
+Agar aap aur bhi premium landing page feel chahte hain, to is line ko bhi add kar do:
+
+> **"Add a very subtle parallax effect to the background and a soft red radial gradient behind the centered logo to create a premium first impression similar to modern brand websites."**

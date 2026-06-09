@@ -1,0 +1,91 @@
+uploads = []
+
+[[generated]]
+id = "dzp7cCZvWpN8fdDtRLw9b"
+uri = "file://artifacts/radhe-digital/public/images/category-collar.png"
+type = "image"
+title = "Collar T-Shirt"
+
+[[generated]]
+id = "DsSUqMWp5_sXA1NaAWQz-"
+uri = "file://artifacts/radhe-digital/public/images/category-round.png"
+type = "image"
+title = "Round Neck T-Shirt"
+
+[[generated]]
+id = "thXZIf0OEZT60SRI98P9z"
+uri = "file://artifacts/radhe-digital/public/images/category-holi.png"
+type = "image"
+title = "Holi Special T-Shirt"
+
+[[generated]]
+id = "HlGpA5APlWQm0-FAThm85"
+uri = "file://artifacts/radhe-digital/public/images/category-event.png"
+type = "image"
+title = "Custom Event T-Shirt"
+
+[[generated]]
+id = "0aX_Vis3CKKoqXFHxajhz"
+uri = "file://artifacts/radhe-digital/public/images/category-bulk.png"
+type = "image"
+title = "Bulk Order T-Shirt"
+
+[[generated]]
+id = "pIcrzjOX273y8Suiv_oi_"
+uri = "file://artifacts/radhe-digital/public/images/gallery-1.png"
+type = "image"
+title = "Gallery mockup 1"
+
+[[generated]]
+id = "CKVJUWNPq27Mj9vAdOQ42"
+uri = "file://artifacts/radhe-digital/public/images/gallery-2.png"
+type = "image"
+title = "Gallery mockup 2"
+
+[[generated]]
+id = "ZOfh5W91McjDVrZRbgwD6"
+uri = "file://artifacts/radhe-digital/public/images/gallery-3.png"
+type = "image"
+title = "Gallery mockup 3"
+
+[[generated]]
+id = "EvcRxUChcExD3WvAtXhiX"
+uri = "file://artifacts/mockup-sandbox/public/images/radhe-hero-bg.png"
+type = "image"
+title = "Dark luxury background with red glow"
+
+[[generated]]
+id = "4Z4zH9ldiUdzEIp-R75mD"
+uri = "file://artifacts/radhe-digital/public/images/product-tshirt.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "6UMM0QWagUUtlC72mlbzK"
+uri = "file://artifacts/radhe-digital/public/images/product-mug.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "13peZycqVGeDgjHoqzsIM"
+uri = "file://artifacts/radhe-digital/public/images/product-cap.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "_bXUZSc1pdhGjFliQZocp"
+uri = "file://artifacts/radhe-digital/public/images/product-badge.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "NPVlCo-9afcElwKYE8qHU"
+uri = "file://artifacts/radhe-digital/public/images/product-pen.png"
+type = "image"
+title = "generated_image"
+
+[[outputs]]
+id = "sGPPGLD8sSwNH0yK6Hz1Z"
+uri = "file://radhe-digital-hostinger.zip"
+type = "unspecified"
+title = "Radhe Digital — Hostinger Deployment Package"

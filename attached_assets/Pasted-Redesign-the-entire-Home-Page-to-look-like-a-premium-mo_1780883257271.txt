@@ -1,0 +1,143 @@
+Redesign the entire Home Page to look like a premium modern custom printing and merchandise brand, not just a T-shirt printing website.
+
+Brand Name: Radhe Digital
+
+Design Goals:
+
+* Premium and modern look
+* Black, white and red color scheme
+* Professional ecommerce style
+* Suitable for T-shirt printing, Mug printing, Cap printing, Pen printing, Badge printing, Corporate Gifts and Custom Merchandise
+* Clean spacing and luxury feel
+* Mobile responsive
+
+Home Page Structure:
+
+1. Hero Banner
+
+* Full width premium hero section
+* Large headline:
+  "Print Your Ideas On Anything"
+* Subheading:
+  "Premium Custom Printing for T-Shirts, Mugs, Caps, Pens, Badges, Corporate Gifts and More."
+* CTA Buttons:
+
+  * Start Customizing
+  * View Products
+
+Hero Visual:
+
+* Create a premium merchandise showcase instead of a single T-shirt.
+* Display multiple product mockups together:
+
+  * T-Shirt
+  * Mug
+  * Cap
+  * Pen
+  * Badge
+* Use realistic sample mockups only.
+* Do NOT use real customer images.
+* Keep all mockups visually consistent.
+
+2. Trust Bar
+   Display:
+
+* Premium Quality Printing
+* Fast Delivery Across India
+* Bulk Orders Available
+* Design Assistance
+* Secure Ordering
+
+3. Featured Categories Section
+
+Heading:
+"Customize Anything You Imagine"
+
+Show category cards with sample mockup images only:
+
+* T-Shirt Printing
+* Mug Printing
+* Cap Printing
+* Pen Printing
+* Badge Printing
+* Corporate Gifts
+
+Each card should contain:
+
+* Premium mockup image
+* Category title
+* Short description
+* Explore Button
+
+4. Featured Products Section
+
+Heading:
+"Popular Custom Products"
+
+Display modern product cards with:
+
+* Mockup Image
+* Product Name
+* Starting Price
+* Short Description
+* Customize Now Button
+
+5. Best Selling Products Section
+
+Create a separate premium carousel showing:
+
+* Best Selling T-Shirts
+* Best Selling Mugs
+* Best Selling Caps
+* Best Selling Corporate Gifts
+
+6. Why Choose Radhe Digital
+
+Create luxury feature cards:
+
+* HD Print Quality
+* Fast Delivery
+* Custom Design Support
+* Bulk Order Discounts
+* Premium Materials
+* Trusted By Businesses
+
+7. How It Works Section
+
+Step 1:
+Choose Product
+
+Step 2:
+Upload Design
+
+Step 3:
+Confirm Order
+
+Step 4:
+Receive Delivery
+
+Use modern timeline design.
+
+8. Customer Reviews
+
+Display premium review cards with ratings and customer feedback.
+
+9. FAQ Section
+
+Keep FAQ section but redesign it with modern accordion style.
+
+10. Final CTA Section
+
+Heading:
+"Ready To Bring Your Ideas To Life?"
+
+Buttons:
+
+* Start Customizing
+* Contact On WhatsApp
+
+Important:
+Do not make the homepage look like a T-shirt-only website.
+The homepage must represent a complete custom printing and merchandise brand.
+Use only sample mockup images in categories because real product photos will be added later.
+Use premium spacing, modern typography, hover effects and subtle animations throughout the page.

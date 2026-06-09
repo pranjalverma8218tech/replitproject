@@ -1,0 +1,111 @@
+import React from "react";
+import { Link } from "wouter";
+import { Upload, Shirt, Phone, Package, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+export default function AboutPage() {
+  const steps = [
+    {
+      icon: <Upload size={32} />,
+      title: "Upload Design",
+      desc: "Share your artwork, logo, or just an idea. Our team accepts all formats and can help refine your concept."
+    },
+    {
+      icon: <Shirt size={32} />,
+      title: "Choose T-Shirt",
+      desc: "Pick from our premium range of Round Necks, Polos, or Special Event fabrics in various sizes and colors."
+    },
+    {
+      icon: <Phone size={32} />,
+      title: "Confirm Order",
+      desc: "Finalize details and pricing directly over WhatsApp with our friendly support team."
+    },
+    {
+      icon: <Package size={32} />,
+      title: "Receive Delivery",
+      desc: "Sit back while we print and ship your custom apparel quickly and safely across India."
+    }
+  ];
+
+  return (
+    <div className="bg-white min-h-screen">
+      {/* Intro Header */}
+      <div className="bg-black text-white py-20 lg:py-32">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">About Radhe Digital</h1>
+          <p className="text-xl text-gray-300 leading-relaxed font-light">
+            We are India's fast-growing custom apparel print shop. By combining traditional printing expertise with modern digital convenience, we make premium custom T-shirts accessible to everyone.
+          </p>
+        </div>
+      </div>
+
+      {/* Process Section */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-black mb-4">How It Works</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">Four simple steps from your imagination to a tangible, high-quality T-shirt.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+            <div className="hidden lg:block absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -z-10 -translate-y-1/2"></div>
+            
+            {steps.map((step, idx) => (
+              <div key={idx} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center relative z-10">
+                <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  {step.icon}
+                </div>
+                <h3 className="text-xl font-bold text-black mb-3">{idx + 1}. {step.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Mission & Vision */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-black mb-6">Our Mission & Vision</h2>
+              <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
+                <p>
+                  <strong className="text-black block mb-1">The Mission</strong>
+                  To empower individuals, businesses, and communities to express their identity through high-quality, customized apparel without the hassle of traditional printing constraints.
+                </p>
+                <p>
+                  <strong className="text-black block mb-1">The Vision</strong>
+                  To become the most trusted and efficient digital printing partner in India, known for flawless execution, unmatched customer support, and bridging the gap between digital design and physical print.
+                </p>
+                <p>
+                  <strong className="text-black block mb-1">Experience & Expertise</strong>
+                  With years of experience in the garment and printing industry, our technicians understand the nuance of fabrics, inks, and curing processes. Whether it is DTG, Screen Printing, or Sublimation, we ensure the print outlasts the fabric.
+                </p>
+              </div>
+              <div className="mt-8">
+                <Link href="/categories">
+                  <Button size="lg" className="bg-black hover:bg-primary text-white">
+                    Explore Our Products <ArrowRight className="ml-2" size={20} />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <img src="/images/gallery-3.png" alt="Team at work" className="w-full h-full object-cover rounded-2xl shadow-lg col-span-2 aspect-video" />
+              <div className="bg-red-50 rounded-2xl p-6 flex flex-col justify-center text-center">
+                <span className="text-4xl font-black text-primary block mb-2">10k+</span>
+                <span className="text-gray-700 font-medium">Orders Delivered</span>
+              </div>
+              <div className="bg-gray-900 rounded-2xl p-6 flex flex-col justify-center text-center">
+                <span className="text-4xl font-black text-white block mb-2">99%</span>
+                <span className="text-gray-400 font-medium">Happy Customers</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

@@ -1,0 +1,85 @@
+✅ Professional Prompt (Copy & Paste Ready)
+Prompt:
+Mujhe ek professional business website design karni hai jiska naam “Radhe Digital T-Shirt Printing” hoga. Yeh ek custom T-shirt printing service website hogi jahan customers apni pasand ki T-shirt choose karke us par front ya back mein apni design print karwa sakte hain.
+🎯 Website Purpose:
+Custom T-shirt printing ke liye inquiry-based website banana hai jahan payment turant na ho, balki customer pehle WhatsApp ke through discussion kare.
+________________________________________
+🏠 Pages & Structure:
+1️⃣ Home Page
+• Attractive hero section with tagline:
+“Design Your Own T-Shirt – Custom Printing Made Easy”
+• High quality T-shirt mockup images
+• CTA Button: “Start Designing” / “Choose Your T-Shirt”
+• Short About Us section
+• Why Choose Us section (Quality Print, Fast Delivery, Custom Design Support, Bulk Orders Available)
+• WhatsApp Contact Button (Sticky floating button)
+________________________________________
+2️⃣ T-Shirt Categories Page
+Different types of T-shirts show kare:
+• Collar T-Shirt
+• Round Neck T-Shirt
+• Holi Special T-Shirt
+• Custom Event T-Shirt
+• Bulk Order T-Shirt
+Har category par:
+• Product image
+• Short description
+• “Customize Now” button
+________________________________________
+3️⃣ Customization Page (Main Feature)
+Jab customer T-shirt par click kare:
+Features hone chahiye:
+• T-shirt preview image
+• Option to select:
+o Size (S, M, L, XL, XXL)
+o Color
+o Quantity
+o Print Position (Front / Back / Both)
+• Design Upload Option:
+o Upload image (PNG, JPG, PDF)
+• Agar design ready nahi hai:
+o Ek text box ho jahan customer Hindi ya English mein likh sake:
+“Mujhe aisi design chahiye…”
+• Customer Details Form:
+o Name
+o Mobile Number
+o City
+• Submit button ke baad:
+👉 Automatic WhatsApp redirect with filled details
+(Pre-filled message like:
+“Hello Radhe Digital, mujhe Round Neck T-Shirt par 20 quantity mein front print karwana hai…”)
+⚠️ Payment option abhi enable na ho. Sirf inquiry based system ho.
+________________________________________
+4️⃣ About Us Page
+• Company introduction
+• Printing process
+• Experience
+• Mission & Vision
+________________________________________
+5️⃣ Contact Page
+• Phone number
+• WhatsApp button
+• Email
+• Google Map location (optional)
+________________________________________
+🎨 Design Style:
+• Modern and clean layout
+• Red + Black + White color theme
+• Professional typography
+• Mobile responsive design
+• Fast loading
+• Sticky WhatsApp floating button on all pages
+________________________________________
+⚙️ Technical Requirements:
+• Mobile friendly
+• SEO optimized
+• Easy to update product images
+• WhatsApp API integration
+• Simple admin panel (if possible)
+________________________________________
+🔥 Extra Features (Optional but Recommended):
+• T-shirt mockup preview with uploaded design placement
+• Bulk order discount mention
+• FAQ section
+• Testimonials section
+• Gallery of previous work

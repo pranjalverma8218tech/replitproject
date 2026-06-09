@@ -1,0 +1,317 @@
+Redesign the entire homepage of RADHE DIGITAL into a modern, premium, trustworthy, and conversion-focused custom printing and branding website. The current design feels outdated and crowded. Transform it into a high-end professional brand website that immediately builds trust and looks like a leading printing company in India.
+
+BRAND NAME:
+RADHE DIGITAL
+
+TAGLINE:
+Custom Printing Solutions
+
+BUSINESS SERVICES:
+
+• Custom T-Shirts
+• Custom Caps
+• Custom Mugs
+• Printed Pens
+• Custom Badges
+• Photo Frame Printing
+• Corporate Gifts
+• Promotional Merchandise
+• Event Branding
+• Bulk Printing Orders
+• Business Branding Solutions
+
+====================================================
+
+1. PREMIUM LOGO INTRO SCREEN (FIRST SCREEN)
+
+When the website opens, visitors should first see a full-screen premium brand introduction.
+
+Create a dark luxury background with subtle red glow effects.
+
+Center the RADHE DIGITAL logo prominently on screen.
+
+The logo should be large, elegant, and immediately attract attention.
+
+Add a smooth fade-in animation.
+
+Below the logo display:
+
+RADHE DIGITAL
+
+Custom Printing Solutions
+
+We Print Your Ideas Into Reality
+
+Add a subtle scroll-down indicator at the bottom.
+
+This section should feel like a premium brand launch experience.
+
+After scrolling, the main homepage begins.
+
+====================================================
+
+2. PREMIUM STICKY NAVIGATION BAR
+
+Replace the current navbar with a modern glassmorphism navigation bar.
+
+Menu Items:
+
+• Home
+• Products
+• Customize
+• About Us
+• Contact
+
+Right Side CTA Button:
+
+GET QUOTE
+
+Navbar Features:
+
+• Sticky on scroll
+• Glassmorphism effect
+• Semi-transparent background
+• Smooth hover animations
+• Premium spacing
+• Modern typography
+• Mobile responsive
+• Professional shadow effects
+
+====================================================
+
+3. PROFESSIONAL HERO SECTION
+
+Create a visually powerful hero section.
+
+LEFT SIDE:
+
+Large Headline:
+
+PRINT YOUR BRAND WITH CONFIDENCE
+
+Subheadline:
+
+Premium Custom T-Shirts, Caps, Mugs, Pens, Badges, Photo Frames and Corporate Merchandise Delivered Across India.
+
+Buttons:
+
+Primary:
+Get Started
+
+Secondary:
+View Products
+
+RIGHT SIDE:
+
+Display premium floating product mockups:
+
+• T-Shirt
+• Cap
+• Mug
+• Pen
+• Badge
+• Photo Frame
+
+Use modern professional presentation with subtle animations.
+
+====================================================
+
+4. FEATURED SERVICES SECTION
+
+Create premium service cards.
+
+Display:
+
+• Custom T-Shirts
+• Custom Caps
+• Printed Mugs
+• Printed Pens
+• Custom Badges
+• Photo Frames
+• Corporate Gifts
+• Bulk Orders
+
+Each card should contain:
+
+• Modern icon
+• Service title
+• Short description
+• Hover animation
+• Premium shadow effects
+
+====================================================
+
+5. WHY CHOOSE RADHE DIGITAL
+
+Create professional statistic cards.
+
+Examples:
+
+5000+
+Orders Delivered
+
+100+
+Corporate Clients
+
+24 Hours
+Fast Processing
+
+India Wide
+Delivery
+
+98%
+Customer Satisfaction
+
+Premium Quality
+Printing
+
+Include modern animated counters.
+
+====================================================
+
+6. PRODUCT SHOWCASE SECTION
+
+Create a modern gallery showcasing:
+
+• Custom T-Shirts
+• Caps
+• Mugs
+• Pens
+• Badges
+• Photo Frames
+• Corporate Gifts
+
+Use realistic premium mockups.
+
+Clean white product cards.
+
+Professional hover effects.
+
+====================================================
+
+7. CUSTOMER TESTIMONIALS
+
+Create modern testimonial cards.
+
+Include:
+
+• Customer photo placeholder
+• Star ratings
+• Customer feedback
+• Professional card design
+
+Add smooth carousel animation.
+
+====================================================
+
+8. PROCESS SECTION
+
+Display the printing process in 4 steps:
+
+1. Share Your Design
+2. Approve Mockup
+3. Printing Process
+4. Fast Delivery
+
+Use modern icons and connecting lines.
+
+====================================================
+
+9. CALL TO ACTION SECTION
+
+Full-width premium section.
+
+Headline:
+
+READY TO PRINT YOUR IDEAS?
+
+Subheadline:
+
+Get high-quality custom printing solutions for your business, events, promotions and personal projects.
+
+Button:
+
+REQUEST A QUOTE
+
+Use premium red gradient background.
+
+====================================================
+
+10. PROFESSIONAL FOOTER
+
+Create a modern multi-column footer.
+
+Column 1:
+Company
+
+• About Us
+• Services
+• Contact
+
+Column 2:
+Products
+
+• T-Shirts
+• Caps
+• Mugs
+• Pens
+• Badges
+• Photo Frames
+
+Column 3:
+Contact
+
+• Phone Number
+• Email Address
+• Location
+
+Column 4:
+Follow Us
+
+• Facebook
+• Instagram
+• WhatsApp
+
+====================================================
+
+DESIGN STYLE
+
+Use:
+
+• Black Background (#0B0B0B)
+• Premium Red Accent (#FF3B30)
+• White Typography
+• Glassmorphism Effects
+• Modern Shadows
+• Luxury Branding Feel
+• Large Spacing
+• Smooth Animations
+• Clean Layout
+• Premium UI Components
+
+Typography:
+
+• Modern Sans-Serif Font
+• Bold Headlines
+• Professional Readability
+
+Animations:
+
+• Smooth fade-ins
+• Hover effects
+• Scroll reveal animations
+• Floating product mockups
+
+====================================================
+
+IMPORTANT:
+
+• Keep the website fast and responsive.
+• Maintain a premium corporate look.
+• Avoid cluttered layouts.
+• Avoid outdated designs.
+• Focus on trust, professionalism, and conversions.
+• Make the homepage look like a premium national custom printing and branding company rather than a local print shop.
+• The logo intro screen should be the first thing visitors see before the homepage content.
+• Ensure excellent mobile responsiveness.
+• Use professional spacing and visual hierarchy throughout the website.

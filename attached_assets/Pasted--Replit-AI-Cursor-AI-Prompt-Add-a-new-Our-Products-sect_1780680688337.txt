@@ -1,0 +1,56 @@
+**Replit AI / Cursor AI Prompt:**
+
+> Add a new **"Our Products"** section to the website showcasing the main printing services offered by Radhe Digital. The section should look modern, premium, and visually attractive while matching the existing website design.
+>
+> ### Products to Include:
+>
+> 1. T-Shirt Printing
+> 2. Mug Printing
+> 3. Cap Printing
+> 4. Pen Printing
+> 5. Badge Printing
+>
+> ### Product Cards
+>
+> * Create a separate premium card for each product.
+> * Each card should contain:
+>
+>   * High-quality, genuine-looking product image.
+>   * Product title.
+>   * Short professional description (1–2 lines).
+>   * Clean "Order Now" or "Get Quote" button.
+>
+> ### Image Gallery
+>
+> * Use realistic and professional images representing actual printed products.
+> * Images should be large, sharp, and visually appealing.
+> * Arrange them in a responsive grid or elegant slider/carousel.
+> * Make sure all images maintain the same aspect ratio and quality.
+>
+> ### Premium Animations
+>
+> * Add a smooth fade-up animation when the section enters the viewport.
+> * Product cards should slightly lift and scale on hover.
+> * Add a subtle glossy/shiny sweep effect across the images on hover (a diagonal light reflection animation) to create a premium feel.
+> * Images should have soft shadows and rounded corners.
+> * Buttons should have smooth hover transitions.
+> * Animations should be elegant and lightweight, not flashy.
+>
+> ### Responsive Design
+>
+> * Desktop: Display cards in multiple columns.
+> * Tablet: Adjust spacing and card sizes automatically.
+> * Mobile: Stack cards neatly with proper margins.
+>
+> ### Styling
+>
+> * Keep the existing red, white, and dark color theme.
+> * Maintain the current typography and branding.
+> * Ensure the new section blends naturally with the rest of the homepage.
+>
+> ### Very Important:
+>
+> * **Do NOT modify any existing sections, navbar, hero section, footer, colors, or layout.**
+> * Only add this new Products section with the gallery and animations.
+> * Preserve all current functionality and design elements already implemented.
+> * The final result should look like a premium commercial digital printing website with a professional product showcase.
