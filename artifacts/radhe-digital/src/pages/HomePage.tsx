@@ -8,7 +8,7 @@ import {
   Award, Image, Gift
 } from "lucide-react";
 import { CATEGORIES } from "@/data/products";
-import logoSrc from "@assets/f6e27559-1690-4a6b-8f98-a83af78055c3_1781011729899.png";
+const logoSrc = "/radhe-logo.png";
 
 /* ─── Category SVG Thumbnails ─── */
 function CategorySVG({ slug }: { slug: string }) {
@@ -287,10 +287,10 @@ export default function HomePage() {
           <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full opacity-8 blur-3xl" style={{ background: "radial-gradient(circle,#e53e3e 0%,transparent 70%)" }}/>
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
-          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
 
             {/* ── Left: Text Content ── */}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 order-2 lg:order-1">
               <motion.div
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
                 className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold"
@@ -360,7 +360,7 @@ export default function HomePage() {
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.35, ease: "easeOut" }}
-              className="flex-shrink-0 flex items-center justify-center w-full lg:w-auto"
+              className="flex-shrink-0 flex items-center justify-center w-full lg:w-auto order-1 lg:order-2"
               style={{ maxWidth: "360px" }}
             >
               {/* Slow floating wrapper */}
