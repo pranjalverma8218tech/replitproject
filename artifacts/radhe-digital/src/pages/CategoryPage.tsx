@@ -290,7 +290,7 @@ export default function CategoryPage() {
       </section>
 
       {/* Category Quick Nav */}
-      <section className="bg-[#0d0d0d] border-b border-white/8 overflow-x-auto">
+      <section className="bg-[#0d0d0d] border-b border-white/8 overflow-x-auto no-scrollbar" style={{ WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-1 py-3 min-w-max">
             {CATEGORIES.map(cat => (

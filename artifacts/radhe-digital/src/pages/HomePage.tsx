@@ -104,11 +104,11 @@ function HeroProductShowcase() {
     { label: "Badge", component: <BadgeSVG /> },
   ];
   return (
-    <div className="relative flex items-center justify-center gap-3 flex-wrap">
+    <div className="relative flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
       {products.map((p, i) => (
         <motion.div
           key={p.label}
-          className="w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden shadow-2xl cursor-pointer"
+          className="w-[72px] h-[72px] sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden shadow-2xl cursor-pointer"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.4 + i * 0.12, ease: "easeOut" }}
@@ -293,7 +293,7 @@ export default function HomePage() {
     <div className="w-full bg-black">
 
       {/* ═══════════════════════════════ HERO ═══════════════════════════════ */}
-      <section className="relative bg-black text-white min-h-screen flex flex-col items-center justify-center overflow-hidden pt-8 pb-16">
+      <section className="relative bg-black text-white min-h-screen flex flex-col items-center justify-center overflow-hidden pt-6 pb-8 md:pt-8 md:pb-16">
         <div className="absolute inset-0 pointer-events-none">
           <div style={{ position: "absolute", top: "10%", left: "50%", transform: "translateX(-50%)", width: "700px", height: "700px", background: "radial-gradient(circle, rgba(229,62,62,0.12) 0%, transparent 65%)", filter: "blur(60px)" }} />
           <div style={{ position: "absolute", bottom: "-10%", left: "10%", width: "400px", height: "400px", background: "radial-gradient(circle, rgba(229,62,62,0.07) 0%, transparent 70%)", filter: "blur(40px)" }} />
@@ -305,7 +305,7 @@ export default function HomePage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           {/* Logo */}
-          <motion.div className="flex justify-center mb-8" initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, ease: "easeOut" }}>
+          <motion.div className="flex justify-center mb-4 md:mb-8" initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, ease: "easeOut" }}>
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
@@ -326,7 +326,7 @@ export default function HomePage() {
 
           {/* Headline */}
           <motion.h1
-            className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-tight mb-6 leading-[1.05]"
+            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4 md:mb-6 leading-tight sm:leading-[1.05]"
             initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.9 }}
           >
             Print Your Ideas<br />
@@ -335,7 +335,7 @@ export default function HomePage() {
 
           {/* Subheadline */}
           <motion.p
-            className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed font-light"
+            className="text-sm sm:text-lg md:text-xl text-gray-300 mb-6 md:mb-10 max-w-2xl mx-auto leading-relaxed font-light"
             initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 1.1 }}
           >
             Premium Custom Printing for T-Shirts, Mugs, Caps, Pens, Badges, Corporate Gifts and More.
@@ -343,7 +343,7 @@ export default function HomePage() {
 
           {/* CTA Buttons */}
           <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 md:mb-16"
             initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 1.25 }}
           >
             <Link href="/customize">
@@ -367,7 +367,7 @@ export default function HomePage() {
 
           {/* Stats row */}
           <motion.div
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto"
+            className="mt-8 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-3xl mx-auto"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2 }}
           >
             {[
@@ -413,16 +413,16 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════════════════ CATEGORIES ═══════════════════════════════ */}
-      <section className="py-24 bg-[#0a0a0a]">
+      <section className="py-12 md:py-24 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <motion.div className="text-center mb-8 md:mb-16" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase text-primary mb-4 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10">
               All Categories
             </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
               Customize Anything <span className="text-primary">You Imagine</span>
             </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">From a single personalized mug to a 1000-piece corporate order — we print everything with precision.</p>
+            <p className="text-gray-400 text-sm sm:text-lg max-w-2xl mx-auto">From a single personalized mug to a 1000-piece corporate order — we print everything with precision.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -456,17 +456,17 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════════════════ FEATURED PRODUCTS ═══════════════════════════════ */}
-      <section className="py-24 bg-black relative overflow-hidden">
+      <section className="py-12 md:py-24 bg-black relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(229,62,62,0.08) 0%, transparent 70%)", filter: "blur(60px)" }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <motion.div className="text-center mb-8 md:mb-16" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase text-primary mb-4 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10">
               Popular Picks
             </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
               Popular <span className="text-primary">Custom Products</span>
             </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">Our most-loved items — customized by thousands of creators, businesses, and events.</p>
+            <p className="text-gray-400 text-sm sm:text-lg max-w-2xl mx-auto">Our most-loved items — customized by thousands of creators, businesses, and events.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -509,33 +509,33 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════════════════ BEST SELLERS CAROUSEL ═══════════════════════════════ */}
-      <section className="py-24 bg-[#0a0a0a]">
+      <section className="py-12 md:py-24 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div className="text-center mb-12" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <motion.div className="text-center mb-6 md:mb-12" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase text-primary mb-4 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10">
               Trending Now
             </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
               Best <span className="text-primary">Selling Products</span>
             </h2>
-            <p className="text-gray-400 text-lg max-w-xl mx-auto">The top picks trusted by businesses, colleges, and event planners across India.</p>
+            <p className="text-gray-400 text-sm sm:text-lg max-w-xl mx-auto">The top picks trusted by businesses, colleges, and event planners across India.</p>
           </motion.div>
           <BestSellersCarousel />
         </div>
       </section>
 
       {/* ═══════════════════════════════ WHY CHOOSE US ═══════════════════════════════ */}
-      <section className="py-24 bg-black relative overflow-hidden">
+      <section className="py-12 md:py-24 bg-black relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, rgba(229,62,62,0.06) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(229,62,62,0.05) 0%, transparent 50%)" }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <motion.div className="text-center mb-8 md:mb-16" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase text-primary mb-4 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10">
               Our Edge
             </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
               Why Choose <span className="text-primary">Radhe Digital?</span>
             </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">We don't just print — we deliver excellence. Here's what sets us apart from the rest.</p>
+            <p className="text-gray-400 text-sm sm:text-lg max-w-2xl mx-auto">We don't just print — we deliver excellence. Here's what sets us apart from the rest.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -563,16 +563,16 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════════════════ HOW IT WORKS ═══════════════════════════════ */}
-      <section className="py-24 bg-[#0a0a0a]">
+      <section className="py-12 md:py-24 bg-[#0a0a0a]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <motion.div className="text-center mb-8 md:mb-16" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase text-primary mb-4 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10">
               Simple Process
             </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
               How It <span className="text-primary">Works</span>
             </h2>
-            <p className="text-gray-400 text-lg max-w-xl mx-auto">Get your custom merchandise in just four easy steps.</p>
+            <p className="text-gray-400 text-sm sm:text-lg max-w-xl mx-auto">Get your custom merchandise in just four easy steps.</p>
           </motion.div>
 
           <div className="relative">
@@ -607,16 +607,16 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════════════════ TESTIMONIALS ═══════════════════════════════ */}
-      <section className="py-24 bg-black">
+      <section className="py-12 md:py-24 bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <motion.div className="text-center mb-8 md:mb-16" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase text-primary mb-4 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10">
               Customer Love
             </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
               Loved by <span className="text-primary">Creators & Brands</span>
             </h2>
-            <p className="text-gray-400 text-lg max-w-xl mx-auto">Real feedback from real customers who trust Radhe Digital.</p>
+            <p className="text-gray-400 text-sm sm:text-lg max-w-xl mx-auto">Real feedback from real customers who trust Radhe Digital.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -650,16 +650,16 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════════════════ FAQ ═══════════════════════════════ */}
-      <section className="py-24 bg-[#0a0a0a]">
+      <section className="py-12 md:py-24 bg-[#0a0a0a]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <motion.div className="text-center mb-8 md:mb-14" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase text-primary mb-4 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10">
               FAQs
             </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-white mt-4 mb-4">
               Frequently Asked <span className="text-primary">Questions</span>
             </h2>
-            <p className="text-gray-400 text-lg">Everything you need to know before placing your order.</p>
+            <p className="text-gray-400 text-sm sm:text-lg">Everything you need to know before placing your order.</p>
           </motion.div>
 
           <div>
@@ -669,7 +669,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════════════════ FINAL CTA ═══════════════════════════════ */}
-      <section className="py-28 bg-black relative overflow-hidden">
+      <section className="py-14 md:py-28 bg-black relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 50%, rgba(229,62,62,0.18) 0%, transparent 60%)", filter: "blur(40px)" }} />
           <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
@@ -680,10 +680,10 @@ export default function HomePage() {
             <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary mx-auto mb-8">
               <Printer size={32} />
             </div>
-            <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
+            <h2 className="text-2xl sm:text-4xl md:text-6xl font-extrabold text-white mb-5 leading-tight">
               Ready To Bring Your<br /><span className="text-primary">Ideas To Life?</span>
             </h2>
-            <p className="text-gray-300 text-lg mb-10 leading-relaxed">
+            <p className="text-gray-300 text-sm sm:text-lg mb-8 md:mb-10 leading-relaxed">
               Join 5,000+ happy customers and start your custom printing journey with Radhe Digital today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

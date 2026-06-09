@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="bg-black text-white py-16 lg:py-24">
+      <div className="bg-black text-white py-10 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Get In Touch</h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+          <h1 className="text-3xl md:text-5xl font-bold mb-4">Get In Touch</h1>
+          <p className="text-base sm:text-xl text-gray-300 max-w-2xl mx-auto">
             Have a question about a bulk order or a custom design? We're here to help. Reach out to us directly.
           </p>
         </div>

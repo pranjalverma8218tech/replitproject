@@ -668,7 +668,7 @@ export default function ProductDetailPage() {
             {details.specs.map((spec, i) => (
               <div
                 key={spec.label}
-                className={`grid grid-cols-2 gap-4 px-6 py-4 ${i !== details.specs.length - 1 ? "border-b border-white/6" : ""} ${i % 2 === 0 ? "bg-white/2" : ""}`}
+                className={`grid grid-cols-2 gap-2 px-4 py-3 ${i !== details.specs.length - 1 ? "border-b border-white/6" : ""} ${i % 2 === 0 ? "bg-white/2" : ""}`}
               >
                 <span className="text-gray-500 text-sm font-semibold">{spec.label}</span>
                 <span className="text-white text-sm">{spec.value}</span>

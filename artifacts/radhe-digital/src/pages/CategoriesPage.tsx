@@ -25,7 +25,7 @@ export default function CategoriesPage() {
           <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase text-primary mb-4 px-3 py-1 rounded-full border border-primary/30 bg-primary/10">
             All Categories
           </span>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold mb-4">
             Customize <span className="text-primary">Anything You Imagine</span>
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">

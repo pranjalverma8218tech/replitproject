@@ -30,9 +30,9 @@ export default function AboutPage() {
   return (
     <div className="bg-white min-h-screen">
       {/* Intro Header */}
-      <div className="bg-black text-white py-20 lg:py-32">
+      <div className="bg-black text-white py-12 lg:py-32">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">About Radhe Digital</h1>
+          <h1 className="text-3xl md:text-6xl font-bold mb-6">About Radhe Digital</h1>
           <p className="text-xl text-gray-300 leading-relaxed font-light">
             We are India's fast-growing custom apparel print shop. By combining traditional printing expertise with modern digital convenience, we make premium custom T-shirts accessible to everyone.
           </p>
@@ -40,11 +40,11 @@ export default function AboutPage() {
       </div>
 
       {/* Process Section */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-12 md:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-black mb-4">How It Works</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-lg">Four simple steps from your imagination to a tangible, high-quality T-shirt.</p>
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-2xl md:text-3xl font-bold text-black mb-4">How It Works</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-lg">Four simple steps from your imagination to a tangible, high-quality T-shirt.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
@@ -64,12 +64,12 @@ export default function AboutPage() {
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-24">
+      <section className="py-12 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-black mb-6">Our Mission & Vision</h2>
-              <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
+              <h2 className="text-2xl md:text-4xl font-bold text-black mb-6">Our Mission & Vision</h2>
+              <div className="space-y-6 text-base sm:text-lg text-gray-600 leading-relaxed">
                 <p>
                   <strong className="text-black block mb-1">The Mission</strong>
                   To empower individuals, businesses, and communities to express their identity through high-quality, customized apparel without the hassle of traditional printing constraints.
