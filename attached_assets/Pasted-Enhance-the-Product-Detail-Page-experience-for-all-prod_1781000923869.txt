@@ -1,0 +1,112 @@
+Enhance the Product Detail Page experience for all product categories.
+
+Applicable To:
+
+* T-Shirts
+* Mugs
+* Caps
+* Pens
+* Badges
+* Photo Frames
+* Corporate Gifts
+
+User Flow:
+
+Products → Select Category → Select Product → Product Detail Page → Buy Now / Customize Now
+
+Product Detail Page Requirements:
+
+1. Product Gallery
+
+* Display multiple high-quality product images.
+* Show the product from different angles and sides.
+* Allow image zoom on click.
+* Allow users to switch between images easily.
+
+Examples:
+
+T-Shirts:
+
+* Front View
+* Back View
+* Left Side View
+* Right Side View
+* Close-Up Fabric View
+
+Mugs:
+
+* Front View
+* Back View
+* Side View
+* Handle Side View
+
+Caps:
+
+* Front View
+* Back View
+* Side View
+* Top View
+
+Apply the same multi-angle image system to all products.
+
+2. Product Overview
+
+Display a short and easy-to-read summary before any purchase action.
+
+Include:
+
+* Product Name
+* Product Category
+* Product Price
+* Product Description
+* Available Colors
+* Available Sizes (if applicable)
+* Material Information
+* Printing Type
+* Estimated Delivery Time
+
+3. Product Specifications
+
+Show specifications in a clean format.
+
+Examples:
+
+For T-Shirts:
+
+* Fabric Material
+* GSM
+* Fit Type
+* Sleeve Type
+* Available Sizes
+
+For Mugs:
+
+* Material
+* Capacity
+* Finish Type
+
+For Caps:
+
+* Material
+* Adjustable Strap
+* Print Area
+
+4. Purchase Actions
+
+After viewing the details, users can choose:
+
+* Buy Now
+* Customize Now
+* Add to Cart
+
+5. Related Products
+
+Display similar products from the same category below the product details.
+
+Important:
+
+* Do not directly open Buy Now or Customize pages when a product is clicked.
+* Always open a dedicated Product Detail Page first.
+* Show multiple product images from different angles so customers can clearly understand the actual appearance and quality of the product.
+* Apply the same structure consistently across all product categories.
+* Keep the layout clean, professional, mobile-friendly, and easy to navigate.

@@ -3,7 +3,7 @@ import { Link, useParams } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, SlidersHorizontal, ShoppingCart, Palette, ChevronRight,
-  X, ArrowRight, Package, ShoppingBag, Sparkles, CheckCircle
+  X, ArrowRight, Package, ShoppingBag, Sparkles, CheckCircle, Eye
 } from "lucide-react";
 import { CATEGORY_MAP, CATEGORIES, type Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
@@ -124,7 +124,7 @@ function Toast({ show, name }: { show: boolean; name: string }) {
 function ProductCard({ product, slug, categoryLabel, index }: {
   product: Product; slug: string; categoryLabel: string; index: number;
 }) {
-  const { addItem, openCart } = useCart();
+  const { addItem } = useCart();
   const [toastVisible, setToastVisible] = useState(false);
 
   const showToast = () => {
@@ -132,7 +132,9 @@ function ProductCard({ product, slug, categoryLabel, index }: {
     setTimeout(() => setToastVisible(false), 2500);
   };
 
-  const handleBuyNow = () => {
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     addItem({
       productId: product.id,
       productName: product.name,
@@ -159,33 +161,32 @@ function ProductCard({ product, slug, categoryLabel, index }: {
         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 12px 36px rgba(229,62,62,0.18)"; }}
         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 20px rgba(0,0,0,0.4)"; }}
       >
-        {/* Image */}
-        <div className="relative aspect-square overflow-hidden bg-[#0d0d0d]">
-          <ProductSVG slug={slug} index={index} />
-          {product.badge && (
-            <span className={`absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full ${BADGE_STYLES[product.badge] ?? "bg-primary text-white"}`}>
-              {product.badge}
-            </span>
-          )}
-          {/* Hover quick-action */}
-          <div className="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-            <button
-              onClick={handleBuyNow}
-              className="flex items-center gap-1.5 px-3 py-2 bg-white rounded-xl text-xs font-bold text-black hover:bg-gray-100 transition-colors"
-            >
-              <ShoppingCart size={13} /> Buy Now
-            </button>
-            <Link href={`/customize?product=${product.id}&category=${slug}`}>
-              <button className="flex items-center gap-1.5 px-3 py-2 bg-primary rounded-xl text-xs font-bold text-white hover:bg-red-700 transition-colors">
-                <Palette size={13} /> Customize
-              </button>
-            </Link>
+        {/* Image — click opens product detail */}
+        <Link href={`/categories/${slug}/${product.id}`}>
+          <div className="relative aspect-square overflow-hidden bg-[#0d0d0d] cursor-pointer">
+            <ProductSVG slug={slug} index={index} />
+            {product.badge && (
+              <span className={`absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full ${BADGE_STYLES[product.badge] ?? "bg-primary text-white"}`}>
+                {product.badge}
+              </span>
+            )}
+            {/* Hover overlay → View Details */}
+            <div className="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <span className="flex items-center gap-2 px-4 py-2.5 bg-white rounded-xl text-xs font-bold text-black">
+                <Eye size={13} /> View Details
+              </span>
+            </div>
           </div>
-        </div>
+        </Link>
 
         {/* Content */}
         <div className="p-5 flex flex-col flex-1">
-          <h3 className="text-white font-bold text-base mb-1 leading-snug">{product.name}</h3>
+          {/* Title links to detail page */}
+          <Link href={`/categories/${slug}/${product.id}`}>
+            <h3 className="text-white font-bold text-base mb-1 leading-snug hover:text-primary transition-colors cursor-pointer">
+              {product.name}
+            </h3>
+          </Link>
           <p className="text-gray-400 text-sm leading-relaxed flex-1 mb-3">{product.description}</p>
 
           {/* Tags */}
@@ -205,23 +206,22 @@ function ProductCard({ product, slug, categoryLabel, index }: {
             </div>
           </div>
 
-          {/* Available label */}
-          <div className="flex items-center gap-1.5 mb-4 px-3 py-2 rounded-xl bg-white/4 border border-white/8">
-            <Sparkles size={12} className="text-primary flex-shrink-0" />
-            <span className="text-[11px] text-gray-400 leading-snug">Available for Direct Purchase or Customization</span>
-          </div>
-
-          {/* Dual Action Buttons */}
-          <div className="grid grid-cols-2 gap-2">
+          {/* Action Buttons */}
+          <div className="grid grid-cols-3 gap-2">
             <button
               onClick={handleBuyNow}
-              className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-bold text-black bg-white hover:bg-gray-100 transition-all duration-200"
+              className="flex items-center justify-center gap-1 py-2.5 rounded-xl text-xs font-bold text-black bg-white hover:bg-gray-100 transition-all duration-200"
             >
-              <ShoppingBag size={14} /> Buy Now
+              <ShoppingBag size={13} /> Buy
             </button>
-            <Link href={`/customize?product=${product.id}&category=${slug}`}>
-              <button className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-red-700 transition-all duration-200">
-                <Palette size={14} /> Customize
+            <Link href={`/categories/${slug}/${product.id}`}>
+              <button className="w-full flex items-center justify-center gap-1 py-2.5 rounded-xl text-xs font-bold text-white border border-white/15 hover:border-white/30 transition-all duration-200">
+                <Eye size={13} /> Details
+              </button>
+            </Link>
+            <Link href={`/customize/${slug}`}>
+              <button className="w-full flex items-center justify-center gap-1 py-2.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-red-700 transition-all duration-200">
+                <Palette size={13} /> Custom
               </button>
             </Link>
           </div>
