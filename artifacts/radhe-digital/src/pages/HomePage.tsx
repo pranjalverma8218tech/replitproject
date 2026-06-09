@@ -359,15 +359,44 @@ export default function HomePage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.35, ease: "easeOut" }}
               className="flex-shrink-0 flex items-center justify-center w-full lg:w-auto"
             >
-              <img
-                src={logoSrc}
-                alt="Radhe Digital"
-                className="w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 object-contain"
-                style={{ display: "block", filter: "drop-shadow(0 0 40px rgba(196,150,42,0.25))" }}
-              />
+              {/* Floating wrapper */}
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="relative flex items-center justify-center"
+              >
+                {/* Outer glow — gold */}
+                <div
+                  className="absolute rounded-full pointer-events-none"
+                  style={{
+                    width: "110%", height: "110%",
+                    background: "radial-gradient(circle, rgba(196,150,42,0.22) 0%, transparent 70%)",
+                    filter: "blur(18px)",
+                  }}
+                />
+                {/* Inner glow — red */}
+                <div
+                  className="absolute rounded-full pointer-events-none"
+                  style={{
+                    width: "85%", height: "85%",
+                    background: "radial-gradient(circle, rgba(229,62,62,0.15) 0%, transparent 65%)",
+                    filter: "blur(12px)",
+                  }}
+                />
+                {/* Logo image — unmodified, full original artwork */}
+                <img
+                  src={logoSrc}
+                  alt="Radhe Digital"
+                  className="relative z-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 object-contain"
+                  style={{
+                    display: "block",
+                    filter: "drop-shadow(0 8px 32px rgba(0,0,0,0.55)) drop-shadow(0 0 18px rgba(196,150,42,0.2))",
+                  }}
+                />
+              </motion.div>
             </motion.div>
 
           </div>
