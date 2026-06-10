@@ -286,21 +286,39 @@ export default function CategoryPage() {
       </section>
 
       {/* Category Quick Nav */}
-      <section className="bg-white border-b border-gray-100 relative">
+      <section
+        className="relative z-20 border-b"
+        style={{
+          position: "sticky",
+          top: "64px",
+          background: "rgba(10,10,10,0.97)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          borderColor: "rgba(255,255,255,0.07)",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.35)",
+        }}
+      >
         {/* Right fade to hint horizontal scroll on mobile */}
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 z-10 lg:hidden" style={{ background: "linear-gradient(to left, white 30%, transparent)" }} />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 z-10 lg:hidden" style={{ background: "linear-gradient(to left, rgba(10,10,10,0.97) 30%, transparent)" }} />
         <div className="overflow-x-auto no-scrollbar" style={{ WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-1 py-3 min-w-max">
+            <div className="flex items-center gap-1.5 py-3 min-w-max">
               {CATEGORIES.map(cat => (
                 <Link key={cat.slug} href={`/categories/${cat.slug}`}>
                   <button
-                    className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+                    className={`px-5 py-2 rounded-xl text-sm font-bold transition-all duration-200 whitespace-nowrap tracking-wide ${
                       cat.slug === slug
                         ? "text-white"
-                        : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                        : "text-gray-400 hover:text-white hover:bg-white/8"
                     }`}
-                    style={cat.slug === slug ? { background: "linear-gradient(135deg, #C4962A, #A07820)", boxShadow: "0 2px 12px rgba(196,150,42,0.3)" } : {}}
+                    style={
+                      cat.slug === slug
+                        ? {
+                            background: "linear-gradient(135deg, #e53e3e, #c53030)",
+                            boxShadow: "0 2px 14px rgba(229,62,62,0.35)",
+                          }
+                        : {}
+                    }
                   >
                     {cat.label}
                   </button>
@@ -314,17 +332,28 @@ export default function CategoryPage() {
       {/* Search + Sort + Filter */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <div className="relative flex-1 group">
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors duration-200 pointer-events-none" />
             <input
               type="text"
               value={search}
               onChange={e => { setSearch(e.target.value); setVisibleCount(6); }}
-              placeholder={`Search ${category.label.toLowerCase()}...`}
-              className="w-full h-11 bg-white border border-gray-200 rounded-xl pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#C4962A] transition-colors"
+              placeholder="Search Products, Categories..."
+              className="w-full h-12 bg-white border-2 border-gray-200 rounded-xl pl-11 pr-10 text-sm font-medium text-gray-900 placeholder-gray-400 outline-none transition-all duration-200"
+              style={search ? { borderColor: "#e53e3e", boxShadow: "0 0 0 3px rgba(229,62,62,0.1)" } : {}}
+              onFocus={e => {
+                e.currentTarget.style.borderColor = "#e53e3e";
+                e.currentTarget.style.boxShadow = "0 0 0 3px rgba(229,62,62,0.12)";
+              }}
+              onBlur={e => {
+                if (!search) {
+                  e.currentTarget.style.borderColor = "#e5e7eb";
+                  e.currentTarget.style.boxShadow = "none";
+                }
+              }}
             />
             {search && (
-              <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
+              <button onClick={() => setSearch("")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors">
                 <X size={15} />
               </button>
             )}
@@ -332,7 +361,7 @@ export default function CategoryPage() {
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value as typeof sortBy)}
-            className="h-11 bg-white border border-gray-200 rounded-xl px-4 text-sm text-gray-700 outline-none focus:border-[#C4962A] cursor-pointer"
+            className="h-12 bg-white border-2 border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-700 outline-none cursor-pointer transition-all duration-200 focus:border-primary"
           >
             <option value="default">Sort: Default</option>
             <option value="price-asc">Price: Low → High</option>
@@ -340,15 +369,15 @@ export default function CategoryPage() {
           </select>
           <button
             onClick={() => setFilterOpen(!filterOpen)}
-            className={`flex items-center gap-2 h-11 px-5 rounded-xl text-sm font-semibold border transition-all duration-200 ${
+            className={`flex items-center gap-2 h-12 px-5 rounded-xl text-sm font-bold border-2 transition-all duration-200 ${
               filterOpen || activeTags.length > 0
-                ? "border-[#C4962A] text-[#C4962A] bg-[#C4962A]/5"
+                ? "border-primary text-primary bg-primary/5"
                 : "bg-white border-gray-200 text-gray-600 hover:border-gray-400 hover:text-gray-900"
             }`}
           >
             <SlidersHorizontal size={15} />
             Filter {activeTags.length > 0 && (
-              <span className="w-5 h-5 rounded-full text-white text-xs flex items-center justify-center font-bold" style={{ background: "#C4962A" }}>{activeTags.length}</span>
+              <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center font-bold">{activeTags.length}</span>
             )}
           </button>
         </div>
