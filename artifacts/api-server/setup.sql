@@ -52,6 +52,19 @@ CREATE TABLE IF NOT EXISTS customers (
   updated_at       DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- Admin users table
+CREATE TABLE IF NOT EXISTS admin_users (
+  id            INT             NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  username      VARCHAR(50)     NOT NULL UNIQUE,
+  email         VARCHAR(100)    NOT NULL UNIQUE,
+  password_hash VARCHAR(255)    NOT NULL,
+  role          ENUM('super_admin','admin') NOT NULL DEFAULT 'admin',
+  is_active     TINYINT(1)      NOT NULL DEFAULT 1,
+  last_login    DATETIME        DEFAULT NULL,
+  created_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 -- Indexes for common queries
 CREATE INDEX IF NOT EXISTS idx_orders_status     ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_mobile     ON orders(mobile);

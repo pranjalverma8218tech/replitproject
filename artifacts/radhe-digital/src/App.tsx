@@ -45,6 +45,12 @@ function ScrollToTop() {
   return null;
 }
 
+function AdminRedirect() {
+  const [, navigate] = useLocation();
+  useEffect(() => { navigate("/admin/login"); }, []);
+  return null;
+}
+
 function AdminProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAdmin();
   const [, navigate] = useLocation();
@@ -89,9 +95,7 @@ function AdminRouter() {
           <AdminLayout><AdminSettings /></AdminLayout>
         </AdminProtectedRoute>
       </Route>
-      <Route path="/admin">
-        {() => { const [, nav] = useLocation(); useEffect(() => nav("/admin/login"), []); return null; }}
-      </Route>
+      <Route path="/admin" component={AdminRedirect} />
     </Switch>
   );
 }

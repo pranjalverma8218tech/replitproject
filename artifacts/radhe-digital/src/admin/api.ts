@@ -4,6 +4,12 @@
 
 const BASE = `${import.meta.env.VITE_API_URL ?? ""}/api`;
 
+const STORAGE_KEY = "rd_admin_auth";
+
+function getToken(): string | null {
+  try { return localStorage.getItem(STORAGE_KEY); } catch { return null; }
+}
+
 // ─── snake_case → camelCase transformer ─────────────────────────────────────
 function toCamel(obj: unknown): unknown {
   if (Array.isArray(obj)) return obj.map(toCamel);
@@ -18,11 +24,16 @@ function toCamel(obj: unknown): unknown {
   return obj;
 }
 
-async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    ...init,
-    headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
-  });
+async function apiFetch<T>(path: string, init?: RequestInit, skipAuth = false): Promise<T> {
+  const token = getToken();
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(init?.headers as Record<string, string> ?? {}),
+  };
+  if (token && !skipAuth) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${BASE}${path}`, { ...init, headers });
   const data = await res.json();
   if (!res.ok) throw Object.assign(new Error(data.message ?? "API error"), { code: data.error, status: res.status });
   return toCamel(data) as T;
@@ -79,6 +90,27 @@ export interface DashboardStats {
   statusBreakdown: Partial<Record<OrderStatus, number>>;
   recentOrders: Order[];
 }
+
+export interface AdminUser {
+  id: number;
+  email: string;
+  username: string;
+  role: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  user: AdminUser;
+}
+
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+export const loginAdmin = (email: string, password: string) =>
+  apiFetch<LoginResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  }, true);
+
+export const getMe = () => apiFetch<{ user: AdminUser }>("/auth/me");
 
 // ─── Orders ──────────────────────────────────────────────────────────────────
 export const getOrders   = (params?: { status?: string; whatsapp?: boolean; search?: string }) => {
