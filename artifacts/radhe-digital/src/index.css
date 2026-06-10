@@ -355,6 +355,13 @@
     background-color: var(--elevate-2);
   }
 
+  .label-xs {
+    @apply block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5;
+  }
+  .input-field {
+    @apply w-full h-10 bg-[#1a1a1a] border border-white/12 rounded-xl px-4 text-sm text-white placeholder-gray-600 outline-none focus:border-primary/40 transition-colors;
+  }
+
   /* If there's a 1px border, adjust the inset so that it covers that parent's border */
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
   .border.active-elevate:not(.no-active-interaction-elevate)::after,

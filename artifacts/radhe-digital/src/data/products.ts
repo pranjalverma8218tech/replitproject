@@ -1,3 +1,9 @@
+export interface ProductImage {
+  view: "front" | "back" | "side" | "closeup";
+  label: string;
+  url: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -6,6 +12,8 @@ export interface Product {
   description: string;
   badge?: string;
   tags: string[];
+  images?: ProductImage[];
+  features?: string[];
 }
 
 export interface Category {

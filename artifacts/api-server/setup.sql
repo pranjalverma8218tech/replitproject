@@ -26,16 +26,22 @@ CREATE TABLE IF NOT EXISTS orders (
 
 -- Products table
 CREATE TABLE IF NOT EXISTS products (
-  id          VARCHAR(30)       NOT NULL PRIMARY KEY,
-  name        VARCHAR(150)      NOT NULL,
-  category    VARCHAR(80)       NOT NULL,
-  description TEXT              DEFAULT NULL,
-  price       DECIMAL(10,2)     NOT NULL,
-  image_url   VARCHAR(255)      DEFAULT NULL,
-  status      ENUM('Active','Inactive') NOT NULL DEFAULT 'Active',
-  stock       INT               NOT NULL DEFAULT 0,
-  created_at  DATETIME          NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at  DATETIME          NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  id              VARCHAR(30)       NOT NULL PRIMARY KEY,
+  name            VARCHAR(150)      NOT NULL,
+  category        VARCHAR(80)       NOT NULL,
+  description     TEXT              DEFAULT NULL,
+  price           DECIMAL(10,2)     NOT NULL,
+  price_label     VARCHAR(60)       DEFAULT NULL COMMENT 'e.g. ₹199 or From ₹149',
+  badge           VARCHAR(60)       DEFAULT NULL COMMENT 'e.g. Best Seller, Trending',
+  tags            TEXT              DEFAULT NULL COMMENT 'JSON array of tag strings',
+  images          TEXT              DEFAULT NULL COMMENT 'JSON array of {view,label,url} objects',
+  features        TEXT              DEFAULT NULL COMMENT 'JSON array of feature strings',
+  specifications  TEXT              DEFAULT NULL COMMENT 'JSON array of {label,value} objects',
+  image_url       VARCHAR(255)      DEFAULT NULL COMMENT 'Legacy single image (deprecated)',
+  status          ENUM('Active','Inactive') NOT NULL DEFAULT 'Active',
+  stock           INT               NOT NULL DEFAULT 0,
+  created_at      DATETIME          NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      DATETIME          NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- Customers table

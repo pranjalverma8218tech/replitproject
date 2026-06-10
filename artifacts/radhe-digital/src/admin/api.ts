@@ -60,12 +60,29 @@ export interface Order {
   createdAt?: string;
 }
 
+export interface ProductImage {
+  view: "front" | "back" | "side" | "closeup";
+  label: string;
+  url: string;
+}
+
+export interface ProductSpec {
+  label: string;
+  value: string;
+}
+
 export interface Product {
   id: string;
   name: string;
   category: string;
   description?: string;
   price: number | string;
+  priceLabel?: string;
+  badge?: string;
+  tags?: string[];
+  images?: ProductImage[];
+  features?: string[];
+  specifications?: ProductSpec[];
   imageUrl?: string;
   status: "Active" | "Inactive";
   stock: number;

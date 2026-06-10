@@ -9,6 +9,7 @@ import { CATEGORY_MAP, type Product } from "@/data/products";
 import { CATEGORY_DETAILS, type GalleryView } from "@/data/productDetails";
 import { useCart } from "@/context/CartContext";
 import { ProductOptionsModal } from "@/components/ProductOptionsModal";
+import { useApiProducts, getViewImages, type ApiProductImage } from "@/hooks/useApiProducts";
 
 /* ─── Gallery SVGs ─── */
 function GallerySVG({
@@ -170,6 +171,7 @@ export default function ProductDetailPage() {
   const [activeView, setActiveView] = useState(0);
   const [activeColor, setActiveColor] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const apiProducts = useApiProducts();
 
   if (!category || !product) {
     return (
@@ -187,6 +189,10 @@ export default function ProductDetailPage() {
   const galleryViews = details?.galleryViews ?? [{ label: "View", angle: "front" as const }];
   const selectedColorHex = details?.colors[activeColor]?.hex ?? "#e53e3e";
   const related = category.products.filter(p => p.id !== product.id).slice(0, 4);
+
+  const realImages: ApiProductImage[] = getViewImages(apiProducts[product.id]);
+  const hasRealImages = realImages.length > 0;
+  const activeRealImage = hasRealImages ? realImages[Math.min(activeView, realImages.length - 1)] : null;
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -211,48 +217,54 @@ export default function ProductDetailPage() {
           {/* ── LEFT: Gallery ── */}
           <div className="space-y-3">
             <motion.div
-              key={`${activeView}-${activeColor}`}
+              key={`${activeView}-${activeColor}-${hasRealImages}`}
               initial={{ opacity: 0.6, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.2 }}
               className="relative aspect-square bg-[#141414] rounded-2xl overflow-hidden border border-gray-200"
               style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.12)" }}
             >
-              <GallerySVG
-                slug={slug ?? ""}
-                angle={galleryViews[activeView]?.angle ?? "front"}
-                color={selectedColorHex}
-                active
-              />
+              {activeRealImage
+                ? <img src={activeRealImage.url} alt={`${product.name} – ${activeRealImage.label}`} className="w-full h-full object-cover" />
+                : <GallerySVG slug={slug ?? ""} angle={galleryViews[activeView]?.angle ?? "front"} color={selectedColorHex} active />
+              }
               {product.badge && (
                 <span className="absolute top-4 left-4 text-xs font-bold px-3 py-1.5 rounded-full bg-primary text-white shadow-lg">
                   {product.badge}
                 </span>
               )}
               <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-xl bg-black/70 border border-white/10 text-xs text-white font-semibold backdrop-blur-sm">
-                {galleryViews[activeView]?.label}
+                {hasRealImages ? (activeRealImage?.label ?? "View") : (galleryViews[activeView]?.label)}
               </div>
             </motion.div>
 
             <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none", msOverflowStyle: "none" } as React.CSSProperties}>
-              {galleryViews.map((view, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveView(i)}
-                  className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border transition-all duration-200 ${
-                    activeView === i
-                      ? "ring-2 shadow-lg"
-                      : "border-gray-200 hover:border-gray-400"
-                  }`}
-                  style={activeView === i ? { borderColor: "#C4962A", boxShadow: "0 2px 12px rgba(196,150,42,0.25)" } : {}}
-                >
-                  <GallerySVG
-                    slug={slug ?? ""}
-                    angle={view.angle}
-                    color={selectedColorHex}
-                  />
-                </button>
-              ))}
+              {hasRealImages
+                ? realImages.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveView(i)}
+                      className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border transition-all duration-200 ${
+                        activeView === i ? "ring-2 shadow-lg" : "border-gray-200 hover:border-gray-400"
+                      }`}
+                      style={activeView === i ? { borderColor: "#C4962A", boxShadow: "0 2px 12px rgba(196,150,42,0.25)" } : {}}
+                    >
+                      <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
+                    </button>
+                  ))
+                : galleryViews.map((view, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveView(i)}
+                      className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border transition-all duration-200 ${
+                        activeView === i ? "ring-2 shadow-lg" : "border-gray-200 hover:border-gray-400"
+                      }`}
+                      style={activeView === i ? { borderColor: "#C4962A", boxShadow: "0 2px 12px rgba(196,150,42,0.25)" } : {}}
+                    >
+                      <GallerySVG slug={slug ?? ""} angle={view.angle} color={selectedColorHex} />
+                    </button>
+                  ))
+              }
             </div>
           </div>
 

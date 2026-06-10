@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { CATEGORY_MAP, CATEGORIES, type Product } from "@/data/products";
 import { ProductOptionsModal } from "@/components/ProductOptionsModal";
+import { useApiProducts, getFrontImage } from "@/hooks/useApiProducts";
 
 /* ─── SVG Product Illustrations ─── */
 function ProductSVG({ slug, index }: { slug: string; index: number }) {
@@ -100,8 +101,8 @@ const BADGE_STYLES: Record<string, string> = {
 };
 
 /* ─── Product Card ─── */
-function ProductCard({ product, slug, categoryLabel, index }: {
-  product: Product; slug: string; categoryLabel: string; index: number;
+function ProductCard({ product, slug, categoryLabel, index, realImageUrl }: {
+  product: Product; slug: string; categoryLabel: string; index: number; realImageUrl?: string | null;
 }) {
   const [showModal, setShowModal] = useState(false);
 
@@ -128,7 +129,10 @@ function ProductCard({ product, slug, categoryLabel, index }: {
         {/* Image */}
         <Link href={`/categories/${slug}/${product.id}`}>
           <div className="relative aspect-square overflow-hidden bg-[#f5f5f5] cursor-pointer">
-            <ProductSVG slug={slug} index={index} />
+            {realImageUrl
+              ? <img src={realImageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              : <ProductSVG slug={slug} index={index} />
+            }
             {product.badge && (
               <span className={`absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full ${BADGE_STYLES[product.badge] ?? "bg-primary text-white"}`}>
                 {product.badge}
@@ -197,6 +201,7 @@ export default function CategoryPage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug ?? "";
   const category = CATEGORY_MAP[slug];
+  const apiProducts = useApiProducts();
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc">("default");
@@ -448,6 +453,7 @@ export default function CategoryPage() {
                 slug={slug}
                 categoryLabel={category.label}
                 index={i}
+                realImageUrl={getFrontImage(apiProducts[product.id])}
               />
             ))}
           </div>
