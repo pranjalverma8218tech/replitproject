@@ -1,0 +1,155 @@
+Create a complete professional Admin Panel for my custom printing ecommerce website "Radhe Digital".
+
+Current Website Setup:
+
+* Customers can place orders as Guest Users
+* No Login / Signup system
+* No Razorpay integration yet
+* No Shiprocket integration yet
+* Orders are currently submitted through Order Forms and WhatsApp
+* Focus on managing products, orders and customers
+
+Requirements:
+
+1. Admin Authentication
+
+Create a separate Admin Login page:
+
+/admin/login
+
+Requirements:
+
+* Only admin can access dashboard
+* Public users cannot access admin pages
+* Secure email and password login
+* Redirect to dashboard after login
+
+2. Admin Dashboard
+
+Create a modern ecommerce dashboard showing:
+
+* Total Orders
+* Total Customers
+* Total Products
+* Pending Orders
+* Processing Orders
+* Delivered Orders
+* Recent Orders Table
+
+Use sample data for now.
+
+3. Product Management
+
+Create Product Management page with:
+
+* Add Product
+* Edit Product
+* Delete Product
+* Product Image Upload
+* Product Name
+* Product Category
+* Product Description
+* Product Price
+* Product Status
+
+Categories:
+
+* T-Shirt Printing
+* Mug Printing
+* Cap Printing
+* Mobile Cover Printing
+* Corporate Gifts
+* Customized Products
+
+4. Order Management
+
+Create Orders page.
+
+Display:
+
+* Order ID
+* Customer Name
+* Mobile Number
+* Product Name
+* Quantity
+* Order Date
+* Order Status
+
+Order Status Options:
+
+* New Order
+* Contacted
+* Design Received
+* In Production
+* Ready
+* Delivered
+* Cancelled
+
+Allow admin to update order status.
+
+5. Customer Management
+
+Create Customers page.
+
+Display:
+
+* Customer Name
+* Mobile Number
+* Email
+* Ordered Products
+* Total Orders
+* Last Order Date
+
+Add search functionality.
+
+6. WhatsApp Order Management
+
+Add WhatsApp Order Support section.
+
+Features:
+
+* View WhatsApp Orders
+* Customer Contact Number
+* Open WhatsApp Chat Button
+* Mark Order As Contacted
+* Mark Order As Completed
+
+7. Dashboard Sidebar
+
+Create professional sidebar:
+
+* Dashboard
+* Products
+* Orders
+* Customers
+* WhatsApp Orders
+* Settings
+* Logout
+
+8. Design Requirements
+
+* Premium black, white and red theme
+* Modern ecommerce admin panel
+* Mobile responsive
+* Professional cards
+* Data tables
+* Search functionality
+* Hover effects
+* Clean UI
+* Consistent with the main website design
+
+Important:
+
+Do not add admin links in the public website navigation.
+
+Admin panel should only be accessible via:
+
+/admin/login
+
+and after successful login:
+
+/admin/dashboard
+
+Generate complete frontend structure with reusable components and sample data.
+
+Do not include Razorpay or Shiprocket functionality yet.

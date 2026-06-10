@@ -20,6 +20,17 @@ import AboutPage from "@/pages/AboutPage";
 import ContactPage from "@/pages/ContactPage";
 import NotFound from "@/pages/not-found";
 
+import { AdminProvider } from "@/admin/AdminContext";
+import AdminLogin from "@/admin/AdminLogin";
+import AdminLayout from "@/admin/AdminLayout";
+import AdminDashboard from "@/admin/AdminDashboard";
+import AdminProducts from "@/admin/AdminProducts";
+import AdminOrders from "@/admin/AdminOrders";
+import AdminCustomers from "@/admin/AdminCustomers";
+import AdminWhatsApp from "@/admin/AdminWhatsApp";
+import AdminSettings from "@/admin/AdminSettings";
+import { useAdmin } from "@/admin/AdminContext";
+
 if ("scrollRestoration" in history) {
   history.scrollRestoration = "manual";
 }
@@ -34,7 +45,58 @@ function ScrollToTop() {
   return null;
 }
 
-function Router() {
+function AdminProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAdmin();
+  const [, navigate] = useLocation();
+  useEffect(() => {
+    if (!isAuthenticated) navigate("/admin/login");
+  }, [isAuthenticated]);
+  if (!isAuthenticated) return null;
+  return <>{children}</>;
+}
+
+function AdminRouter() {
+  return (
+    <Switch>
+      <Route path="/admin/login" component={AdminLogin} />
+      <Route path="/admin/dashboard">
+        <AdminProtectedRoute>
+          <AdminLayout><AdminDashboard /></AdminLayout>
+        </AdminProtectedRoute>
+      </Route>
+      <Route path="/admin/products">
+        <AdminProtectedRoute>
+          <AdminLayout><AdminProducts /></AdminLayout>
+        </AdminProtectedRoute>
+      </Route>
+      <Route path="/admin/orders">
+        <AdminProtectedRoute>
+          <AdminLayout><AdminOrders /></AdminLayout>
+        </AdminProtectedRoute>
+      </Route>
+      <Route path="/admin/customers">
+        <AdminProtectedRoute>
+          <AdminLayout><AdminCustomers /></AdminLayout>
+        </AdminProtectedRoute>
+      </Route>
+      <Route path="/admin/whatsapp-orders">
+        <AdminProtectedRoute>
+          <AdminLayout><AdminWhatsApp /></AdminLayout>
+        </AdminProtectedRoute>
+      </Route>
+      <Route path="/admin/settings">
+        <AdminProtectedRoute>
+          <AdminLayout><AdminSettings /></AdminLayout>
+        </AdminProtectedRoute>
+      </Route>
+      <Route path="/admin">
+        {() => { const [, nav] = useLocation(); useEffect(() => nav("/admin/login"), []); return null; }}
+      </Route>
+    </Switch>
+  );
+}
+
+function PublicRouter() {
   return (
     <Switch>
       <Route path="/" component={HomePage} />
@@ -50,24 +112,39 @@ function Router() {
   );
 }
 
+function AppContent() {
+  const [location] = useLocation();
+  const isAdmin = location.startsWith("/admin");
+
+  if (isAdmin) {
+    return <AdminRouter />;
+  }
+
+  return (
+    <CartProvider>
+      <div className="min-h-screen flex flex-col bg-background font-sans overflow-x-hidden w-full">
+        <Navbar />
+        <main className="flex-1 w-full">
+          <PublicRouter />
+        </main>
+        <Footer />
+        <WhatsAppButton />
+      </div>
+      <CartDrawer />
+    </CartProvider>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <CartProvider>
+        <AdminProvider>
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
             <ScrollToTop />
-            <div className="min-h-screen flex flex-col bg-background font-sans overflow-x-hidden w-full">
-              <Navbar />
-              <main className="flex-1 w-full">
-                <Router />
-              </main>
-              <Footer />
-              <WhatsAppButton />
-            </div>
-            <CartDrawer />
+            <AppContent />
           </WouterRouter>
-        </CartProvider>
+        </AdminProvider>
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
