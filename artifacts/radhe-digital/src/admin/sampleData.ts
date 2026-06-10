@@ -1,3 +1,36 @@
+// ============================================================
+// ⚠️  SAMPLE / MOCK DATA — NOT CONNECTED TO ANY DATABASE
+// ============================================================
+// This file contains hardcoded placeholder data used to
+// demonstrate the admin panel UI.
+//
+// ALL DATA HERE IS FAKE. Nothing is persisted — every page
+// refresh resets to these values.
+//
+// FILE LOCATION:
+//   artifacts/radhe-digital/src/admin/sampleData.ts
+//
+// DATA SECTIONS IN THIS FILE:
+//   - OrderStatus / ProductCategory  →  TypeScript type definitions
+//   - Order interface                →  shape of one order record
+//   - Product interface              →  shape of one product record
+//   - Customer interface             →  shape of one customer record
+//   - SAMPLE_ORDERS (8 rows)         →  mock order data
+//   - SAMPLE_PRODUCTS (10 rows)      →  mock product catalogue
+//   - SAMPLE_CUSTOMERS (5 rows)      →  mock customer records
+//
+// PAGES THAT USE THIS FILE:
+//   AdminDashboard.tsx   → SAMPLE_ORDERS, SAMPLE_PRODUCTS, SAMPLE_CUSTOMERS
+//   AdminOrders.tsx      → SAMPLE_ORDERS
+//   AdminProducts.tsx    → SAMPLE_PRODUCTS
+//   AdminCustomers.tsx   → SAMPLE_CUSTOMERS
+//   AdminWhatsApp.tsx    → SAMPLE_ORDERS (filtered to isWhatsApp:true)
+//
+// HOW TO REPLACE WITH REAL DATA:
+//   Replace each SAMPLE_* array with an API call to your
+//   backend (see bottom of this file for the integration plan).
+// ============================================================
+
 export type OrderStatus =
   | "New Order"
   | "Contacted"
@@ -53,6 +86,10 @@ export interface Customer {
   totalSpent: number;
 }
 
+// ─────────────────────────────────────────────
+// ⚠️  SAMPLE ORDERS — 8 fake rows
+//     Replace with: GET /api/orders
+// ─────────────────────────────────────────────
 export const SAMPLE_ORDERS: Order[] = [
   { id: "ORD-001", customerName: "Rahul Sharma", mobile: "9876543210", productName: "Classic Round Neck T-Shirt", category: "T-Shirt Printing", quantity: 50, total: 9950, status: "In Production", date: "2026-06-09", address: "12 MG Road, Mathura, UP 281001", email: "rahul@example.com", isWhatsApp: true },
   { id: "ORD-002", customerName: "Priya Verma", mobile: "9654321087", productName: "Custom Printed Mug", category: "Mug Printing", quantity: 20, total: 3980, status: "Ready", date: "2026-06-08", address: "45 Krishna Nagar, Vrindavan, UP 281121", isWhatsApp: true },
@@ -64,6 +101,10 @@ export const SAMPLE_ORDERS: Order[] = [
   { id: "ORD-008", customerName: "Meena Tiwari", mobile: "9654987321", productName: "Customized Hoodie", category: "Customized Products", quantity: 15, total: 10485, status: "Cancelled", date: "2026-06-03", address: "67 Railway Colony, Mathura, UP 281005", notes: "Customer cancelled due to delay" },
 ];
 
+// ─────────────────────────────────────────────
+// ⚠️  SAMPLE PRODUCTS — 10 fake rows
+//     Replace with: GET /api/products
+// ─────────────────────────────────────────────
 export const SAMPLE_PRODUCTS: Product[] = [
   { id: "PRD-001", name: "Classic Round Neck T-Shirt", category: "T-Shirt Printing", description: "Premium 180 GSM cotton round neck t-shirt with custom logo or text printing.", price: 199, imageUrl: "", status: "Active", stock: 500 },
   { id: "PRD-002", name: "Polo T-Shirt with Logo", category: "T-Shirt Printing", description: "Professional polo t-shirt with embroidered or printed logo. Ideal for corporate teams.", price: 249, imageUrl: "", status: "Active", stock: 300 },
@@ -77,6 +118,10 @@ export const SAMPLE_PRODUCTS: Product[] = [
   { id: "PRD-010", name: "Pen Set (Branded)", category: "Corporate Gifts", description: "Set of 5 branded pens with company name or logo engraved.", price: 125, imageUrl: "", status: "Inactive", stock: 0 },
 ];
 
+// ─────────────────────────────────────────────
+// ⚠️  SAMPLE CUSTOMERS — 5 fake rows
+//     Replace with: GET /api/customers
+// ─────────────────────────────────────────────
 export const SAMPLE_CUSTOMERS: Customer[] = [
   { id: "CUS-001", name: "Rahul Sharma", mobile: "9876543210", email: "rahul@example.com", totalOrders: 3, orderedProducts: ["Classic Round Neck T-Shirt", "Polo T-Shirt with Logo", "Printed Cap"], lastOrderDate: "2026-06-09", totalSpent: 34850 },
   { id: "CUS-002", name: "Priya Verma", mobile: "9654321087", totalOrders: 2, orderedProducts: ["Custom Printed Mug", "Sublimation Mug"], lastOrderDate: "2026-06-08", totalSpent: 4975 },
