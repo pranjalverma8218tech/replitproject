@@ -14,13 +14,31 @@ interface AdminUserRow {
   is_active: number;
 }
 
+// DEV-ONLY fallback credentials (active only when DB is not configured)
+const DEV_ADMIN = {
+  email: "admin@radhedigital.com",
+  password: "admin123",
+  user: { id: 0, email: "admin@radhedigital.com", username: "admin", role: "super_admin" },
+};
+
 // POST /api/auth/login
 router.post("/login", async (req, res) => {
+  const { email, password } = req.body as { email?: string; password?: string };
+
+  // Dev bypass: when DB is not connected, allow hardcoded dev credentials
   if (!dbConfigured) {
+    if (
+      process.env.NODE_ENV !== "production" &&
+      email?.trim().toLowerCase() === DEV_ADMIN.email &&
+      password === DEV_ADMIN.password
+    ) {
+      const token = signToken(DEV_ADMIN.user);
+      res.json({ token, user: DEV_ADMIN.user });
+      return;
+    }
     res.status(503).json(DB_UNAVAILABLE);
     return;
   }
-  const { email, password } = req.body as { email?: string; password?: string };
   if (!email || !password) {
     res.status(400).json({ error: "MISSING_FIELDS", message: "Email and password are required." });
     return;
