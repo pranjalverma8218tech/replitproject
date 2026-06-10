@@ -5,6 +5,7 @@ import {
   MessageCircle, ArrowRight, ArrowLeft, User, Phone, MapPin, Mail, AlertCircle
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { createOrder } from "@/admin/api";
 
 type Step = "cart" | "checkout";
 
@@ -493,6 +494,25 @@ export function CartDrawer() {
                           setErrors(errs);
                           return;
                         }
+                        // Fire-and-forget: save order to database silently
+                        const primaryItem = items[0];
+                        createOrder({
+                          customerName: info.name.trim(),
+                          mobile: info.phone.trim(),
+                          address: info.address.trim(),
+                          email: info.email.trim() || undefined,
+                          productName: items.length === 1
+                            ? primaryItem.productName
+                            : `${primaryItem.productName} (+${items.length - 1} more)`,
+                          category: primaryItem.categoryLabel,
+                          quantity: items.reduce((s, i) => s + i.quantity, 0),
+                          total: totalPrice,
+                          isWhatsapp: true,
+                          notes: JSON.stringify(items.map(i => ({
+                            name: i.productName, qty: i.quantity, price: i.price,
+                            label: i.priceLabel, customization: i.customization ?? null,
+                          }))),
+                        }).catch(() => {/* silent — WhatsApp is the primary channel */});
                         setTimeout(handleClose, 400);
                       }}
                     >
