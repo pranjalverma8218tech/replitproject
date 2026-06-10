@@ -187,12 +187,22 @@ export default function ProductDetailPage() {
   }
 
   const galleryViews = details?.galleryViews ?? [{ label: "View", angle: "front" as const }];
-  const selectedColorHex = details?.colors[activeColor]?.hex ?? "#e53e3e";
   const related = category.products.filter(p => p.id !== product.id).slice(0, 4);
 
-  const realImages: ApiProductImage[] = getViewImages(apiProducts[product.id]);
+  const apiProduct = apiProducts[product.id];
+  const apiVariants = (apiProduct?.variants ?? []).filter((v: any) => v.color?.trim());
+  const hasVariants = apiVariants.length > 0;
+
+  const selectedVariant = hasVariants ? apiVariants[Math.min(activeColor, apiVariants.length - 1)] : null;
+  const variantImages: ApiProductImage[] = (selectedVariant?.images ?? []).filter((i: ApiProductImage) => i.url);
+  const productLevelImages: ApiProductImage[] = getViewImages(apiProduct);
+  const realImages: ApiProductImage[] = variantImages.length > 0 ? variantImages : productLevelImages;
   const hasRealImages = realImages.length > 0;
   const activeRealImage = hasRealImages ? realImages[Math.min(activeView, realImages.length - 1)] : null;
+
+  const selectedColorHex = hasVariants
+    ? (apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.hex ?? "#e53e3e")
+    : (details?.colors?.[activeColor]?.hex ?? "#e53e3e");
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -295,22 +305,39 @@ export default function ProductDetailPage() {
               <span className="text-gray-400 text-sm pb-1">per piece · inclusive of printing</span>
             </div>
 
-            {details?.colors && (
+            {(hasVariants || details?.colors) && (
               <div>
                 <p className="text-sm font-semibold text-gray-500 mb-3">
-                  Available Colors · <span className="text-gray-900">{details.colors[activeColor].name}</span>
+                  Available Colors ·{" "}
+                  <span className="text-gray-900">
+                    {hasVariants
+                      ? apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.color
+                      : details!.colors[activeColor].name}
+                  </span>
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  {details.colors.map((c, i) => (
-                    <ColorDot
-                      key={c.name}
-                      hex={c.hex}
-                      border={c.border}
-                      name={c.name}
-                      active={activeColor === i}
-                      onClick={() => setActiveColor(i)}
-                    />
-                  ))}
+                  {hasVariants
+                    ? apiVariants.map((v: any, i: number) => (
+                        <ColorDot
+                          key={v.id ?? i}
+                          hex={v.hex}
+                          border={v.hex === "#ffffff" || v.hex === "#f5f5f5" || v.hex === "#FFFFFF"}
+                          name={v.color}
+                          active={activeColor === i}
+                          onClick={() => { setActiveColor(i); setActiveView(0); }}
+                        />
+                      ))
+                    : details!.colors.map((c, i) => (
+                        <ColorDot
+                          key={c.name}
+                          hex={c.hex}
+                          border={c.border}
+                          name={c.name}
+                          active={activeColor === i}
+                          onClick={() => setActiveColor(i)}
+                        />
+                      ))
+                  }
                 </div>
               </div>
             )}

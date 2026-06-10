@@ -33,13 +33,19 @@
       "corporate",
       "polo"
     ],
-    "images": [],
+    "images": [
+      {
+        "view": "front",
+        "label": "Front View",
+        "url": "/api/uploads/1781084359819-ragyhhu9kv.jpg"
+      }
+    ],
     "features": [],
     "specifications": [],
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z"
+    "updatedAt": "2026-06-10T09:39:25.548Z"
   },
   {
     "id": "ts-003",

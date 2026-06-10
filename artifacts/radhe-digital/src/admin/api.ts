@@ -71,6 +71,15 @@ export interface ProductSpec {
   value: string;
 }
 
+export interface ProductVariant {
+  id: string;
+  color: string;
+  hex: string;
+  images: ProductImage[];
+  stock?: number;
+  priceAdjustment?: number;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -81,6 +90,7 @@ export interface Product {
   badge?: string;
   tags?: string[];
   images?: ProductImage[];
+  variants?: ProductVariant[];
   features?: string[];
   specifications?: ProductSpec[];
   imageUrl?: string;

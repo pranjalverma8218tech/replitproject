@@ -11,7 +11,7 @@ import {
 import {
   getProducts, createProduct, updateProduct, deleteProduct,
   uploadImage,
-  type Product, type ProductImage, type ProductSpec, DB_NOT_CONNECTED_MSG
+  type Product, type ProductImage, type ProductSpec, type ProductVariant, DB_NOT_CONNECTED_MSG
 } from "./api";
 import { invalidateApiProductsCache } from "@/hooks/useApiProducts";
 import type { ProductCategory } from "./sampleData";
@@ -41,35 +41,42 @@ const IMAGE_VIEWS: { view: ProductImage["view"]; label: string }[] = [
   { view: "closeup", label: "Close-Up View" },
 ];
 const EMPTY_IMAGES: ProductImage[] = IMAGE_VIEWS.map(v => ({ view: v.view, label: v.label, url: "" }));
+const EMPTY_VARIANT_IMAGES = (): ProductImage[] => IMAGE_VIEWS.map(v => ({ view: v.view, label: v.label, url: "" }));
+
+function makeVariantId() { return `v-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`; }
 
 interface FormState {
   id: string; name: string; category: ProductCategory; description: string;
   price: number; priceLabel: string; badge: string; tags: string;
-  images: ProductImage[]; features: string[]; specifications: ProductSpec[];
+  images: ProductImage[]; variants: ProductVariant[]; features: string[]; specifications: ProductSpec[];
   status: "Active" | "Inactive"; stock: number;
 }
 const EMPTY_FORM: FormState = {
   id: "", name: "", category: "T-Shirt Printing", description: "",
   price: 0, priceLabel: "", badge: "", tags: "",
-  images: EMPTY_IMAGES, features: [""], specifications: [{ label: "", value: "" }],
+  images: EMPTY_IMAGES, variants: [], features: [""], specifications: [{ label: "", value: "" }],
   status: "Active", stock: 0,
 };
 function productToForm(p: Product): FormState {
   const existingImages = (p.images ?? []) as ProductImage[];
   const images = IMAGE_VIEWS.map(v => existingImages.find(i => i.view === v.view) ?? { view: v.view, label: v.label, url: "" });
+  const variants: ProductVariant[] = (p.variants ?? []).map(v => ({
+    ...v,
+    images: IMAGE_VIEWS.map(view => v.images?.find(i => i.view === view.view) ?? { view: view.view, label: view.label, url: "" }),
+  }));
   return {
     id: p.id, name: p.name, category: p.category as ProductCategory,
     description: p.description ?? "", price: Number(p.price),
     priceLabel: p.priceLabel ?? "", badge: p.badge ?? "",
     tags: Array.isArray(p.tags) ? p.tags.join(", ") : "",
-    images,
+    images, variants,
     features: p.features?.length ? p.features : [""],
     specifications: p.specifications?.length ? p.specifications : [{ label: "", value: "" }],
     status: p.status, stock: p.stock,
   };
 }
 
-type Tab = "info" | "images" | "details";
+type Tab = "info" | "images" | "variants" | "details";
 type BulkAction = "delete" | "category" | "status" | null;
 
 function getThumb(p: Product): string | null {
@@ -107,8 +114,10 @@ export default function AdminProducts() {
   const [deleteId,      setDeleteId]      = useState<string | null>(null);
 
   // upload
-  const [uploadingIdx,  setUploadingIdx]  = useState<number | null>(null);
+  const [uploadingIdx,       setUploadingIdx]       = useState<number | null>(null);
   const fileRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [uploadingVariantKey, setUploadingVariantKey] = useState<string | null>(null);
+  const variantFileRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   // ── Load ──
   const load = useCallback(async () => {
@@ -168,6 +177,9 @@ export default function AdminProducts() {
         badge: form.badge || undefined,
         tags: form.tags ? form.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
         images: form.images.filter(i => i.url.trim()),
+        variants: form.variants.filter(v => v.color.trim()).map(v => ({
+          ...v, images: v.images.filter(i => i.url.trim()),
+        })),
         features: form.features.filter(f => f.trim()),
         specifications: form.specifications.filter(s => s.label.trim() && s.value.trim()),
         status: form.status, stock: form.stock,
@@ -268,6 +280,29 @@ export default function AdminProducts() {
     finally { setUploadingIdx(null); }
   };
 
+  // ── Variant Handlers ──
+  const addVariant = () => setForm(f => ({
+    ...f,
+    variants: [...f.variants, { id: makeVariantId(), color: "", hex: "#000000", images: EMPTY_VARIANT_IMAGES(), stock: 0, priceAdjustment: 0 }],
+  }));
+  const removeVariant = (vi: number) => setForm(f => ({ ...f, variants: f.variants.filter((_, i) => i !== vi) }));
+  const setVariantField = (vi: number, key: string, val: string | number) =>
+    setForm(f => ({ ...f, variants: f.variants.map((v, i) => i === vi ? { ...v, [key]: val } : v) }));
+  const setVariantImage = (vi: number, imgIdx: number, url: string) =>
+    setForm(f => ({
+      ...f,
+      variants: f.variants.map((v, i) => i === vi
+        ? { ...v, images: v.images.map((img, ii) => ii === imgIdx ? { ...img, url } : img) }
+        : v),
+    }));
+  const handleVariantImageUpload = async (vi: number, imgIdx: number, file: File) => {
+    const key = `${vi}-${imgIdx}`;
+    setUploadingVariantKey(key);
+    try { const { url } = await uploadImage(file); setVariantImage(vi, imgIdx, url); }
+    catch (e: any) { setError(e.message ?? "Upload failed"); }
+    finally { setUploadingVariantKey(null); }
+  };
+
   const setFeature  = (idx: number, val: string) => setForm(f => ({ ...f, features: f.features.map((v, i) => i === idx ? val : v) }));
   const addFeature  = () => setForm(f => ({ ...f, features: [...f.features, ""] }));
   const removeFeature = (idx: number) => setForm(f => ({ ...f, features: f.features.filter((_, i) => i !== idx) }));
@@ -276,10 +311,11 @@ export default function AdminProducts() {
   const removeSpec  = (idx: number) => setForm(f => ({ ...f, specifications: f.specifications.filter((_, i) => i !== idx) }));
 
   const TAB_LABELS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: "info",    label: "Basic Info",       icon: <Package size={13} /> },
-    { id: "images",  label: "Images",           icon: <ImageIcon size={13} /> },
-    { id: "details", label: "Features & Specs", icon: <ListChecks size={13} /> },
-  ];
+    { id: "info",     label: "Basic Info",       icon: <Package size={13} /> },
+    { id: "images",   label: "Images",           icon: <ImageIcon size={13} /> },
+    { id: "variants", label: "Color Variants",   icon: <Palette size={13} />, badge: form.variants.length || undefined },
+    { id: "details",  label: "Features & Specs", icon: <ListChecks size={13} /> },
+  ] as { id: Tab; label: string; icon: React.ReactNode; badge?: number }[];
 
   // ─────────────────────────────────────────────────────────────────────────────
   return (
@@ -600,11 +636,16 @@ export default function AdminProducts() {
                 <button onClick={closeModal} className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white rounded-xl hover:bg-white/8 transition-all"><X size={16} /></button>
               </div>
 
-              <div className="flex border-b border-white/8 flex-shrink-0">
+              <div className="flex border-b border-white/8 flex-shrink-0 overflow-x-auto">
                 {TAB_LABELS.map(t => (
                   <button key={t.id} onClick={() => setTab(t.id)}
-                    className={`flex items-center gap-1.5 px-5 py-3 text-xs font-bold transition-all border-b-2 -mb-[1px] ${tab === t.id ? "text-primary border-primary" : "text-gray-500 border-transparent hover:text-gray-300"}`}>
+                    className={`flex items-center gap-1.5 px-4 py-3 text-xs font-bold transition-all border-b-2 -mb-[1px] whitespace-nowrap flex-shrink-0 ${tab === t.id ? "text-primary border-primary" : "text-gray-500 border-transparent hover:text-gray-300"}`}>
                     {t.icon} {t.label}
+                    {(t as any).badge ? (
+                      <span className="ml-1 px-1.5 py-0.5 rounded-full bg-primary/20 text-primary text-[9px] font-black leading-none">
+                        {(t as any).badge}
+                      </span>
+                    ) : null}
                   </button>
                 ))}
               </div>
@@ -751,6 +792,140 @@ export default function AdminProducts() {
                     <div className="bg-white/3 border border-white/6 rounded-xl px-4 py-3 text-[11px] text-gray-500 leading-relaxed">
                       <span className="font-bold text-gray-400">Supported formats:</span> JPG, PNG, WebP, GIF · Max 10 MB per image
                     </div>
+                  </div>
+                )}
+
+                {tab === "variants" && (
+                  <div className="p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-white text-sm font-bold">Color Variants</p>
+                        <p className="text-gray-500 text-xs mt-0.5">Each variant has its own set of images. Customers see the correct photo when they pick a color.</p>
+                      </div>
+                      <button onClick={addVariant}
+                        className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary/15 hover:bg-primary/25 text-primary text-xs font-bold border border-primary/20 transition-all flex-shrink-0">
+                        <Plus size={12} /> Add Color
+                      </button>
+                    </div>
+
+                    {form.variants.length === 0 && (
+                      <div className="text-center py-10 border border-dashed border-white/10 rounded-xl">
+                        <Palette size={28} className="mx-auto mb-2 text-gray-700" />
+                        <p className="text-gray-500 text-sm font-semibold">No color variants yet</p>
+                        <p className="text-gray-600 text-xs mt-1">Click "Add Color" to create variants with separate images per color.</p>
+                      </div>
+                    )}
+
+                    <div className="space-y-4">
+                      {form.variants.map((variant, vi) => (
+                        <div key={variant.id} className="bg-[#1a1a1a] border border-white/8 rounded-xl overflow-hidden">
+                          {/* Variant Header */}
+                          <div className="flex items-center gap-3 px-4 py-3 border-b border-white/6">
+                            <div className="w-5 h-5 rounded-full border border-white/20 flex-shrink-0"
+                              style={{ backgroundColor: variant.hex || "#555" }} />
+                            <input
+                              value={variant.color}
+                              onChange={e => setVariantField(vi, "color", e.target.value)}
+                              placeholder="Color name (e.g. Black, White, Red)"
+                              className="flex-1 h-8 bg-transparent text-sm text-white placeholder-gray-600 outline-none font-semibold min-w-0"
+                            />
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <label className="text-[10px] text-gray-600 font-semibold">HEX</label>
+                              <div className="relative">
+                                <input
+                                  type="color"
+                                  value={variant.hex || "#000000"}
+                                  onChange={e => setVariantField(vi, "hex", e.target.value)}
+                                  className="w-8 h-7 rounded cursor-pointer border border-white/10 bg-transparent p-0.5"
+                                  title="Pick color"
+                                />
+                              </div>
+                              <input
+                                value={variant.hex}
+                                onChange={e => setVariantField(vi, "hex", e.target.value)}
+                                placeholder="#000000"
+                                className="w-20 h-7 bg-[#0d0d0d] border border-white/12 rounded-lg px-2 text-xs text-white font-mono placeholder-gray-600 outline-none focus:border-primary/40 transition-colors"
+                              />
+                              <button onClick={() => removeVariant(vi)}
+                                className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all border border-red-500/15"
+                                title="Remove variant">
+                                <Trash2 size={12} />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Variant Images */}
+                          <div className="p-4">
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-3">Images for this color</p>
+                            <div className="grid grid-cols-4 gap-2">
+                              {variant.images.map((img, imgIdx) => {
+                                const refKey = `${vi}-${imgIdx}`;
+                                const isUploading = uploadingVariantKey === refKey;
+                                return (
+                                  <div key={img.view} className="space-y-1">
+                                    <input type="file" accept="image/jpeg,image/png,image/webp,image/gif"
+                                      ref={el => { variantFileRefs.current[refKey] = el; }}
+                                      onChange={e => { const file = e.target.files?.[0]; if (file) handleVariantImageUpload(vi, imgIdx, file); e.target.value = ""; }}
+                                      className="hidden" />
+                                    <button type="button"
+                                      onClick={() => variantFileRefs.current[refKey]?.click()}
+                                      disabled={isUploading}
+                                      className="w-full aspect-square rounded-xl border-2 border-dashed border-white/12 hover:border-primary/40 bg-[#0d0d0d] hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-1 overflow-hidden relative group">
+                                      {isUploading ? (
+                                        <Loader2 size={16} className="animate-spin text-primary" />
+                                      ) : img.url ? (
+                                        <>
+                                          <img src={img.url} alt={img.label} className="absolute inset-0 w-full h-full object-cover" />
+                                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <Upload size={14} className="text-white" />
+                                          </div>
+                                          <div className="absolute top-1 right-1"><CheckCircle2 size={11} className="text-green-400 drop-shadow" /></div>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Upload size={14} className="text-gray-600 group-hover:text-primary transition-colors" />
+                                        </>
+                                      )}
+                                    </button>
+                                    <p className="text-[9px] text-center text-gray-600 font-bold uppercase tracking-wide truncate">{img.label.replace(" View","")}</p>
+                                    {img.url && (
+                                      <button onClick={() => setVariantImage(vi, imgIdx, "")}
+                                        className="w-full text-[9px] text-red-400/60 hover:text-red-400 transition-colors font-semibold text-center">
+                                        × remove
+                                      </button>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          {/* Optional adjustments */}
+                          <div className="px-4 pb-4 grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="label-xs">Stock (this color)</label>
+                              <input type="number" value={variant.stock || ""}
+                                onChange={e => setVariantField(vi, "stock", Number(e.target.value))}
+                                placeholder="0"
+                                className="w-full h-8 bg-[#0d0d0d] border border-white/12 rounded-lg px-3 text-xs text-white placeholder-gray-600 outline-none focus:border-primary/40 transition-colors" />
+                            </div>
+                            <div>
+                              <label className="label-xs">Price Adjustment (₹)</label>
+                              <input type="number" value={variant.priceAdjustment || ""}
+                                onChange={e => setVariantField(vi, "priceAdjustment", Number(e.target.value))}
+                                placeholder="0 (same as base)"
+                                className="w-full h-8 bg-[#0d0d0d] border border-white/12 rounded-lg px-3 text-xs text-white placeholder-gray-600 outline-none focus:border-primary/40 transition-colors" />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {form.variants.length > 0 && (
+                      <div className="bg-white/3 border border-white/6 rounded-xl px-4 py-3 text-[11px] text-gray-500 leading-relaxed">
+                        <span className="font-bold text-gray-400">Tip:</span> When a customer selects a color on the product page, the gallery automatically switches to that color's images. If a color has no images, the default product images are shown.
+                      </div>
+                    )}
                   </div>
                 )}
 

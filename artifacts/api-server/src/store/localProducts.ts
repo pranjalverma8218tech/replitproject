@@ -18,6 +18,15 @@ export interface LocalProductSpec {
   value: string;
 }
 
+export interface LocalProductVariant {
+  id: string;
+  color: string;
+  hex: string;
+  images: LocalProductImage[];
+  stock?: number;
+  priceAdjustment?: number;
+}
+
 export interface LocalProduct {
   id: string;
   name: string;
@@ -28,6 +37,7 @@ export interface LocalProduct {
   badge?: string;
   tags?: string[];
   images?: LocalProductImage[];
+  variants?: LocalProductVariant[];
   features?: string[];
   specifications?: LocalProductSpec[];
   imageUrl?: string;

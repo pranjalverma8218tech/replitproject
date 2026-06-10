@@ -6,9 +6,19 @@ export interface ApiProductImage {
   url: string;
 }
 
+export interface ApiProductVariant {
+  id: string;
+  color: string;
+  hex: string;
+  images: ApiProductImage[];
+  stock?: number;
+  priceAdjustment?: number;
+}
+
 export interface ApiProductData {
   id: string;
   images?: ApiProductImage[];
+  variants?: ApiProductVariant[];
   features?: string[];
   specifications?: Array<{ label: string; value: string }>;
   priceLabel?: string;
