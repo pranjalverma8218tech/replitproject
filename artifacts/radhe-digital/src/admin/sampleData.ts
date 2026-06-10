@@ -12,4 +12,5 @@ export type ProductCategory =
   | "Cap Printing"
   | "Mobile Cover Printing"
   | "Corporate Gifts"
-  | "Customized Products";
+  | "Customized Products"
+  | "Other Products";
