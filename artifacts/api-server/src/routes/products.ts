@@ -1,12 +1,11 @@
 import { Router } from "express";
 import { dbConfigured, query, queryOne, execute, DB_UNAVAILABLE } from "../db";
+import {
+  localGetAll, localGetById, localCreate, localUpdate, localDelete,
+  type LocalProduct
+} from "../store/localProducts";
 
 const router = Router();
-
-function dbCheck(req: any, res: any, next: any) {
-  if (!dbConfigured) return res.status(503).json(DB_UNAVAILABLE);
-  next();
-}
 
 function parseJson(val: unknown): unknown {
   if (typeof val !== "string" || !val) return val ?? null;
@@ -30,23 +29,24 @@ function hydrate(row: Record<string, unknown>) {
 }
 
 // GET /api/products
-router.get("/", dbCheck, async (req, res) => {
+router.get("/", async (req, res) => {
+  const { status, search } = req.query as Record<string, string>;
+
+  if (!dbConfigured) {
+    res.json(localGetAll({ status, search }));
+    return;
+  }
+
   try {
-    const { status, search } = req.query as Record<string, string>;
     let sql = "SELECT * FROM products WHERE 1=1";
     const params: unknown[] = [];
-
-    if (status && status !== "All") {
-      sql += " AND status = ?";
-      params.push(status);
-    }
+    if (status && status !== "All") { sql += " AND status = ?"; params.push(status); }
     if (search) {
       sql += " AND (name LIKE ? OR category LIKE ?)";
       const like = `%${search}%`;
       params.push(like, like);
     }
     sql += " ORDER BY created_at DESC";
-
     const rows = await query<Record<string, unknown>>(sql, params);
     res.json(rows.map(hydrate));
   } catch (err) {
@@ -55,13 +55,20 @@ router.get("/", dbCheck, async (req, res) => {
 });
 
 // GET /api/products/:id
-router.get("/:id", dbCheck, async (req, res) => {
+router.get("/:id", async (req, res) => {
+  if (!dbConfigured) {
+    const p = localGetById(req.params.id);
+    if (!p) { res.status(404).json({ error: "NOT_FOUND" }); return; }
+    res.json(p);
+    return;
+  }
+
   try {
     const row = await queryOne<Record<string, unknown>>(
       "SELECT * FROM products WHERE id = ? LIMIT 1",
       [req.params.id]
     );
-    if (!row) return res.status(404).json({ error: "NOT_FOUND" });
+    if (!row) { res.status(404).json({ error: "NOT_FOUND" }); return; }
     res.json(hydrate(row));
   } catch (err) {
     res.status(500).json({ error: "DB_ERROR", message: (err as Error).message });
@@ -69,17 +76,36 @@ router.get("/:id", dbCheck, async (req, res) => {
 });
 
 // POST /api/products
-router.post("/", dbCheck, async (req, res) => {
-  try {
-    const {
-      name, category, description, price, priceLabel, badge,
-      tags, images, features, specifications, imageUrl, status, stock
-    } = req.body as Record<string, any>;
+router.post("/", async (req, res) => {
+  const {
+    name, category, description, price, priceLabel, badge,
+    tags, images, features, specifications, imageUrl, status, stock
+  } = req.body as Record<string, any>;
 
-    if (!name || !category || price === undefined) {
-      return res.status(400).json({ error: "MISSING_FIELDS", message: "name, category, price are required" });
-    }
-    const id = req.body.id ?? `PRD-${Date.now()}`;
+  if (!name || !category || price === undefined) {
+    res.status(400).json({ error: "MISSING_FIELDS", message: "name, category, price are required" });
+    return;
+  }
+  const id = req.body.id ?? `PRD-${Date.now()}`;
+
+  if (!dbConfigured) {
+    const product = localCreate({
+      id, name, category, description: description ?? undefined,
+      price: Number(price), priceLabel: priceLabel ?? undefined,
+      badge: badge ?? undefined,
+      tags: Array.isArray(tags) ? tags : (typeof tags === "string" ? tags.split(",").map((t: string) => t.trim()).filter(Boolean) : []),
+      images: images ?? [],
+      features: features ?? [],
+      specifications: specifications ?? [],
+      imageUrl: imageUrl ?? undefined,
+      status: status ?? "Active",
+      stock: stock ?? 0,
+    });
+    res.status(201).json(product);
+    return;
+  }
+
+  try {
     await execute(
       `INSERT INTO products
         (id, name, category, description, price, price_label, badge, tags, images, features, specifications, image_url, status, stock)
@@ -105,13 +131,31 @@ router.post("/", dbCheck, async (req, res) => {
 });
 
 // PUT /api/products/:id
-router.put("/:id", dbCheck, async (req, res) => {
-  try {
-    const {
-      name, category, description, price, priceLabel, badge,
-      tags, images, features, specifications, imageUrl, status, stock
-    } = req.body as Record<string, any>;
+router.put("/:id", async (req, res) => {
+  const {
+    name, category, description, price, priceLabel, badge,
+    tags, images, features, specifications, imageUrl, status, stock
+  } = req.body as Record<string, any>;
 
+  if (!dbConfigured) {
+    const updated = localUpdate(req.params.id, {
+      name, category, description: description ?? undefined,
+      price: Number(price), priceLabel: priceLabel ?? undefined,
+      badge: badge ?? undefined,
+      tags: Array.isArray(tags) ? tags : (typeof tags === "string" ? tags.split(",").map((t: string) => t.trim()).filter(Boolean) : []),
+      images: images ?? [],
+      features: features ?? [],
+      specifications: specifications ?? [],
+      imageUrl: imageUrl ?? undefined,
+      status: status ?? "Active",
+      stock: stock ?? 0,
+    });
+    if (!updated) { res.status(404).json({ error: "NOT_FOUND" }); return; }
+    res.json(updated);
+    return;
+  }
+
+  try {
     const result = await execute(
       `UPDATE products SET
         name=?, category=?, description=?, price=?, price_label=?, badge=?,
@@ -124,7 +168,7 @@ router.put("/:id", dbCheck, async (req, res) => {
         imageUrl ?? null, status, stock ?? 0, req.params.id
       ]
     );
-    if (result.affectedRows === 0) return res.status(404).json({ error: "NOT_FOUND" });
+    if (result.affectedRows === 0) { res.status(404).json({ error: "NOT_FOUND" }); return; }
     const updated = await queryOne<Record<string, unknown>>("SELECT * FROM products WHERE id = ?", [req.params.id]);
     res.json(hydrate(updated!));
   } catch (err) {
@@ -133,10 +177,17 @@ router.put("/:id", dbCheck, async (req, res) => {
 });
 
 // DELETE /api/products/:id
-router.delete("/:id", dbCheck, async (req, res) => {
+router.delete("/:id", async (req, res) => {
+  if (!dbConfigured) {
+    const deleted = localDelete(req.params.id);
+    if (!deleted) { res.status(404).json({ error: "NOT_FOUND" }); return; }
+    res.json({ deleted: req.params.id });
+    return;
+  }
+
   try {
     const result = await execute("DELETE FROM products WHERE id = ?", [req.params.id]);
-    if (result.affectedRows === 0) return res.status(404).json({ error: "NOT_FOUND" });
+    if (result.affectedRows === 0) { res.status(404).json({ error: "NOT_FOUND" }); return; }
     res.json({ deleted: req.params.id });
   } catch (err) {
     res.status(500).json({ error: "DB_ERROR", message: (err as Error).message });

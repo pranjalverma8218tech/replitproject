@@ -1,14 +1,16 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus, Search, Edit2, Trash2, X, Package, ChevronDown, Loader2,
   RefreshCw, WifiOff, AlertCircle, Image as ImageIcon, ListChecks,
-  SlidersHorizontal, PlusCircle, MinusCircle, Eye, EyeOff
+  PlusCircle, MinusCircle, Upload, Link2, CheckCircle2
 } from "lucide-react";
 import {
   getProducts, createProduct, updateProduct, deleteProduct,
+  uploadImage,
   type Product, type ProductImage, type ProductSpec, DB_NOT_CONNECTED_MSG
 } from "./api";
+import { invalidateApiProductsCache } from "@/hooks/useApiProducts";
 import type { ProductCategory } from "./sampleData";
 
 const CATEGORIES: ProductCategory[] = [
@@ -84,7 +86,8 @@ export default function AdminProducts() {
   const [form,     setForm]     = useState<FormState>(EMPTY_FORM);
   const [tab,      setTab]      = useState<Tab>("info");
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [previewImg, setPreviewImg] = useState<string | null>(null);
+  const [uploadingIdx, setUploadingIdx] = useState<number | null>(null);
+  const fileRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const load = useCallback(async () => {
     setLoading(true); setError(null); setDbDown(false);
@@ -99,10 +102,22 @@ export default function AdminProducts() {
 
   const openAdd  = () => { setForm(EMPTY_FORM); setTab("info"); setModal({ open: true, editing: null }); };
   const openEdit = (p: Product) => { setForm(productToForm(p)); setTab("info"); setModal({ open: true, editing: p }); };
-  const closeModal = () => { setModal({ open: false, editing: null }); setPreviewImg(null); };
+  const closeModal = () => { setModal({ open: false, editing: null }); };
 
   const setImage = (idx: number, url: string) => {
     setForm(f => ({ ...f, images: f.images.map((img, i) => i === idx ? { ...img, url } : img) }));
+  };
+
+  const handleFileUpload = async (idx: number, file: File) => {
+    setUploadingIdx(idx);
+    try {
+      const { url } = await uploadImage(file);
+      setImage(idx, url);
+    } catch (e: any) {
+      setError(e.message ?? "Upload failed");
+    } finally {
+      setUploadingIdx(null);
+    }
   };
 
   const setFeature = (idx: number, val: string) =>
@@ -145,6 +160,7 @@ export default function AdminProducts() {
         const created = await createProduct(payload as Parameters<typeof createProduct>[0]);
         setProducts(prev => [created, ...prev]);
       }
+      invalidateApiProductsCache();
       closeModal();
     } catch (e: any) { setError(e.message); }
     finally { setSaving(false); }
@@ -393,49 +409,106 @@ export default function AdminProducts() {
 
                 {/* ── Tab: Images ── */}
                 {tab === "images" && (
-                  <div className="p-6 space-y-5">
-                    <p className="text-gray-500 text-xs">Paste image URLs for each view. Leave blank if not available. Use direct image links (ending in .jpg, .png, .webp).</p>
+                  <div className="p-6 space-y-4">
+                    <p className="text-gray-500 text-xs leading-relaxed">
+                      Upload photos from your computer for each view. You can also paste a direct image URL instead.
+                    </p>
+
                     {form.images.map((img, idx) => (
-                      <div key={img.view} className="bg-[#1a1a1a] border border-white/8 rounded-xl p-4">
-                        <div className="flex items-center gap-3 mb-3">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-2 py-0.5 rounded-lg border border-white/10 bg-white/4">
-                            {img.label}
-                          </span>
-                          {img.url && (
-                            <button onClick={() => setPreviewImg(previewImg === img.url ? null : img.url)}
-                              className="flex items-center gap-1 text-xs text-gray-500 hover:text-primary transition-colors">
-                              {previewImg === img.url ? <EyeOff size={12} /> : <Eye size={12} />}
-                              {previewImg === img.url ? "Hide" : "Preview"}
-                            </button>
-                          )}
-                        </div>
+                      <div key={img.view} className="bg-[#1a1a1a] border border-white/8 rounded-xl overflow-hidden">
+                        {/* Hidden file input */}
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/gif"
+                          ref={el => { fileRefs.current[idx] = el; }}
+                          onChange={e => {
+                            const file = e.target.files?.[0];
+                            if (file) handleFileUpload(idx, file);
+                            e.target.value = "";
+                          }}
+                          className="hidden"
+                        />
 
-                        {previewImg === img.url && img.url && (
-                          <div className="mb-3 h-40 rounded-xl overflow-hidden border border-white/10 bg-black flex items-center justify-center">
-                            <img src={img.url} alt={img.label} className="h-full w-full object-contain" onError={() => setPreviewImg(null)} />
+                        <div className="flex gap-4 p-4">
+                          {/* Thumbnail / Upload zone */}
+                          <button
+                            type="button"
+                            onClick={() => fileRefs.current[idx]?.click()}
+                            disabled={uploadingIdx === idx}
+                            className="flex-shrink-0 w-24 h-24 rounded-xl border-2 border-dashed border-white/15 hover:border-primary/50 bg-[#0d0d0d] hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-1.5 overflow-hidden relative group"
+                          >
+                            {uploadingIdx === idx ? (
+                              <Loader2 size={20} className="animate-spin text-primary" />
+                            ) : img.url ? (
+                              <>
+                                <img
+                                  src={img.url}
+                                  alt={img.label}
+                                  className="absolute inset-0 w-full h-full object-cover"
+                                  onError={() => {}}
+                                />
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                  <Upload size={16} className="text-white" />
+                                </div>
+                                <div className="absolute top-1 right-1">
+                                  <CheckCircle2 size={14} className="text-green-400 drop-shadow" />
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <Upload size={18} className="text-gray-600 group-hover:text-primary transition-colors" />
+                                <span className="text-[9px] text-gray-600 group-hover:text-primary transition-colors font-semibold text-center leading-tight">
+                                  Click to<br/>upload
+                                </span>
+                              </>
+                            )}
+                          </button>
+
+                          {/* Label + URL input + actions */}
+                          <div className="flex-1 min-w-0 flex flex-col justify-between gap-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-2 py-0.5 rounded-lg border border-white/10 bg-white/4">
+                                {img.label}
+                              </span>
+                              {img.url && (
+                                <button
+                                  onClick={() => setImage(idx, "")}
+                                  className="text-[10px] text-red-400/70 hover:text-red-400 transition-colors font-semibold flex items-center gap-1"
+                                >
+                                  <X size={11} /> Remove
+                                </button>
+                              )}
+                            </div>
+
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => fileRefs.current[idx]?.click()}
+                                disabled={uploadingIdx === idx}
+                                className="flex items-center gap-1.5 px-3 h-9 rounded-lg bg-primary/15 hover:bg-primary/25 text-primary text-xs font-bold transition-all border border-primary/20 flex-shrink-0 disabled:opacity-50"
+                              >
+                                <Upload size={12} />
+                                {uploadingIdx === idx ? "Uploading…" : "Upload"}
+                              </button>
+                              <div className="relative flex-1 min-w-0">
+                                <Link2 size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" />
+                                <input
+                                  value={img.url}
+                                  onChange={e => setImage(idx, e.target.value)}
+                                  placeholder="or paste URL…"
+                                  className="w-full h-9 bg-[#0d0d0d] border border-white/12 rounded-lg pl-8 pr-3 text-xs text-white placeholder-gray-600 outline-none focus:border-primary/40 transition-colors"
+                                />
+                              </div>
+                            </div>
                           </div>
-                        )}
-
-                        <div className="flex gap-2">
-                          <input
-                            value={img.url}
-                            onChange={e => setImage(idx, e.target.value)}
-                            placeholder={`Paste ${img.label.toLowerCase()} image URL…`}
-                            className="flex-1 h-10 bg-[#0d0d0d] border border-white/12 rounded-xl px-4 text-sm text-white placeholder-gray-600 outline-none focus:border-primary/40 transition-colors"
-                          />
-                          {img.url && (
-                            <button onClick={() => setImage(idx, "")}
-                              className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all border border-red-500/20">
-                              <X size={14} />
-                            </button>
-                          )}
                         </div>
                       </div>
                     ))}
 
-                    <p className="text-gray-600 text-[11px] bg-white/3 border border-white/6 rounded-xl px-4 py-3">
-                      💡 <span className="text-gray-500">Tip:</span> You can use image hosting services like Google Drive (set sharing to Anyone with link), Cloudinary, or Imgur to host your product photos and paste the direct image URLs above.
-                    </p>
+                    <div className="bg-white/3 border border-white/6 rounded-xl px-4 py-3 text-[11px] text-gray-500 leading-relaxed">
+                      <span className="font-bold text-gray-400">Supported formats:</span> JPG, PNG, WebP, GIF · Max 10 MB per image<br/>
+                      Images are stored on the server and displayed instantly on your product pages.
+                    </div>
                   </div>
                 )}
 

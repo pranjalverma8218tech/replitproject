@@ -145,6 +145,29 @@ export const createOrder = (data: Omit<Order, "id" | "status" | "createdAt">) =>
 export const updateOrderStatus = (id: string, status: OrderStatus) =>
   apiFetch<{ id: string; status: string }>(`/orders/${id}`, { method: "PATCH", body: JSON.stringify({ status }) });
 
+// ─── Image Upload ─────────────────────────────────────────────────────────────
+export async function uploadImage(file: File): Promise<{ url: string }> {
+  const token = getToken();
+  const form = new FormData();
+  form.append("file", file);
+  const res = await fetch(`${BASE}/upload`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: form,
+  });
+  const data = await res.json();
+  if (!res.ok) throw Object.assign(new Error(data.message ?? "Upload failed"), { code: data.error, status: res.status });
+  return data as { url: string };
+}
+
+export async function deleteUploadedImage(filename: string): Promise<void> {
+  const token = getToken();
+  await fetch(`${BASE}/upload/${encodeURIComponent(filename)}`, {
+    method: "DELETE",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+}
+
 // ─── Products ─────────────────────────────────────────────────────────────────
 export const getProducts    = (params?: { status?: string; search?: string }) => {
   const qs = new URLSearchParams();

@@ -5,6 +5,7 @@ import productsRouter  from "./products";
 import customersRouter from "./customers";
 import dashboardRouter from "./dashboard";
 import authRouter      from "./auth";
+import uploadRouter    from "./upload";
 
 const router: IRouter = Router();
 
@@ -14,5 +15,6 @@ router.use("/orders",    ordersRouter);
 router.use("/products",  productsRouter);
 router.use("/customers", customersRouter);
 router.use("/dashboard", dashboardRouter);
+router.use("/upload",    uploadRouter);
 
 export default router;

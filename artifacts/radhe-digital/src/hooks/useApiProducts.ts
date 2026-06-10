@@ -18,23 +18,39 @@ export interface ApiProductData {
 
 let cache: Record<string, ApiProductData> | null = null;
 let fetchPromise: Promise<void> | null = null;
+const listeners: Set<(map: Record<string, ApiProductData>) => void> = new Set();
+
+export function invalidateApiProductsCache() {
+  cache = null;
+  fetchPromise = null;
+}
+
+function doFetch() {
+  if (fetchPromise) return fetchPromise;
+  fetchPromise = fetch("/api/products")
+    .then(r => r.ok ? r.json() : [])
+    .then((rows: ApiProductData[]) => {
+      cache = Object.fromEntries(rows.map(r => [r.id, r]));
+      listeners.forEach(fn => fn(cache!));
+    })
+    .catch(() => {
+      cache = {};
+      listeners.forEach(fn => fn({}));
+    });
+  return fetchPromise;
+}
 
 export function useApiProducts(): Record<string, ApiProductData> {
   const [map, setMap] = useState<Record<string, ApiProductData>>(cache ?? {});
 
   useEffect(() => {
-    if (cache !== null) { setMap(cache); return; }
-    if (!fetchPromise) {
-      fetchPromise = fetch("/api/products")
-        .then(r => r.ok ? r.json() : [])
-        .then((rows: ApiProductData[]) => {
-          cache = Object.fromEntries(rows.map(r => [r.id, r]));
-          setMap(cache);
-        })
-        .catch(() => { cache = {}; setMap({}); });
+    listeners.add(setMap);
+    if (cache !== null) {
+      setMap(cache);
     } else {
-      fetchPromise.then(() => { if (cache) setMap(cache); });
+      doFetch();
     }
+    return () => { listeners.delete(setMap); };
   }, []);
 
   return map;
