@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import {
-  Menu, X, Search, ShoppingCart, User, ChevronDown,
-  Shirt, Coffee, HardHat, Pen, Award, Gift, Image,
-  LogIn, UserPlus
+  Menu, X, Search, ShoppingCart, ChevronDown,
+  Shirt, Coffee, HardHat, Pen, Award, Gift, Image
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
@@ -206,15 +205,6 @@ export function Navbar() {
               )}
             </button>
 
-            {/* Login */}
-            <button
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-gray-300 hover:text-white hover:bg-white/8 transition-all duration-200"
-              title="Login / Signup"
-            >
-              <User size={15} />
-              <span>Login</span>
-            </button>
-
             {/* Start Designing CTA */}
             <Link href="/customize">
               <motion.button
@@ -334,16 +324,8 @@ export function Navbar() {
                 )
               )}
 
-              {/* Mobile auth + CTA */}
-              <div className="pt-3 border-t border-white/8 space-y-2">
-                <div className="grid grid-cols-2 gap-2">
-                  <button className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-300 border border-white/15 hover:border-white/30 hover:text-white transition-colors">
-                    <LogIn size={15} /> Login
-                  </button>
-                  <button className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-300 border border-white/15 hover:border-white/30 hover:text-white transition-colors">
-                    <UserPlus size={15} /> Sign Up
-                  </button>
-                </div>
+              {/* Mobile CTA */}
+              <div className="pt-3 border-t border-white/8">
                 <Link href="/customize" onClick={() => setMobileOpen(false)}>
                   <button
                     className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white"
