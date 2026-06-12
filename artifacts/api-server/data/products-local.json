@@ -37,17 +37,7 @@
       {
         "view": "front",
         "label": "Front View",
-        "url": "/api/uploads/1781084359819-ragyhhu9kv.jpg"
-      },
-      {
-        "view": "back",
-        "label": "Back View",
-        "url": "/api/uploads/1781242665212-my166c67z4c.webp"
-      },
-      {
-        "view": "side",
-        "label": "Side View",
-        "url": "/api/uploads/1781242668968-25sgvs2dzl2.webp"
+        "url": "/api/uploads/1781251142477-jur2hjy9vcn.webp"
       }
     ],
     "features": [],
@@ -55,7 +45,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-12T07:55:02.735Z",
+    "updatedAt": "2026-06-12T07:59:04.278Z",
     "variants": [
       {
         "id": "v-royal-blue-001",
@@ -65,10 +55,39 @@
           {
             "view": "front",
             "label": "Front View",
-            "url": "/api/uploads/1781250902361-9pe07qou3c.jpg"
+            "url": "/api/uploads/1781250981377-11m0z4jfuxn.webp"
+          },
+          {
+            "view": "back",
+            "label": "Back View",
+            "url": "/api/uploads/1781250984684-itwfnv820g.webp"
           }
         ],
-        "stock": 0,
+        "stock": 50,
+        "priceAdjustment": 0
+      },
+      {
+        "id": "v-1781250989179-lwle7",
+        "color": "red ",
+        "hex": "#ff0000",
+        "images": [
+          {
+            "view": "front",
+            "label": "Front View",
+            "url": "/api/uploads/1781251018156-kqtbnip2r3b.webp"
+          },
+          {
+            "view": "back",
+            "label": "Back View",
+            "url": "/api/uploads/1781251024734-imwrsxay0dd.webp"
+          },
+          {
+            "view": "side",
+            "label": "Side View",
+            "url": "/api/uploads/1781251032805-lwwfvaibq9.webp"
+          }
+        ],
+        "stock": 100,
         "priceAdjustment": 0
       }
     ],

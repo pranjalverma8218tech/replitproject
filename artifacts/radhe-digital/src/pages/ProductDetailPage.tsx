@@ -171,7 +171,7 @@ export default function ProductDetailPage() {
   const details = CATEGORY_DETAILS[slug ?? ""];
 
   const [activeView, setActiveView] = useState(0);
-  const [activeColor, setActiveColor] = useState(0);
+  const [activeColor, setActiveColor] = useState(-1); // -1 = no color selected
   const [showModal, setShowModal] = useState(false);
   const apiProducts = useApiProducts();
   const loaded = useApiProductsLoaded();
@@ -209,16 +209,38 @@ export default function ProductDetailPage() {
   const apiVariants = (product.variants ?? []).filter((v: any) => v.color?.trim());
   const hasVariants = apiVariants.length > 0;
 
-  const selectedVariant = hasVariants ? apiVariants[Math.min(activeColor, apiVariants.length - 1)] : null;
-  const variantImages: ApiProductImage[] = (selectedVariant?.images ?? []).filter((i: ApiProductImage) => i.url);
+  // Only resolve a selected variant when the user has explicitly clicked a color dot
+  const selectedVariant = (hasVariants && activeColor >= 0)
+    ? apiVariants[Math.min(activeColor, apiVariants.length - 1)]
+    : null;
+
   const productLevelImages: ApiProductImage[] = getViewImages(product);
-  const realImages: ApiProductImage[] = variantImages.length > 0 ? variantImages : productLevelImages;
+
+  // Build display gallery:
+  //  • No color selected → always show product-level images
+  //  • Color selected with images → per-view merge: prefer variant image, fall back to product image
+  //  • Color selected with no images → fall back entirely to product-level images
+  const realImages: ApiProductImage[] = (() => {
+    if (!selectedVariant) return productLevelImages;
+    const variantImgs = (selectedVariant.images ?? []).filter((i: ApiProductImage) => i.url);
+    if (variantImgs.length === 0) return productLevelImages;
+    const variantByView = new Map(variantImgs.map((i: ApiProductImage) => [i.view, i]));
+    // Replace each product-level view with the variant version if available
+    const merged = productLevelImages.map((img: ApiProductImage) => variantByView.get(img.view) ?? img);
+    // Append any variant views that don't exist at the product level
+    const productViews = new Set(productLevelImages.map((i: ApiProductImage) => i.view));
+    const extras = variantImgs.filter((i: ApiProductImage) => !productViews.has(i.view));
+    return [...merged, ...extras];
+  })();
+
   const hasRealImages = realImages.length > 0;
   const activeRealImage = hasRealImages ? realImages[Math.min(activeView, realImages.length - 1)] : null;
 
-  const selectedColorHex = hasVariants
+  const selectedColorHex = (hasVariants && activeColor >= 0)
     ? (apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.hex ?? "#e53e3e")
-    : (details?.colors?.[activeColor]?.hex ?? "#e53e3e");
+    : (!hasVariants && activeColor >= 0)
+      ? (details?.colors?.[activeColor]?.hex ?? "#e53e3e")
+      : "#e53e3e";
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -326,12 +348,17 @@ export default function ProductDetailPage() {
             {(hasVariants || details?.colors) && (
               <div>
                 <p className="text-sm font-semibold text-gray-500 mb-3">
-                  Available Colors ·{" "}
-                  <span className="text-gray-900">
-                    {hasVariants
-                      ? apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.color
-                      : details!.colors[activeColor]?.name}
-                  </span>
+                  Available Colors
+                  {activeColor >= 0 && (
+                    <>
+                      {" · "}
+                      <span className="text-gray-900">
+                        {hasVariants
+                          ? apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.color
+                          : details!.colors[activeColor]?.name}
+                      </span>
+                    </>
+                  )}
                 </p>
                 <div className="flex flex-wrap gap-3">
                   {hasVariants
@@ -342,7 +369,7 @@ export default function ProductDetailPage() {
                           border={v.hex === "#ffffff" || v.hex === "#f5f5f5" || v.hex === "#FFFFFF"}
                           name={v.color}
                           active={activeColor === i}
-                          onClick={() => { setActiveColor(i); setActiveView(0); }}
+                          onClick={() => { setActiveColor(activeColor === i ? -1 : i); setActiveView(0); }}
                         />
                       ))
                     : details!.colors.map((c, i) => (
