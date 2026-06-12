@@ -110,8 +110,23 @@ export default function CustomizePage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
 
         {/* Category Grid */}
-        <div className="mb-10">
-          <p className="text-xs font-extrabold text-gray-400 uppercase tracking-widest mb-5">Select a Category</p>
+        <div
+          className="mb-10 rounded-2xl p-6"
+          style={{
+            background: "linear-gradient(135deg, rgba(220,38,38,0.06) 0%, rgba(220,38,38,0.03) 100%)",
+            border: "2px solid rgba(220,38,38,0.18)",
+            boxShadow: "0 4px 24px rgba(220,38,38,0.08)",
+          }}
+        >
+          <div className="flex items-center gap-3 mb-5">
+            <span
+              className="w-2 h-6 rounded-full"
+              style={{ background: "#DC2626" }}
+            />
+            <p className="text-sm font-extrabold uppercase tracking-widest" style={{ color: "#DC2626" }}>
+              Select a Category
+            </p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {CATEGORIES.map((cat, i) => {
               const Icon = cat.icon;
