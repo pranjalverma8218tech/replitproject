@@ -14,6 +14,7 @@ import HomePage from "@/pages/HomePage";
 import CategoriesPage from "@/pages/CategoriesPage";
 import CategoryPage from "@/pages/CategoryPage";
 import CustomizePage from "@/pages/CustomizePage";
+import CustomizeCategoryPage from "@/pages/CustomizeCategoryPage";
 import CustomizeProductPage from "@/pages/CustomizeProductPage";
 import ProductDetailPage from "@/pages/ProductDetailPage";
 import AboutPage from "@/pages/AboutPage";
@@ -108,7 +109,8 @@ function PublicRouter() {
       <Route path="/categories/:slug/:productId" component={ProductDetailPage} />
       <Route path="/categories/:slug" component={CategoryPage} />
       <Route path="/customize" component={CustomizePage} />
-      <Route path="/customize/:category" component={CustomizeProductPage} />
+      <Route path="/customize/:category/:productSlug" component={CustomizeProductPage} />
+      <Route path="/customize/:category" component={CustomizeCategoryPage} />
       <Route path="/about" component={AboutPage} />
       <Route path="/contact" component={ContactPage} />
       <Route component={NotFound} />

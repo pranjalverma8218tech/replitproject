@@ -1,228 +1,151 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef } from "react";
 import { useLocation, useParams } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Upload, CheckCircle2, MessageCircle, X, ArrowLeft,
-  Shirt, Coffee, HardHat, Pen, Award, Image as ImageIcon, Gift,
-  Lock, Sparkles, RotateCcw, AlignCenter, AlertTriangle, FileText
+  Upload, CheckCircle2, X, ArrowLeft, AlertTriangle,
+  Sparkles, ChevronRight, Tag, Package, FileText, MessageCircle, Minus, Plus
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/context/CartContext";
-
-/* ─── Constants ─── */
-const T_SHIRT_SIZES = ["S", "M", "L", "XL", "XXL"] as const;
-type TShirtSize = typeof T_SHIRT_SIZES[number];
-
-const GENDER_OPTIONS = ["Men", "Women", "Unisex"] as const;
-type Gender = typeof GENDER_OPTIONS[number];
-
-interface PrintPosition { id: string; label: string; desc: string }
-
-const PRINT_POSITIONS: Record<string, PrintPosition[]> = {
-  "t-shirts": [
-    { id: "front",  label: "Front Side",  desc: "Print on the front of the T-shirt" },
-    { id: "back",   label: "Back Side",   desc: "Print on the back of the T-shirt" },
-    { id: "both",   label: "Both Sides",  desc: "Separate design on front & back" },
-  ],
-  "mugs": [
-    { id: "front",  label: "Front Print",     desc: "Visible side when drinking" },
-    { id: "back",   label: "Back Print",      desc: "Opposite side of the handle" },
-    { id: "wrap",   label: "Wrap Around",     desc: "Full 360° all-over print" },
-  ],
-  "caps": [
-    { id: "front",  label: "Front Panel",     desc: "Logo on the front panel" },
-    { id: "side",   label: "Side Print",      desc: "Print on the left or right panel" },
-    { id: "back",   label: "Back Print",      desc: "Print above the strap/closure" },
-  ],
-};
-
-const CATEGORY_META: Record<string, {
-  label: string; icon: React.ElementType; color: string; price: number; priceLabel: string;
-}> = {
-  "t-shirts":        { label: "T-Shirt",        icon: Shirt,      color: "#e53e3e", price: 199, priceLabel: "₹199" },
-  "mugs":            { label: "Mug",             icon: Coffee,     color: "#f6ad55", price: 249, priceLabel: "₹249" },
-  "caps":            { label: "Cap",             icon: HardHat,    color: "#4299e1", price: 179, priceLabel: "₹179" },
-  "pens":            { label: "Pen",             icon: Pen,        color: "#68d391", price: 49,  priceLabel: "₹49"  },
-  "badges":          { label: "Badge",           icon: Award,      color: "#f6e05e", price: 29,  priceLabel: "₹29"  },
-  "photo-frames":    { label: "Photo Frame",     icon: ImageIcon,  color: "#b794f4", price: 299, priceLabel: "₹299" },
-  "corporate-gifts": { label: "Corporate Gift",  icon: Gift,       color: "#fc8181", price: 499, priceLabel: "₹499" },
-};
-
-type Tab = "upload" | "request";
-type DesignSide = "front" | "back";
-
-/* ─── Step badge ─── */
-function Step({ n }: { n: number }) {
-  return (
-    <span className="w-6 h-6 rounded-full bg-primary/20 border border-primary/40 text-primary text-xs font-black flex items-center justify-center flex-shrink-0">
-      {n}
-    </span>
-  );
-}
+import { getProductBySlug } from "@/data/customizeProducts";
 
 /* ─── Print Position Card ─── */
-function PositionCard({ pos, active, onClick }: {
-  pos: PrintPosition; active: boolean; onClick: () => void;
+function PositionCard({
+  pos, active, onClick,
+}: {
+  pos: { id: string; label: string; desc: string };
+  active: boolean;
+  onClick: () => void;
 }) {
   return (
     <button
       onClick={onClick}
-      className={`flex-1 flex flex-col items-start gap-1.5 p-4 rounded-xl border text-left transition-all duration-200 ${
+      className="flex-1 flex flex-col items-start gap-1.5 p-3.5 rounded-xl border text-left transition-all duration-200"
+      style={
         active
-          ? "border-primary bg-primary/12"
-          : "border-white/10 bg-white/4 hover:border-white/20 hover:bg-white/6"
-      }`}
+          ? { borderColor: "#e53e3e", background: "rgba(229,62,62,0.1)" }
+          : { borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)" }
+      }
     >
       <div className="flex items-center gap-2 w-full">
         <span
-          className={`w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
-            active ? "border-primary" : "border-white/30"
-          }`}
+          className="w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors"
+          style={{ borderColor: active ? "#e53e3e" : "rgba(255,255,255,0.3)" }}
         >
-          {active && <span className="w-2 h-2 rounded-full bg-primary" />}
+          {active && <span className="w-2 h-2 rounded-full" style={{ background: "#e53e3e" }} />}
         </span>
-        <span className={`text-sm font-bold transition-colors ${active ? "text-white" : "text-gray-300"}`}>
+        <span
+          className="text-sm font-bold transition-colors"
+          style={{ color: active ? "#ffffff" : "rgba(255,255,255,0.6)" }}
+        >
           {pos.label}
         </span>
       </div>
-      <p className="text-xs text-gray-500 ml-6 leading-snug">{pos.desc}</p>
+      <p className="text-xs text-gray-600 ml-6 leading-snug">{pos.desc}</p>
     </button>
   );
 }
 
-/* ─── Design Upload Box ─── */
-function DesignUploadBox({
-  label, file, preview, inputRef,
-  onFileChange, onRemove,
+/* ─── Upload Box ─── */
+function UploadBox({
+  label, sublabel, file, preview, inputRef, accept, onFileChange, onRemove,
 }: {
-  label?: string;
+  label: string;
+  sublabel?: string;
   file: File | null;
-  preview: string | null;
+  preview?: string | null;
   inputRef: React.RefObject<HTMLInputElement>;
+  accept: string;
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onRemove: () => void;
 }) {
-  return (
-    <div>
-      {label && <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">{label}</p>}
-      {!preview ? (
-        <label className="relative flex flex-col items-center justify-center gap-3 py-8 border-2 border-dashed border-white/15 rounded-xl cursor-pointer hover:border-primary/40 hover:bg-primary/4 transition-all duration-200">
-          <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
-            <Upload size={18} className="text-primary" />
-          </div>
-          <div className="text-center">
-            <p className="text-white font-semibold text-sm">Tap to upload design</p>
-            <p className="text-gray-500 text-xs mt-0.5">PNG, JPG, SVG, PDF — Max 10 MB</p>
-          </div>
-          <input
-            ref={inputRef}
-            type="file"
-            className="absolute inset-0 opacity-0 cursor-pointer"
-            accept=".png,.jpg,.jpeg,.svg,.pdf"
-            onChange={onFileChange}
+  if (file) {
+    return (
+      <div className="rounded-xl overflow-hidden border border-white/10">
+        {preview && (
+          <img
+            src={preview}
+            alt="Uploaded"
+            className="w-full max-h-32 object-contain bg-[#0d0d0d] p-3"
           />
-        </label>
-      ) : (
-        <div className="rounded-xl overflow-hidden border border-white/12">
-          <img src={preview} alt="Design" className="w-full max-h-36 object-contain bg-[#0d0d0d] p-4" />
-          <div className="flex items-center justify-between px-4 py-3 bg-[#1a1a1a] border-t border-white/8">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 size={14} className="text-green-400 flex-shrink-0" />
-              <span className="text-green-400 text-sm font-semibold truncate max-w-[200px]">{file?.name}</span>
-            </div>
-            <button onClick={onRemove} className="text-gray-500 hover:text-red-400 transition-colors flex-shrink-0">
-              <X size={14} />
-            </button>
+        )}
+        <div className="flex items-center justify-between px-4 py-3 bg-[#1a1a1a] border-t border-white/8">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={14} className="text-green-400 flex-shrink-0" />
+            <span className="text-green-400 text-sm font-semibold truncate max-w-[200px]">
+              {file.name}
+            </span>
           </div>
+          <button onClick={onRemove} className="text-gray-500 hover:text-red-400 transition-colors ml-2 flex-shrink-0">
+            <X size={14} />
+          </button>
         </div>
-      )}
-    </div>
+      </div>
+    );
+  }
+
+  return (
+    <label className="relative flex flex-col items-center justify-center gap-2.5 py-6 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 hover:border-red-500/40 hover:bg-red-500/4"
+      style={{ borderColor: "rgba(255,255,255,0.12)" }}
+    >
+      <div
+        className="w-10 h-10 rounded-xl flex items-center justify-center"
+        style={{ background: "rgba(229,62,62,0.12)" }}
+      >
+        <Upload size={18} style={{ color: "#e53e3e" }} />
+      </div>
+      <div className="text-center">
+        <p className="text-white font-semibold text-sm">{label}</p>
+        {sublabel && <p className="text-gray-500 text-xs mt-0.5">{sublabel}</p>}
+      </div>
+      <input
+        ref={inputRef}
+        type="file"
+        className="absolute inset-0 opacity-0 cursor-pointer"
+        accept={accept}
+        onChange={onFileChange}
+      />
+    </label>
   );
 }
 
+/* ─── Main Page ─── */
 export default function CustomizeProductPage() {
-  const { category } = useParams<{ category: string }>();
+  const { category, productSlug } = useParams<{ category: string; productSlug: string }>();
   const [, setLocation] = useLocation();
 
-  /* ── Parse locked variant from URL query params ── */
-  const lockedVariant = useMemo(() => {
-    const search = window.location.search;
-    if (!search) return null;
-    const p = new URLSearchParams(search);
-    const color = p.get("color");
-    const colorHex = p.get("colorHex");
-    const variantId = p.get("variantId");
-    const imageUrl = p.get("imageUrl");
-    const productId = p.get("productId");
-    if (!color && !imageUrl) return null;
-    return { color: color ?? "", colorHex: colorHex ?? "", variantId: variantId ?? "", imageUrl: imageUrl ?? "", productId: productId ?? "" };
-  }, []);
-
-  const isVariantLocked = !!lockedVariant?.color;
-  const meta = CATEGORY_META[category ?? ""] ?? CATEGORY_META["t-shirts"];
-  const Icon = meta.icon;
-  const isTShirt = category === "t-shirts";
-  const positions = PRINT_POSITIONS[category ?? ""] ?? [];
-  const hasPositions = positions.length > 0;
-
+  const product = getProductBySlug(category ?? "", productSlug ?? "");
   const { addItem, openCart } = useCart();
 
   /* ── Print position ── */
+  const positions = product?.printPositions ?? [];
   const [printPosition, setPrintPosition] = useState<string>(positions[0]?.id ?? "front");
   const isBothSides = printPosition === "both";
-  const [activeSide, setActiveSide] = useState<DesignSide>("front");
 
-  /* ── Tab ── */
-  const [tab, setTab] = useState<Tab>("upload");
+  /* ── File states ── */
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const logoRef = useRef<HTMLInputElement>(null);
 
-  /* ── T-Shirt specific ── */
-  const [gender, setGender] = useState<Gender>("Unisex");
-  const [sizeQty, setSizeQty] = useState<Record<TShirtSize, number>>({ S: 0, M: 0, L: 0, XL: 0, XXL: 0 });
-  const totalQty = Object.values(sizeQty).reduce((a, b) => a + b, 0);
-
-  const setSizeAmount = (size: TShirtSize, val: string) => {
-    const n = Math.max(0, parseInt(val) || 0);
-    setSizeQty(prev => ({ ...prev, [size]: n }));
-  };
-
-  /* ── Locked color values ── */
-  const effectiveColor = isVariantLocked ? lockedVariant!.color : "";
-  const effectiveColorHex = isVariantLocked ? lockedVariant!.colorHex : "";
-
-  /* ── Non-T-Shirt quantity ── */
-  const [quantity, setQuantity] = useState(1);
-
-  /* ── Front design upload ── */
   const [frontFile, setFrontFile] = useState<File | null>(null);
   const [frontPreview, setFrontPreview] = useState<string | null>(null);
   const frontRef = useRef<HTMLInputElement>(null);
 
-  /* ── Back design upload (Both Sides only) ── */
   const [backFile, setBackFile] = useState<File | null>(null);
   const [backPreview, setBackPreview] = useState<string | null>(null);
   const backRef = useRef<HTMLInputElement>(null);
 
-  /* ── Logo upload ── */
-  const [logoFile, setLogoFile] = useState<File | null>(null);
-  const logoRef = useRef<HTMLInputElement>(null);
-
-  /* ── Cart saved state ── */
-  const [saved, setSaved] = useState(false);
-
-  /* ── Design instructions (upload tab) ── */
+  /* ── Text states ── */
   const [designInstructions, setDesignInstructions] = useState("");
 
-  /* ── Validation error display ── */
+  /* ── Quantity ── */
+  const [quantity, setQuantity] = useState(1);
+
+  /* ── UI states ── */
   const [showError, setShowError] = useState(false);
+  const [saved, setSaved] = useState(false);
 
-  /* ── Request tab state ── */
-  const [customText, setCustomText] = useState("");
-  const [requirements, setRequirements] = useState("");
-  const [instructions, setInstructions] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  /* ── File handlers ── */
+  /* ── File handler factory ── */
   const makeFileHandler = (
     setFile: React.Dispatch<React.SetStateAction<File | null>>,
     setPreview: React.Dispatch<React.SetStateAction<string | null>>
@@ -230,9 +153,14 @@ export default function CustomizeProductPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     setFile(file);
-    const reader = new FileReader();
-    reader.onload = ev => setPreview(ev.target?.result as string);
-    reader.readAsDataURL(file);
+    setShowError(false);
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = ev => setPreview(ev.target?.result as string);
+      reader.readAsDataURL(file);
+    } else {
+      setPreview(null);
+    }
   };
 
   const makeRemoveHandler = (
@@ -240,643 +168,497 @@ export default function CustomizeProductPage() {
     setPreview: React.Dispatch<React.SetStateAction<string | null>>,
     ref: React.RefObject<HTMLInputElement>
   ) => () => {
-    setFile(null); setPreview(null);
+    setFile(null);
+    setPreview(null);
     if (ref.current) ref.current.value = "";
   };
 
-  /* ── Print position label for orders ── */
-  const printPositionLabel = positions.find(p => p.id === printPosition)?.label ?? printPosition;
+  /* ── Validation ── */
+  const hasLogo = !!logoFile;
+  const hasDesign = !!(frontFile || backFile);
+  const hasInstructions = designInstructions.trim().length > 0;
+  const isValid = hasLogo || hasDesign || hasInstructions;
 
-  /* ── Validation: upload tab needs at least one of: design file, logo, instructions ── */
-  const hasDesignFile = !!(frontFile || backFile);
-  const isUploadValid = hasDesignFile || !!logoFile || designInstructions.trim().length > 0;
-
-  /* ── Validation: request tab needs at least one text field ── */
-  const isRequestValid = customText.trim().length > 0 || requirements.trim().length > 0 || instructions.trim().length > 0;
-
-  /* ── Derived values ── */
-  const sizeBreakdown = T_SHIRT_SIZES.filter(s => sizeQty[s] > 0).map(s => `${s}×${sizeQty[s]}`).join(", ");
-  const effectiveQty = isTShirt ? totalQty : quantity;
-
-  /* ── Back navigation ── */
-  const handleBack = () => {
-    if (lockedVariant?.productId && category) { history.back(); }
-    else { setLocation("/customize"); }
-  };
-
-  /* ── Save Customization to Cart ── */
+  /* ── Save to cart ── */
   const handleSaveToCart = () => {
-    if (!isUploadValid) { setShowError(true); return; }
+    if (!isValid) { setShowError(true); return; }
     setShowError(false);
 
-    const uploadNote = isBothSides
-      ? [frontFile?.name && `Front: ${frontFile.name}`, backFile?.name && `Back: ${backFile.name}`].filter(Boolean).join(" | ")
+    const printPositionLabel = positions.find(p => p.id === printPosition)?.label ?? printPosition;
+    const designNote = isBothSides
+      ? [frontFile && `Front: ${frontFile.name}`, backFile && `Back: ${backFile.name}`].filter(Boolean).join(" | ")
       : frontFile?.name ?? undefined;
 
     addItem({
-      productId: lockedVariant?.productId ?? `${category}-custom`,
-      productName: `Custom ${meta.label}`,
+      productId: `${category}-${productSlug}-custom`,
+      productName: product?.name ?? "Custom Product",
       categorySlug: category ?? "",
-      categoryLabel: meta.label,
-      price: meta.price,
-      priceLabel: meta.priceLabel,
+      categoryLabel: product?.category ?? "",
+      price: product?.price ?? 0,
+      priceLabel: product?.priceLabel ?? "",
       isCustomized: true,
-      quantity: effectiveQty || 1,
-      image: lockedVariant?.imageUrl || undefined,
+      quantity,
+      image: product?.image,
       customization: {
-        color: effectiveColor || undefined,
-        colorHex: effectiveColorHex || undefined,
-        size: isTShirt ? sizeBreakdown || undefined : undefined,
-        quantity: effectiveQty || 1,
-        uploadedFileName: uploadNote,
-        logoFileName: logoFile?.name || undefined,
+        printPosition: printPositionLabel,
+        uploadedFileName: designNote,
+        logoFileName: logoFile?.name,
         designInstructions: designInstructions.trim() || undefined,
-        printPosition: hasPositions ? printPositionLabel : undefined,
+        quantity,
       },
     });
+
     setSaved(true);
     setTimeout(() => { setSaved(false); openCart(); }, 1600);
   };
 
-  /* ── WhatsApp Request ── */
-  const handleSubmitRequest = () => {
-    if (!isRequestValid) { setShowError(true); return; }
-    setShowError(false);
-
+  /* ── WhatsApp fallback ── */
+  const handleWhatsApp = () => {
+    if (!isValid) { setShowError(true); return; }
+    const printPositionLabel = positions.find(p => p.id === printPosition)?.label ?? printPosition;
     const lines = [
-      `Hello Radhe Digital! I'd like to request a custom ${meta.label}.`,
+      `Hello Radhe Digital! I'd like to customize a product.`,
       ``,
-      `*Product:* ${meta.label}`,
-      hasPositions ? `*Print Position:* ${printPositionLabel}` : "",
-      isTShirt ? `*Gender:* ${gender}` : "",
-      isTShirt && effectiveColor ? `*Color:* ${effectiveColor}` : "",
-      lockedVariant?.variantId ? `*Variant ID:* ${lockedVariant.variantId}` : "",
-      isTShirt
-        ? T_SHIRT_SIZES.filter(s => sizeQty[s] > 0).map(s => `*${s}:* ${sizeQty[s]} pcs`).join("\n")
-        : `*Quantity:* ${quantity}`,
-      isTShirt ? `*Total Quantity:* ${totalQty} T-Shirts` : "",
-      customText   ? `*Custom Text:* ${customText}` : "",
-      requirements ? `*Design Requirements:* ${requirements}` : "",
-      instructions ? `*Special Instructions:* ${instructions}` : "",
-      lockedVariant?.imageUrl ? `*Product Image:* ${lockedVariant.imageUrl}` : "",
+      `*Product:* ${product?.name ?? category}`,
+      `*Print Position:* ${printPositionLabel}`,
+      `*Quantity:* ${quantity}`,
+      logoFile ? `*Logo:* ${logoFile.name}` : "",
+      frontFile ? `*Design (Front):* ${frontFile.name}` : "",
+      backFile ? `*Design (Back):* ${backFile.name}` : "",
+      designInstructions.trim() ? `*Instructions:* ${designInstructions.trim()}` : "",
+      `*Base Price:* ${product?.priceLabel ?? ""}`,
     ].filter(Boolean).join("\n");
 
     window.open(`https://wa.me/919319903380?text=${encodeURIComponent(lines)}`, "_blank");
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 4000);
   };
 
-  /* ── Step numbering ── */
-  // Step 1 always = Print Position (when positions exist)
-  // T-shirt: +Gender, +Color(if unlocked), +Size — then uploads
-  const tShirtBaseSteps = hasPositions ? 1 : 0;
-  const genderStep   = tShirtBaseSteps + 1;
-  const colorStep    = genderStep + 1;                          // only when !isVariantLocked
-  const sizeStep     = isVariantLocked ? genderStep + 1 : colorStep + 1;
-  const uploadStep   = isTShirt ? sizeStep + 1 : (hasPositions ? 2 : 1);
-  const logoStep     = uploadStep + 1;
-  const instrStep    = logoStep + 1;
-  const qtyStep      = instrStep + 1;
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center text-white">
+        <div className="text-center">
+          <p className="text-gray-400 text-lg mb-4">Product not found.</p>
+          <button
+            onClick={() => setLocation("/customize")}
+            className="text-red-400 underline text-sm"
+          >
+            Back to Customize
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">
 
       {/* Header */}
-      <section className="bg-[#0a0a0a] border-b border-white/8 py-10">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6">
+      <section
+        className="border-b border-white/8 py-8"
+        style={{ background: "linear-gradient(135deg, #0a0a0a 0%, #110808 100%)" }}
+      >
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <button
-            onClick={handleBack}
-            className="flex items-center gap-2 text-gray-500 hover:text-white text-sm mb-5 transition-colors"
+            onClick={() => setLocation(`/customize/${category}`)}
+            className="flex items-center gap-2 text-gray-500 hover:text-white text-sm mb-4 transition-colors"
           >
-            <ArrowLeft size={14} /> {lockedVariant?.productId ? "Back to Product" : "Back to Categories"}
+            <ArrowLeft size={14} /> Back to {product.category}
           </button>
-          <div className="flex items-center gap-4">
-            <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: `${meta.color}18`, border: `1px solid ${meta.color}30` }}
-            >
-              <Icon size={22} style={{ color: meta.color }} />
-            </div>
-            <div>
-              <span className="text-xs font-bold tracking-[0.18em] uppercase text-gray-500">Customize</span>
-              <h1 className="text-2xl md:text-3xl font-extrabold leading-tight">{meta.label}</h1>
-            </div>
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-xs text-gray-600 flex-wrap">
+            <span className="hover:text-gray-400 cursor-pointer" onClick={() => setLocation("/customize")}>
+              Customize
+            </span>
+            <ChevronRight size={12} />
+            <span className="hover:text-gray-400 cursor-pointer" onClick={() => setLocation(`/customize/${category}`)}>
+              {product.category}
+            </span>
+            <ChevronRight size={12} />
+            <span className="text-gray-400">{product.name}</span>
           </div>
         </div>
       </section>
 
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-5">
+      {/* Main content */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
 
-        {/* ── Locked Variant Banner ── */}
-        {isVariantLocked && (
-          <div
-            className="flex items-center gap-4 rounded-2xl p-4 border"
-            style={{ background: "rgba(196,150,42,0.07)", borderColor: "rgba(196,150,42,0.25)" }}
-          >
-            {lockedVariant!.imageUrl ? (
-              <img
-                src={lockedVariant!.imageUrl}
-                alt={lockedVariant!.color}
-                className="w-16 h-16 rounded-xl object-cover flex-shrink-0 border border-white/10"
-              />
-            ) : (
-              <span
-                className="w-16 h-16 rounded-xl flex-shrink-0 border border-white/10"
-                style={{ backgroundColor: lockedVariant!.colorHex || "#888" }}
-              />
-            )}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <Lock size={12} style={{ color: "#C4962A" }} />
-                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "#C4962A" }}>Variant Locked</span>
-              </div>
-              <p className="text-white font-bold text-sm">{lockedVariant!.color ? `Color: ${lockedVariant!.color}` : "Original Product"}</p>
-              <p className="text-gray-500 text-xs mt-0.5">This color is locked from your product selection.</p>
-            </div>
-            {lockedVariant!.colorHex && (
-              <span className="w-8 h-8 rounded-full flex-shrink-0 border-2 border-white/20" style={{ backgroundColor: lockedVariant!.colorHex }} />
-            )}
-          </div>
-        )}
-
-        {/* ── Step 1: Print Position ── */}
-        {hasPositions && (
-          <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
-            <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-              <Step n={1} />
-              <span>Choose Print Position</span>
-              {printPosition && (
-                <span
-                  className="ml-auto text-xs font-bold px-2.5 py-1 rounded-full"
-                  style={{ background: "rgba(229,62,62,0.12)", color: "#fc8181", border: "1px solid rgba(229,62,62,0.25)" }}
-                >
-                  {printPositionLabel}
-                </span>
-              )}
-            </h2>
-            <div className="flex flex-col sm:flex-row gap-2.5">
-              {positions.map(pos => (
-                <PositionCard
-                  key={pos.id}
-                  pos={pos}
-                  active={printPosition === pos.id}
-                  onClick={() => { setPrintPosition(pos.id); setActiveSide("front"); }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Tab switcher */}
-        <div className="grid grid-cols-2 gap-2 bg-[#111] border border-white/8 rounded-2xl p-1.5">
-          {(["upload", "request"] as Tab[]).map(t => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                tab === t ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-gray-400 hover:text-white"
-              }`}
+          {/* ── LEFT: Product Preview ── */}
+          <div className="lg:sticky lg:top-8 lg:self-start space-y-5">
+            {/* Step badge */}
+            <span
+              className="inline-flex items-center gap-1.5 text-xs font-bold tracking-[0.18em] uppercase px-3 py-1 rounded-full border"
+              style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.35)", background: "rgba(196,150,42,0.1)" }}
             >
-              {t === "upload" ? <><Upload size={14} /> Upload Existing Design</> : <><MessageCircle size={14} /> Request Design Creation</>}
-            </button>
-          ))}
-        </div>
+              Step 3 of 3 · Customization Studio
+            </span>
 
-        {/* ── T-Shirt shared options ── */}
-        {isTShirt && (
-          <>
-            {/* Gender */}
-            <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
-              <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                <Step n={genderStep} /> Gender Type
-              </h2>
-              <div className="flex gap-3">
-                {GENDER_OPTIONS.map(g => (
-                  <button
-                    key={g}
-                    onClick={() => setGender(g)}
-                    className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-200 ${
-                      gender === g
-                        ? "bg-primary text-white border-primary"
-                        : "bg-white/6 text-gray-300 border-white/12 hover:border-white/25 hover:text-white"
-                    }`}
-                  >
-                    {g}
-                  </button>
-                ))}
+            {/* Product image */}
+            <div
+              className="rounded-2xl overflow-hidden border border-white/8"
+              style={{ background: "#111" }}
+            >
+              <div className="aspect-square relative">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+                <div
+                  className="absolute bottom-0 left-0 right-0 px-4 py-3"
+                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85), transparent)" }}
+                >
+                  <div className="flex items-center gap-2">
+                    <Package size={14} className="text-gray-400" />
+                    <span className="text-white text-xs font-semibold">Plain base — ready for customization</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Product meta */}
+              <div className="p-5">
+                <h1 className="text-xl font-extrabold text-white leading-tight mb-1">
+                  {product.name}
+                </h1>
+                <p className="text-gray-400 text-sm leading-relaxed mb-4">
+                  {product.description}
+                </p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Tag size={14} style={{ color: "#C4962A" }} />
+                    <span className="text-2xl font-black" style={{ color: "#C4962A" }}>
+                      {product.priceLabel}
+                    </span>
+                    <span className="text-gray-600 text-xs">/ piece</span>
+                  </div>
+                  {quantity >= 10 && (
+                    <span
+                      className="text-xs font-bold px-2.5 py-1 rounded-full"
+                      style={{ background: "rgba(196,150,42,0.15)", color: "#C4962A" }}
+                    >
+                      Bulk Discount Applies
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Color (only when NOT locked) */}
-            {!isVariantLocked && (
-              <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
-                <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                  <Step n={colorStep} /> T-Shirt Color
-                </h2>
-                <p className="text-gray-500 text-sm mb-3">
-                  Select a color from the product page, or describe your preferred color below.
-                </p>
-                <Input
-                  placeholder="e.g. Sky Blue, Maroon, Olive Green, Bottle Green..."
-                  className="bg-[#1a1a1a] border-white/12 text-white placeholder-gray-600 focus:border-primary/50 h-11 rounded-xl"
+            {/* Order summary card */}
+            <div
+              className="rounded-2xl p-5 border space-y-2.5"
+              style={{ background: "rgba(255,255,255,0.03)", borderColor: "rgba(255,255,255,0.08)" }}
+            >
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Order Summary</p>
+              <div className="space-y-2">
+                <Row label="Product" value={product.name} />
+                {positions.length > 0 && (
+                  <Row
+                    label="Print Position"
+                    value={positions.find(p => p.id === printPosition)?.label ?? printPosition}
+                    valueColor="#fc8181"
+                  />
+                )}
+                <Row label="Quantity" value={`${quantity} piece${quantity > 1 ? "s" : ""}`} />
+                <Row
+                  label="Total (base)"
+                  value={`₹${(product.price * quantity).toLocaleString("en-IN")}`}
+                  valueColor="#C4962A"
+                  bold
                 />
+                {hasLogo && <Row label="Logo" value="Uploaded ✓" valueColor="#4ade80" />}
+                {hasDesign && (
+                  <Row
+                    label={isBothSides ? "Designs" : "Design"}
+                    value={isBothSides
+                      ? [frontFile && "Front ✓", backFile && "Back ✓"].filter(Boolean).join(", ")
+                      : "Uploaded ✓"
+                    }
+                    valueColor="#4ade80"
+                  />
+                )}
+                {hasInstructions && <Row label="Instructions" value="Added ✓" valueColor="#4ade80" />}
               </div>
+              <p className="text-gray-600 text-xs pt-1">
+                * Final price may vary based on print complexity & bulk quantity.
+              </p>
+            </div>
+          </div>
+
+          {/* ── RIGHT: Customization Options ── */}
+          <div className="space-y-5">
+
+            {/* 1. Print Position */}
+            {positions.length > 0 && (
+              <Section title="Print Position" step={1}>
+                <div className="flex flex-wrap gap-2.5">
+                  {positions.map(pos => (
+                    <PositionCard
+                      key={pos.id}
+                      pos={pos}
+                      active={printPosition === pos.id}
+                      onClick={() => { setPrintPosition(pos.id); }}
+                    />
+                  ))}
+                </div>
+              </Section>
             )}
 
-            {/* Size + Quantity */}
-            <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
-              <h2 className="text-white font-bold text-base mb-1 flex items-center gap-2">
-                <Step n={sizeStep} /> Size &amp; Quantity
-              </h2>
-              <p className="text-gray-500 text-xs mb-5 ml-8">Enter how many pieces per size. Leave blank if not needed.</p>
-              <div className="space-y-2">
-                <div className="grid grid-cols-2 gap-3 px-1 mb-1">
-                  <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Size</span>
-                  <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Quantity (pcs)</span>
-                </div>
-                {T_SHIRT_SIZES.map(s => (
-                  <div
-                    key={s}
-                    className={`grid grid-cols-2 gap-3 items-center px-4 py-3 rounded-xl border transition-colors ${
-                      sizeQty[s] > 0 ? "bg-primary/8 border-primary/30" : "bg-white/4 border-white/8"
-                    }`}
-                  >
-                    <span className={`w-9 h-9 rounded-lg flex items-center justify-center text-sm font-black border ${
-                      sizeQty[s] > 0 ? "bg-primary text-white border-primary" : "bg-white/8 text-gray-300 border-white/12"
-                    }`}>{s}</span>
-                    <input
-                      type="number" min={0}
-                      value={sizeQty[s] === 0 ? "" : sizeQty[s]}
-                      onChange={e => setSizeAmount(s, e.target.value)}
-                      placeholder="0"
-                      className="w-full h-10 bg-[#1a1a1a] border border-white/12 rounded-xl px-3 text-sm text-white placeholder-gray-600 outline-none focus:border-primary/50 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            {/* 2. Upload Logo */}
+            <Section
+              title="Upload Logo"
+              step={2}
+              badge={hasLogo ? "Uploaded" : "Optional"}
+              badgeGreen={hasLogo}
+            >
+              <UploadBox
+                label="Tap to upload your logo"
+                sublabel="PNG, SVG recommended — Max 10 MB"
+                file={logoFile}
+                preview={logoPreview}
+                inputRef={logoRef}
+                accept=".png,.jpg,.jpeg,.svg"
+                onFileChange={makeFileHandler(setLogoFile, setLogoPreview)}
+                onRemove={makeRemoveHandler(setLogoFile, setLogoPreview, logoRef)}
+              />
+            </Section>
+
+            {/* 3. Upload Design */}
+            <Section
+              title={isBothSides ? "Upload Designs (Front & Back)" : "Upload Design"}
+              step={3}
+              badge={hasDesign ? "Uploaded" : "Optional"}
+              badgeGreen={hasDesign}
+            >
+              {isBothSides ? (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Front Design</p>
+                    <UploadBox
+                      label="Upload Front"
+                      sublabel="PNG, JPG, PDF"
+                      file={frontFile}
+                      preview={frontPreview}
+                      inputRef={frontRef}
+                      accept=".png,.jpg,.jpeg,.svg,.pdf"
+                      onFileChange={makeFileHandler(setFrontFile, setFrontPreview)}
+                      onRemove={makeRemoveHandler(setFrontFile, setFrontPreview, frontRef)}
                     />
                   </div>
-                ))}
-              </div>
-              <div className={`mt-4 flex items-center justify-between px-4 py-3 rounded-xl border ${
-                totalQty > 0 ? "bg-primary/10 border-primary/30" : "bg-white/4 border-white/8"
-              }`}>
-                <span className="text-sm font-semibold text-gray-300">Total T-Shirts</span>
-                <span className={`text-xl font-extrabold ${totalQty > 0 ? "text-primary" : "text-gray-600"}`}>{totalQty}</span>
-              </div>
-              {totalQty >= 10 && <p className="text-yellow-400 text-xs mt-2 text-center">🎉 Bulk order — we'll offer you a special price!</p>}
-            </div>
-          </>
-        )}
-
-        {/* ── Upload Tab content ── */}
-        {tab === "upload" && (
-          <motion.div key="upload" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-
-            {/* Upload Design — split by side when "Both Sides" */}
-            <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
-              <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                <Step n={uploadStep} />
-                {isBothSides ? "Upload Your Designs" : "Upload Your Design"}
-              </h2>
-
-              {isBothSides ? (
-                <>
-                  {/* Side tab switcher */}
-                  <div className="flex gap-2 mb-4">
-                    {(["front", "back"] as DesignSide[]).map(side => (
-                      <button
-                        key={side}
-                        onClick={() => setActiveSide(side)}
-                        className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-200 flex items-center justify-center gap-2 ${
-                          activeSide === side
-                            ? "bg-primary/20 border-primary text-primary"
-                            : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20 hover:text-white"
-                        }`}
-                      >
-                        {side === "front" ? <AlignCenter size={14} /> : <RotateCcw size={14} />}
-                        {side === "front" ? "Front Design" : "Back Design"}
-                        {side === "front" && frontFile && <CheckCircle2 size={13} className="text-green-400" />}
-                        {side === "back" && backFile && <CheckCircle2 size={13} className="text-green-400" />}
-                      </button>
-                    ))}
+                  <div>
+                    <p className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Back Design</p>
+                    <UploadBox
+                      label="Upload Back"
+                      sublabel="PNG, JPG, PDF"
+                      file={backFile}
+                      preview={backPreview}
+                      inputRef={backRef}
+                      accept=".png,.jpg,.jpeg,.svg,.pdf"
+                      onFileChange={makeFileHandler(setBackFile, setBackPreview)}
+                      onRemove={makeRemoveHandler(setBackFile, setBackPreview, backRef)}
+                    />
                   </div>
-                  <AnimatePresence mode="wait">
-                    {activeSide === "front" ? (
-                      <motion.div key="front" initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }}>
-                        <DesignUploadBox
-                          file={frontFile}
-                          preview={frontPreview}
-                          inputRef={frontRef}
-                          onFileChange={makeFileHandler(setFrontFile, setFrontPreview)}
-                          onRemove={makeRemoveHandler(setFrontFile, setFrontPreview, frontRef)}
-                        />
-                      </motion.div>
-                    ) : (
-                      <motion.div key="back" initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }}>
-                        <DesignUploadBox
-                          file={backFile}
-                          preview={backPreview}
-                          inputRef={backRef}
-                          onFileChange={makeFileHandler(setBackFile, setBackPreview)}
-                          onRemove={makeRemoveHandler(setBackFile, setBackPreview, backRef)}
-                        />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </>
+                </div>
               ) : (
-                <DesignUploadBox
+                <UploadBox
+                  label="Tap to upload your design"
+                  sublabel="PNG, JPG, SVG, PDF — Max 10 MB"
                   file={frontFile}
                   preview={frontPreview}
                   inputRef={frontRef}
+                  accept=".png,.jpg,.jpeg,.svg,.pdf"
                   onFileChange={makeFileHandler(setFrontFile, setFrontPreview)}
                   onRemove={makeRemoveHandler(setFrontFile, setFrontPreview, frontRef)}
                 />
               )}
-            </div>
+            </Section>
 
-            {/* Logo */}
-            <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
-              <h2 className="text-white font-bold text-base mb-1 flex items-center gap-2">
-                <Step n={logoStep} />
-                Upload Your Logo
-              </h2>
-              <p className="text-gray-500 text-xs mb-4 ml-8">Upload your logo file if you'd like it printed on the product.</p>
-              {!logoFile ? (
-                <label className="relative flex items-center gap-3 py-4 px-5 border border-dashed border-white/12 rounded-xl cursor-pointer hover:border-primary/30 hover:bg-primary/4 transition-all">
-                  <Upload size={15} className="text-gray-500" />
-                  <span className="text-gray-400 text-sm">Tap to upload logo (PNG, SVG)</span>
-                  <input ref={logoRef} type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept=".png,.jpg,.jpeg,.svg" onChange={e => { const f = e.target.files?.[0]; if (f) { setLogoFile(f); setShowError(false); } }} />
-                </label>
-              ) : (
-                <div className="flex items-center justify-between px-4 py-3 bg-[#1a1a1a] border border-white/12 rounded-xl">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={14} className="text-green-400" />
-                    <span className="text-green-400 text-sm font-semibold truncate max-w-[220px]">{logoFile.name}</span>
-                  </div>
-                  <button onClick={() => { setLogoFile(null); if (logoRef.current) logoRef.current.value = ""; }} className="text-gray-500 hover:text-red-400 transition-colors"><X size={14} /></button>
-                </div>
-              )}
-            </div>
-
-            {/* Design Instructions */}
-            <div className={`bg-[#111] rounded-2xl p-6 border transition-colors ${
-              showError && !isUploadValid ? "border-red-500/50" : "border-white/8"
-            }`}>
-              <h2 className="text-white font-bold text-base mb-1 flex items-center gap-2">
-                <Step n={instrStep} />
-                <FileText size={15} className="text-gray-400" />
-                Design Instructions
-              </h2>
-              <p className="text-gray-500 text-xs mb-4 ml-8">
-                Describe exactly what to print — text, placement, colours, or any specific details.
-              </p>
+            {/* 4. Design Instructions */}
+            <Section
+              title="Design Instructions"
+              step={4}
+              badge={hasInstructions ? "Added" : "Optional"}
+              badgeGreen={hasInstructions}
+            >
               <Textarea
                 value={designInstructions}
                 onChange={e => { setDesignInstructions(e.target.value); setShowError(false); }}
-                placeholder={`Example: "Print company logo on the front and contact details on the back. Use white text on dark background."`}
-                className={`bg-[#1a1a1a] text-white placeholder-gray-600 focus:border-primary/50 rounded-xl resize-none h-28 transition-colors ${
-                  showError && !isUploadValid ? "border-red-500/60" : "border-white/12"
-                }`}
+                placeholder={`Describe what you want printed — text, placement, colors, fonts, or any specific details.\n\nExample: "Print company logo on front in white. Add 'Est. 2020' text below the logo."`}
+                className="bg-[#1a1a1a] border-white/12 text-white placeholder-gray-600 focus:border-red-500/50 rounded-xl resize-none h-28 transition-colors"
               />
-              <p className="text-gray-600 text-[11px] mt-2 ml-1">
-                ✱ At least one of: logo, design file, or instructions is required.
+              <p className="text-gray-600 text-xs mt-2">
+                Describe your vision if you don't have a file ready — our team will design it for you.
               </p>
-            </div>
+            </Section>
 
-            {/* Quantity (non-T-shirt) */}
-            {!isTShirt && (
-              <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
-                <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                  <Step n={qtyStep} /> Select Quantity
-                </h2>
-                <div className="flex items-center gap-3">
-                  <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-11 h-11 rounded-xl bg-white/8 hover:bg-white/15 text-white font-bold text-xl transition-colors flex items-center justify-center">−</button>
-                  <span className="w-14 text-center text-white font-bold text-xl">{quantity}</span>
-                  <button onClick={() => setQuantity(q => q + 1)} className="w-11 h-11 rounded-xl bg-white/8 hover:bg-white/15 text-white font-bold text-xl transition-colors flex items-center justify-center">+</button>
-                  <span className="text-gray-500 text-sm ml-1">pieces</span>
+            {/* 5. Quantity */}
+            <Section title="Quantity" step={5}>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center rounded-xl overflow-hidden border border-white/12">
+                  <button
+                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                    className="w-12 h-12 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
+                  >
+                    <Minus size={16} />
+                  </button>
+                  <span className="w-14 text-center text-white font-black text-xl bg-[#1a1a1a] h-12 flex items-center justify-center">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity(q => q + 1)}
+                    className="w-12 h-12 flex items-center justify-center text-white hover:bg-white/10 transition-colors"
+                  >
+                    <Plus size={16} />
+                  </button>
                 </div>
-                {quantity >= 10 && <p className="text-yellow-400 text-xs mt-3">🎉 Bulk order — we'll offer you a special price!</p>}
+                <div>
+                  <p className="text-white text-sm font-semibold">
+                    {quantity} piece{quantity > 1 ? "s" : ""}
+                  </p>
+                  <p className="text-gray-500 text-xs">
+                    Total: ₹{(product.price * quantity).toLocaleString("en-IN")}
+                  </p>
+                </div>
               </div>
-            )}
+              {quantity >= 10 && (
+                <motion.p
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-yellow-400 text-xs mt-3 flex items-center gap-1.5"
+                >
+                  🎉 Bulk order! We'll offer you a special discounted price.
+                </motion.p>
+              )}
+            </Section>
 
-            {/* ── Order Summary Preview ── */}
-            {(hasPositions || isTShirt) && (
-              <div
-                className="rounded-2xl p-4 border space-y-2"
-                style={{ background: "rgba(255,255,255,0.03)", borderColor: "rgba(255,255,255,0.07)" }}
+            {/* ── Validation Banner ── */}
+            <AnimatePresence>
+              {showError && !isValid && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  className="flex items-start gap-3 rounded-2xl px-4 py-4 border"
+                  style={{ background: "rgba(239,68,68,0.08)", borderColor: "rgba(239,68,68,0.35)" }}
+                >
+                  <AlertTriangle size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-red-300 font-bold text-sm">Design information required</p>
+                    <p className="text-red-400/80 text-xs mt-0.5 leading-snug">
+                      Please provide at least one of: Upload Logo, Upload Design, or Design Instructions before continuing.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* ── CTA Buttons ── */}
+            <div className="space-y-3">
+              {/* Primary: Add to Cart */}
+              <motion.button
+                onClick={handleSaveToCart}
+                whileHover={isValid ? { scale: 1.02 } : {}}
+                whileTap={isValid ? { scale: 0.98 } : {}}
+                className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-bold text-white text-base transition-all duration-200"
+                style={
+                  saved
+                    ? { background: "linear-gradient(135deg,#38a169,#276749)", boxShadow: "0 4px 20px rgba(56,161,105,0.35)" }
+                    : isValid
+                    ? { background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 20px rgba(229,62,62,0.35)" }
+                    : { background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", cursor: "not-allowed" }
+                }
               >
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Order Summary</p>
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Product</span>
-                    <span className="text-white font-semibold">{meta.label}</span>
-                  </div>
-                  {hasPositions && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Print Position</span>
-                      <span className="text-white font-semibold">{printPositionLabel}</span>
-                    </div>
-                  )}
-                  {isTShirt && gender && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Gender</span>
-                      <span className="text-white font-semibold">{gender}</span>
-                    </div>
-                  )}
-                  {effectiveColor && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Color</span>
-                      <span className="text-white font-semibold flex items-center gap-1.5">
-                        {effectiveColorHex && <span className="w-3 h-3 rounded-full inline-block border border-white/20" style={{ backgroundColor: effectiveColorHex }} />}
-                        {effectiveColor}
-                      </span>
-                    </div>
-                  )}
-                  {isTShirt && totalQty > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Sizes</span>
-                      <span className="text-white font-semibold">{sizeBreakdown}</span>
-                    </div>
-                  )}
-                  {isBothSides && (frontFile || backFile) && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Designs</span>
-                      <span className="text-white font-semibold text-right">
-                        {[frontFile && "Front ✓", backFile && "Back ✓"].filter(Boolean).join(", ")}
-                      </span>
-                    </div>
-                  )}
-                  {!isBothSides && frontFile && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Design File</span>
-                      <span className="text-green-400 font-semibold">Uploaded ✓</span>
-                    </div>
-                  )}
-                  {logoFile && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Logo File</span>
-                      <span className="text-green-400 font-semibold">Uploaded ✓</span>
-                    </div>
-                  )}
-                  {designInstructions.trim() && (
-                    <div className="flex justify-between text-sm gap-4">
-                      <span className="text-gray-400 flex-shrink-0">Instructions</span>
-                      <span className="text-gray-300 text-right text-xs leading-snug line-clamp-2">{designInstructions.trim()}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+                {saved ? (
+                  <><CheckCircle2 size={20} /> Saved! Opening Cart…</>
+                ) : isValid ? (
+                  <><Sparkles size={20} /> Add to Cart — {quantity} pc{quantity > 1 ? "s" : ""} · ₹{(product.price * quantity).toLocaleString("en-IN")}</>
+                ) : (
+                  <><FileText size={18} className="opacity-40" /> Add Logo, Design or Instructions to Continue</>
+                )}
+              </motion.button>
 
-            {/* ── Validation Error Banner ── */}
-            <AnimatePresence>
-              {showError && !isUploadValid && (
-                <motion.div
-                  initial={{ opacity: 0, y: -6, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                  className="flex items-start gap-3 rounded-2xl px-4 py-4 border"
-                  style={{ background: "rgba(239,68,68,0.08)", borderColor: "rgba(239,68,68,0.35)" }}
-                >
-                  <AlertTriangle size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-red-300 font-bold text-sm">Design information required</p>
-                    <p className="text-red-400/80 text-xs mt-0.5 leading-snug">
-                      Please upload a logo, upload a design, or describe your design requirements before continuing.
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+              {/* Secondary: WhatsApp */}
+              <motion.button
+                onClick={handleWhatsApp}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-2xl font-bold text-white text-sm transition-all duration-200 border"
+                style={{ background: "rgba(37,211,102,0.08)", borderColor: "rgba(37,211,102,0.3)", color: "#25d366" }}
+              >
+                <MessageCircle size={18} />
+                Or Send Request via WhatsApp
+              </motion.button>
+            </div>
 
-            {/* ── Save Customization Button ── */}
-            <motion.button
-              onClick={handleSaveToCart}
-              whileHover={isUploadValid ? { scale: 1.02 } : {}}
-              whileTap={isUploadValid ? { scale: 0.98 } : {}}
-              className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-bold text-white text-base transition-all duration-200"
-              style={saved
-                ? { background: "linear-gradient(135deg,#38a169,#276749)", boxShadow: "0 4px 20px rgba(56,161,105,0.35)" }
-                : isUploadValid
-                  ? { background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 20px rgba(229,62,62,0.35)" }
-                  : { background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", cursor: "not-allowed" }
-              }
-            >
-              {saved ? (
-                <><CheckCircle2 size={20} /> Customization Saved — Opening Cart</>
-              ) : isUploadValid ? (
-                <><Sparkles size={20} /> Save Customization &amp; Add to Cart {isTShirt && totalQty > 0 ? `(${totalQty} pcs)` : ""}</>
-              ) : (
-                <><AlertTriangle size={18} className="text-gray-500" /> Add Design Info to Continue</>
-              )}
-            </motion.button>
             <p className="text-center text-gray-600 text-xs">
-              No upfront payment · Confirm your customized order via WhatsApp after checkout.
+              No upfront payment · Our team will confirm your order via WhatsApp before printing.
             </p>
-          </motion.div>
-        )}
-
-        {/* ── Request Tab content ── */}
-        {tab === "request" && (
-          <motion.div key="request" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-
-            <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
-              <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                <Step n={uploadStep} /> Custom Text
-              </h2>
-              <Input
-                value={customText}
-                onChange={e => setCustomText(e.target.value)}
-                placeholder="e.g. Team Name, Company Name, Slogan..."
-                className="bg-[#1a1a1a] border-white/12 text-white placeholder-gray-600 focus:border-primary/50 h-11 rounded-xl"
-              />
-            </div>
-
-            <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
-              <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                <Step n={uploadStep + 1} /> Design Requirements
-              </h2>
-              <Textarea
-                value={requirements}
-                onChange={e => setRequirements(e.target.value)}
-                placeholder="Describe what you want — theme, style, colours, images, logo idea..."
-                className="bg-[#1a1a1a] border-white/12 text-white placeholder-gray-600 focus:border-primary/50 rounded-xl resize-none h-28"
-              />
-            </div>
-
-            <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
-              <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                <Step n={uploadStep + 2} />
-                Special Instructions <span className="text-gray-500 text-xs font-normal ml-1">(Optional)</span>
-              </h2>
-              <Textarea
-                value={instructions}
-                onChange={e => setInstructions(e.target.value)}
-                placeholder="e.g. Delivery deadline, print on back only, reference image links..."
-                className="bg-[#1a1a1a] border-white/12 text-white placeholder-gray-600 focus:border-primary/50 rounded-xl resize-none h-20"
-              />
-            </div>
-
-            {!isTShirt && (
-              <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
-                <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                  <Step n={uploadStep + 3} /> Select Quantity
-                </h2>
-                <div className="flex items-center gap-3">
-                  <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-11 h-11 rounded-xl bg-white/8 hover:bg-white/15 text-white font-bold text-xl transition-colors flex items-center justify-center">−</button>
-                  <span className="w-14 text-center text-white font-bold text-xl">{quantity}</span>
-                  <button onClick={() => setQuantity(q => q + 1)} className="w-11 h-11 rounded-xl bg-white/8 hover:bg-white/15 text-white font-bold text-xl transition-colors flex items-center justify-center">+</button>
-                  <span className="text-gray-500 text-sm ml-1">pieces</span>
-                </div>
-                {quantity >= 10 && <p className="text-yellow-400 text-xs mt-3">🎉 Bulk order — we'll offer you a special price!</p>}
-              </div>
-            )}
-
-            {/* ── Request Tab Validation Error ── */}
-            <AnimatePresence>
-              {showError && !isRequestValid && (
-                <motion.div
-                  initial={{ opacity: 0, y: -6, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                  className="flex items-start gap-3 rounded-2xl px-4 py-4 border"
-                  style={{ background: "rgba(239,68,68,0.08)", borderColor: "rgba(239,68,68,0.35)" }}
-                >
-                  <AlertTriangle size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-red-300 font-bold text-sm">Design information required</p>
-                    <p className="text-red-400/80 text-xs mt-0.5 leading-snug">
-                      Please fill in at least one field — custom text, design requirements, or special instructions — before submitting.
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <motion.button
-              onClick={handleSubmitRequest}
-              whileHover={isRequestValid ? { scale: 1.02 } : {}}
-              whileTap={isRequestValid ? { scale: 0.98 } : {}}
-              className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-white text-base transition-all duration-200"
-              style={submitted
-                ? { background: "linear-gradient(135deg,#38a169,#276749)", boxShadow: "0 4px 20px rgba(56,161,105,0.25)" }
-                : isRequestValid
-                  ? { background: "linear-gradient(135deg,#25d366,#128c7e)", boxShadow: "0 4px 20px rgba(37,211,102,0.25)" }
-                  : { background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", cursor: "not-allowed" }
-              }
-            >
-              {submitted
-                ? <><CheckCircle2 size={20} /> Request Sent!</>
-                : isRequestValid
-                  ? <><MessageCircle size={20} /> Submit Design Request via WhatsApp {isTShirt && totalQty > 0 ? `(${totalQty} pcs)` : ""}</>
-                  : <><AlertTriangle size={18} className="text-gray-500" /> Describe Your Design to Continue</>
-              }
-            </motion.button>
-            <p className="text-center text-gray-600 text-xs">
-              Our team will review your requirements and get back to you within a few hours.
-            </p>
-          </motion.div>
-        )}
-
+          </div>
+        </div>
       </div>
+    </div>
+  );
+}
+
+/* ── Helper: Section wrapper ── */
+function Section({
+  title, step, badge, badgeGreen, children,
+}: {
+  title: string;
+  step: number;
+  badge?: string;
+  badgeGreen?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className="rounded-2xl p-5 border border-white/8 space-y-4"
+      style={{ background: "#111" }}
+    >
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-white font-bold text-base flex items-center gap-2.5">
+          <span
+            className="w-6 h-6 rounded-full text-xs font-black flex items-center justify-center flex-shrink-0"
+            style={{ background: "rgba(229,62,62,0.2)", border: "1px solid rgba(229,62,62,0.4)", color: "#fc8181" }}
+          >
+            {step}
+          </span>
+          {title}
+        </h2>
+        {badge && (
+          <span
+            className="text-xs font-bold px-2.5 py-1 rounded-full flex-shrink-0"
+            style={
+              badgeGreen
+                ? { background: "rgba(74,222,128,0.12)", color: "#4ade80", border: "1px solid rgba(74,222,128,0.25)" }
+                : { background: "rgba(255,255,255,0.06)", color: "#9ca3af", border: "1px solid rgba(255,255,255,0.1)" }
+            }
+          >
+            {badge}
+          </span>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/* ── Helper: Summary row ── */
+function Row({
+  label, value, valueColor, bold,
+}: {
+  label: string;
+  value: string;
+  valueColor?: string;
+  bold?: boolean;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-3 text-sm">
+      <span className="text-gray-500">{label}</span>
+      <span
+        className={`text-right ${bold ? "font-extrabold" : "font-semibold"}`}
+        style={{ color: valueColor ?? "#ffffff" }}
+      >
+        {value}
+      </span>
     </div>
   );
 }
