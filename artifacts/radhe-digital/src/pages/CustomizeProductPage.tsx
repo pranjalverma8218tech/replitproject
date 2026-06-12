@@ -321,9 +321,9 @@ export default function CustomizeProductPage() {
   const [quantity, setQuantity] = useState(1);
 
   /* ── T-Shirt size breakdown ── */
-  const SIZES = ["S", "M", "L", "XL", "XXL"] as const;
+  const SIZES = ["S", "M", "L", "XL", "XXL", "3XL"] as const;
   type Size = typeof SIZES[number];
-  const [sizeQty, setSizeQty] = useState<Record<Size, number>>({ S: 0, M: 0, L: 0, XL: 0, XXL: 0 });
+  const [sizeQty, setSizeQty] = useState<Record<Size, number>>({ S: 0, M: 0, L: 0, XL: 0, XXL: 0, "3XL": 0 });
   const isTShirt = category === "t-shirts";
   const totalSizeQty = isTShirt ? Object.values(sizeQty).reduce((a, b) => a + b, 0) : 0;
   const effectiveQty = isTShirt ? Math.max(1, totalSizeQty) : quantity;

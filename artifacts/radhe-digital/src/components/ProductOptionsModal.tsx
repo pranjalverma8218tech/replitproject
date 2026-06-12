@@ -4,7 +4,7 @@ import { X, Plus, Minus, ImageOff, User, Phone } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 
 const WHATSAPP_NUMBER = "919319903380";
-const T_SHIRT_SIZES = ["S", "M", "L", "XL", "XXL"];
+const T_SHIRT_SIZES = ["S", "M", "L", "XL", "XXL", "3XL"];
 const GENDERS = ["Men", "Women", "Unisex"];
 
 export interface ProductVariant {
