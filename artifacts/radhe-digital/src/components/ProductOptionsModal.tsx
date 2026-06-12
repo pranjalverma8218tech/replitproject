@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus, ShoppingCart } from "lucide-react";
-import { CATEGORY_DETAILS } from "@/data/productDetails";
 import { useCart } from "@/context/CartContext";
 
 const T_SHIRT_SIZES = ["S", "M", "L", "XL", "XXL"];
 const GENDERS = ["Men", "Women", "Unisex"];
+
+export interface ProductVariant {
+  id?: string;
+  color: string;
+  hex: string;
+  border?: boolean;
+}
 
 interface ProductLike {
   id: string;
@@ -18,15 +24,26 @@ interface Props {
   product: ProductLike;
   categorySlug: string;
   categoryLabel: string;
+  variants?: ProductVariant[];
+  initialColorIndex?: number;
   onClose: () => void;
 }
 
-export function ProductOptionsModal({ product, categorySlug, categoryLabel, onClose }: Props) {
+export function ProductOptionsModal({
+  product,
+  categorySlug,
+  categoryLabel,
+  variants = [],
+  initialColorIndex = 0,
+  onClose,
+}: Props) {
   const { addItem } = useCart();
-  const details = CATEGORY_DETAILS[categorySlug];
   const isTShirt = categorySlug === "t-shirts";
 
-  const [selectedColor, setSelectedColor] = useState(0);
+  const hasColors = variants.length > 0;
+  const clampedInitial = hasColors ? Math.max(0, Math.min(initialColorIndex, variants.length - 1)) : 0;
+
+  const [selectedColor, setSelectedColor] = useState(clampedInitial);
   const [customColor, setCustomColor] = useState("");
   const [showCustomColor, setShowCustomColor] = useState(false);
   const [gender, setGender] = useState("Unisex");
@@ -41,11 +58,11 @@ export function ProductOptionsModal({ product, categorySlug, categoryLabel, onCl
 
   const colorName = showCustomColor
     ? (customColor.trim() || "Custom Colour")
-    : (details?.colors[selectedColor]?.name ?? "Default");
+    : (hasColors ? variants[selectedColor]?.color : "");
 
   const colorHex = showCustomColor
     ? "#888"
-    : (details?.colors[selectedColor]?.hex ?? "#e53e3e");
+    : (hasColors ? (variants[selectedColor]?.hex ?? "#e53e3e") : "#e53e3e");
 
   const total = product.price * totalQty;
 
@@ -65,18 +82,20 @@ export function ProductOptionsModal({ product, categorySlug, categoryLabel, onCl
             price: product.price,
             quantity: q,
             category: categoryLabel,
-            customization: `${gender} · ${size} · ${colorName}`,
+            customization: colorName
+              ? `${gender} · ${size} · ${colorName}`
+              : `${gender} · ${size}`,
           });
         }
       });
     } else {
       addItem({
-        id: `${product.id}-${colorName}`,
+        id: `${product.id}-${colorName || "default"}`,
         name: product.name,
         price: product.price,
         quantity: qty,
         category: categoryLabel,
-        customization: colorName !== "Default" ? colorName : undefined,
+        customization: colorName || undefined,
       });
     }
     onClose();
@@ -112,30 +131,38 @@ export function ProductOptionsModal({ product, categorySlug, categoryLabel, onCl
           </div>
 
           <div className="px-6 py-5 space-y-6">
-            {/* Colour */}
-            {details?.colors && details.colors.length > 0 && (
+            {/* Colour — only shown when variants exist from Admin Panel */}
+            {hasColors && (
               <div>
                 <p className="text-sm font-bold text-gray-700 mb-3">
                   Colour: <span className="text-gray-900">{colorName}</span>
                 </p>
                 <div className="flex flex-wrap gap-2.5 mb-3">
-                  {details.colors.map((c, i) => (
-                    <button
-                      key={c.name}
-                      onClick={() => { setSelectedColor(i); setShowCustomColor(false); }}
-                      title={c.name}
-                      className={`w-9 h-9 rounded-full transition-all duration-200 ${
-                        !showCustomColor && selectedColor === i
-                          ? "ring-2 ring-[#C4962A] ring-offset-2 scale-110"
-                          : "hover:scale-105"
-                      }`}
-                      style={{ backgroundColor: c.hex, border: c.border ? "2px solid rgba(0,0,0,0.15)" : "none" }}
-                    />
-                  ))}
+                  {variants.map((v, i) => {
+                    const isWhite = ["#ffffff", "#f5f5f5", "#FFFFFF"].includes(v.hex);
+                    return (
+                      <button
+                        key={v.id ?? v.color}
+                        onClick={() => { setSelectedColor(i); setShowCustomColor(false); }}
+                        title={v.color}
+                        className={`w-9 h-9 rounded-full transition-all duration-200 ${
+                          !showCustomColor && selectedColor === i
+                            ? "ring-2 ring-[#C4962A] ring-offset-2 scale-110"
+                            : "hover:scale-105"
+                        }`}
+                        style={{
+                          backgroundColor: v.hex,
+                          border: isWhite ? "2px solid rgba(0,0,0,0.15)" : "none",
+                        }}
+                      />
+                    );
+                  })}
                   <button
                     onClick={() => setShowCustomColor(v => !v)}
                     className={`px-3 py-1 rounded-full text-xs font-bold border transition-all ${
-                      showCustomColor ? "border-[#C4962A] text-[#C4962A] bg-[#C4962A]/8" : "border-gray-200 text-gray-500 hover:border-gray-400"
+                      showCustomColor
+                        ? "border-[#C4962A] text-[#C4962A] bg-[#C4962A]/8"
+                        : "border-gray-200 text-gray-500 hover:border-gray-400"
                     }`}
                   >
                     + Custom
@@ -228,6 +255,15 @@ export function ProductOptionsModal({ product, categorySlug, categoryLabel, onCl
                 <span>Price per piece</span>
                 <span className="font-semibold text-gray-900">{product.priceLabel ?? `₹${product.price}`}</span>
               </div>
+              {hasColors && !showCustomColor && colorName && (
+                <div className="flex justify-between text-sm text-gray-500">
+                  <span>Colour</span>
+                  <span className="flex items-center gap-1.5 font-semibold text-gray-900">
+                    <span className="w-3 h-3 rounded-full inline-block border border-gray-200" style={{ backgroundColor: colorHex }} />
+                    {colorName}
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between text-sm text-gray-500">
                 <span>Total pieces</span>
                 <span className="font-semibold text-gray-900">{totalQty}</span>
@@ -246,7 +282,10 @@ export function ProductOptionsModal({ product, categorySlug, categoryLabel, onCl
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
                 className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-white text-base transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ background: totalQty > 0 ? "linear-gradient(135deg,#e53e3e,#c53030)" : "#ccc", boxShadow: totalQty > 0 ? "0 4px 18px rgba(229,62,62,0.3)" : "none" }}
+                style={{
+                  background: totalQty > 0 ? "linear-gradient(135deg,#e53e3e,#c53030)" : "#ccc",
+                  boxShadow: totalQty > 0 ? "0 4px 18px rgba(229,62,62,0.3)" : "none",
+                }}
               >
                 <ShoppingCart size={18} />
                 {totalQty === 0 ? "Select quantity to continue" : `Add ${totalQty} item${totalQty !== 1 ? "s" : ""} to Cart`}

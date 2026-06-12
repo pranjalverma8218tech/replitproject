@@ -483,6 +483,13 @@ export default function ProductDetailPage() {
           product={product}
           categorySlug={slug ?? ""}
           categoryLabel={categoryLabel}
+          variants={apiVariants.map((v: any) => ({
+            id: v.id,
+            color: v.color,
+            hex: v.hex,
+            border: v.hex === "#ffffff" || v.hex === "#f5f5f5" || v.hex === "#FFFFFF",
+          }))}
+          initialColorIndex={activeColor >= 0 ? activeColor : 0}
           onClose={() => setShowModal(false)}
         />
       )}
