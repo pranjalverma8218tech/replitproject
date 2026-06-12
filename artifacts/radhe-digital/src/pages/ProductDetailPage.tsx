@@ -348,19 +348,35 @@ export default function ProductDetailPage() {
             {(hasVariants || details?.colors) && (
               <div>
                 <p className="text-sm font-semibold text-gray-500 mb-3">
-                  Available Colors
-                  {activeColor >= 0 && (
+                  {hasVariants ? (
+                    activeColor === -1
+                      ? <>Gallery · <span className="text-gray-900">Original Product</span></>
+                      : <>Color · <span className="text-gray-900">{apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.color}</span></>
+                  ) : (
                     <>
-                      {" · "}
-                      <span className="text-gray-900">
-                        {hasVariants
-                          ? apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.color
-                          : details!.colors[activeColor]?.name}
-                      </span>
+                      Available Colors
+                      {activeColor >= 0 && (
+                        <> · <span className="text-gray-900">{details!.colors[activeColor]?.name}</span></>
+                      )}
                     </>
                   )}
                 </p>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-3 items-center">
+                  {/* "Original Product" selector — always visible when API variants exist */}
+                  {hasVariants && (
+                    <button
+                      onClick={() => { setActiveColor(-1); setActiveView(0); }}
+                      title="View original product images"
+                      className={`flex items-center gap-1.5 h-9 px-3 rounded-full border text-[11px] font-bold transition-all duration-200 ${
+                        activeColor === -1
+                          ? "scale-110 ring-2 ring-[#C4962A] ring-offset-2 ring-offset-white border-[#C4962A] text-[#C4962A]"
+                          : "border-gray-300 bg-gray-50 text-gray-500 hover:scale-105 hover:border-gray-400 hover:text-gray-700"
+                      }`}
+                    >
+                      <span className="text-[9px] opacity-70">⊞</span>
+                      Original
+                    </button>
+                  )}
                   {hasVariants
                     ? apiVariants.map((v: any, i: number) => (
                         <ColorDot
