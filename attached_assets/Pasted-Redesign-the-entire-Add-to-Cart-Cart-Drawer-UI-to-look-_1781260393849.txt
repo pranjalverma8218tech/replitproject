@@ -1,0 +1,102 @@
+Redesign the entire Add to Cart / Cart Drawer UI to look premium, modern, professional, and ecommerce-grade.
+
+Current problems:
+- Product image is missing
+- Typography looks inconsistent
+- Product information hierarchy is weak
+- Delete button is hard to see
+- Quantity controls look outdated
+- Layout looks empty and unfinished
+- Cart does not match the premium theme of the website
+
+Required improvements:
+
+1. Product Card Design
+- Show product thumbnail image on the left
+- Image size: 80x80 to 100x100
+- Rounded corners
+- Light border
+- Hover effect
+
+2. Product Information
+Display in this order:
+
+Product Name
+Category
+Selected Color
+Selected Size
+Quantity
+Price
+
+Use clear typography hierarchy:
+- Product Name: Bold, larger font
+- Category: Small muted text
+- Color/Size: Badge style tags
+- Price: Highlighted and bold
+
+3. Quantity Controls
+- Modern + and - buttons
+- Rounded design
+- Better spacing
+- Clearly visible on mobile and desktop
+
+4. Delete Button
+- Use a red trash icon
+- Place top-right of each cart item
+- Add hover effect
+- Make it clearly visible
+
+5. Cart Header
+- Modern cart icon
+- "Shopping Cart" title
+- Item count badge
+- Better spacing
+- Professional typography
+
+6. Cart Summary Section
+Show:
+- Total Items
+- Subtotal
+- Shipping
+- Grand Total
+
+Use premium card styling.
+
+7. Checkout Button
+- Full width
+- Premium gradient or branded theme color
+- Large button
+- Strong hover effect
+- Clear CTA text:
+  "Proceed to Checkout"
+
+8. Empty Cart State
+If cart is empty:
+- Show cart illustration/icon
+- Message:
+  "Your cart is currently empty"
+- Button:
+  "Continue Shopping"
+
+9. Theme Improvements
+- Match overall website theme
+- Consistent fonts everywhere
+- Better spacing and alignment
+- Professional shadows
+- Modern ecommerce appearance similar to Myntra, Amazon, Nike, or Shopify stores
+
+10. Responsive Design
+- Perfect on mobile
+- Perfect on tablet
+- Perfect on desktop
+
+11. Product Preview
+The cart item must always display:
+- Product image
+- Selected color
+- Selected size
+- Quantity
+- Price
+
+Do not create only UI placeholders.
+Use actual cart data and actual product images from the API/database.

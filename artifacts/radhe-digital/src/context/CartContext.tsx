@@ -25,6 +25,7 @@ export interface CartItem {
   isCustomized: boolean;
   customization?: CartCustomization;
   quantity: number;
+  image?: string;
 }
 
 interface CartContextValue {
@@ -35,9 +36,7 @@ interface CartContextValue {
   openCart: () => void;
   closeCart: () => void;
   toggleCart: () => void;
-  /** Adds item AND opens the cart drawer. */
   addItem: (item: Omit<CartItem, "cartId">) => void;
-  /** Adds item silently — does NOT open the cart drawer. Use for Buy Now / direct Add to Cart. */
   addItemSilent: (item: Omit<CartItem, "cartId">) => void;
   removeItem: (cartId: string) => void;
   updateQty: (cartId: string, qty: number) => void;

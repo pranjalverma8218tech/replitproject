@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  X, Trash2, Plus, Minus, ShoppingBag, Palette,
-  MessageCircle, ArrowRight, ArrowLeft, User, Phone, MapPin, Mail, AlertCircle
+  X, Trash2, Plus, Minus, ShoppingCart, ShoppingBag,
+  MessageCircle, ArrowRight, ArrowLeft, User, Phone, MapPin,
+  Mail, AlertCircle, Package, Tag
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { createOrder } from "@/admin/api";
@@ -17,6 +18,33 @@ interface CustomerInfo {
 }
 
 const EMPTY: CustomerInfo = { name: "", phone: "", address: "", email: "" };
+
+function ProductImage({ src, alt, colorHex }: { src?: string; alt: string; colorHex?: string }) {
+  const [errored, setErrored] = useState(false);
+
+  if (src && !errored) {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        onError={() => setErrored(true)}
+        className="w-full h-full object-cover"
+      />
+    );
+  }
+
+  return (
+    <div
+      className="w-full h-full flex items-center justify-center"
+      style={{ background: colorHex ? `${colorHex}22` : "rgba(229,62,62,0.1)" }}
+    >
+      <ShoppingBag
+        size={22}
+        style={{ color: colorHex ?? "#e53e3e", opacity: 0.7 }}
+      />
+    </div>
+  );
+}
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, updateQty, totalItems, totalPrice, clearCart } = useCart();
@@ -42,23 +70,13 @@ export function CartDrawer() {
 
   const handleBlur = (field: keyof CustomerInfo) => {
     setTouched(prev => ({ ...prev, [field]: true }));
-    const e = validate(info);
-    setErrors(e);
+    setErrors(validate(info));
   };
 
   const handleChange = (field: keyof CustomerInfo, value: string) => {
     const updated = { ...info, [field]: value };
     setInfo(updated);
-    if (touched[field]) {
-      setErrors(validate(updated));
-    }
-  };
-
-  const handleProceed = () => {
-    setTouched({ name: true, phone: true, address: true, email: true });
-    const e = validate(info);
-    setErrors(e);
-    if (Object.keys(e).length === 0) setStep("checkout");
+    if (touched[field]) setErrors(validate(updated));
   };
 
   const buildWhatsApp = () => {
@@ -133,7 +151,7 @@ export function CartDrawer() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm"
             onClick={handleClose}
           />
         )}
@@ -148,32 +166,45 @@ export function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 320, damping: 32 }}
-            className="fixed top-0 right-0 h-full w-full max-w-md z-[70] flex flex-col"
+            className="fixed top-0 right-0 h-full w-full max-w-[420px] z-[70] flex flex-col"
             style={{
-              background: "rgba(10,10,10,0.97)",
-              backdropFilter: "blur(24px)",
-              borderLeft: "1px solid rgba(255,255,255,0.08)",
-              boxShadow: "-8px 0 40px rgba(0,0,0,0.6)",
+              background: "#0d0d0d",
+              borderLeft: "1px solid rgba(255,255,255,0.07)",
+              boxShadow: "-12px 0 60px rgba(0,0,0,0.7)",
             }}
           >
-            {/* ─── STEP 1: CART ─── */}
             <AnimatePresence mode="wait">
+
+              {/* ─── STEP 1: CART ─── */}
               {step === "cart" && (
                 <motion.div
                   key="cart-step"
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  exit={{ opacity: 0, x: -30 }}
                   transition={{ duration: 0.2 }}
                   className="flex flex-col h-full"
                 >
                   {/* Header */}
-                  <div className="flex items-center justify-between px-6 py-5 border-b border-white/8 flex-shrink-0">
+                  <div
+                    className="flex items-center justify-between px-5 py-4 flex-shrink-0"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                  >
                     <div className="flex items-center gap-3">
-                      <ShoppingBag size={20} className="text-primary" />
-                      <h2 className="text-white font-bold text-lg">Your Cart</h2>
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "rgba(229,62,62,0.12)", border: "1px solid rgba(229,62,62,0.2)" }}>
+                        <ShoppingCart size={17} className="text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="text-white font-bold text-base leading-none">Shopping Cart</h2>
+                        <p className="text-gray-500 text-xs mt-0.5">
+                          {totalItems === 0 ? "No items yet" : `${totalItems} item${totalItems !== 1 ? "s" : ""} added`}
+                        </p>
+                      </div>
                       {totalItems > 0 && (
-                        <span className="w-6 h-6 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center">
+                        <span
+                          className="w-6 h-6 rounded-full text-white text-xs font-black flex items-center justify-center flex-shrink-0"
+                          style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)" }}
+                        >
                           {totalItems}
                         </span>
                       )}
@@ -182,169 +213,267 @@ export function CartDrawer() {
                       {items.length > 0 && (
                         <button
                           onClick={clearCart}
-                          className="text-xs text-gray-500 hover:text-red-400 transition-colors font-semibold px-2 py-1 rounded"
+                          className="text-[11px] text-gray-600 hover:text-red-400 transition-colors font-semibold px-2 py-1 rounded-lg hover:bg-red-500/10"
                         >
                           Clear all
                         </button>
                       )}
                       <button
                         onClick={handleClose}
-                        className="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/8 transition-all"
+                        className="w-8 h-8 rounded-xl flex items-center justify-center text-gray-500 hover:text-white transition-all"
+                        style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
                       >
-                        <X size={18} />
+                        <X size={16} />
                       </button>
                     </div>
                   </div>
 
-                  {/* Items */}
-                  <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+                  {/* Items list */}
+                  <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3" style={{ scrollbarWidth: "none" }}>
                     {items.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center h-full text-center py-16">
-                        <ShoppingBag size={56} className="text-gray-700 mb-4" />
-                        <p className="text-gray-400 font-semibold mb-2">Your cart is empty</p>
-                        <p className="text-gray-600 text-sm">Browse our products and add items to get started.</p>
+                      /* Empty state */
+                      <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                        <div
+                          className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5"
+                          style={{ background: "rgba(229,62,62,0.08)", border: "1px solid rgba(229,62,62,0.15)" }}
+                        >
+                          <ShoppingBag size={36} style={{ color: "rgba(229,62,62,0.5)" }} />
+                        </div>
+                        <p className="text-white font-bold text-lg mb-2">Your cart is empty</p>
+                        <p className="text-gray-500 text-sm mb-8 max-w-[240px] leading-relaxed">
+                          Browse our products and add items to get started.
+                        </p>
+                        <button
+                          onClick={handleClose}
+                          className="px-6 py-3 rounded-xl text-sm font-bold text-white transition-all hover:scale-105"
+                          style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 18px rgba(229,62,62,0.3)" }}
+                        >
+                          Continue Shopping
+                        </button>
                       </div>
                     ) : (
                       <AnimatePresence>
                         {items.map(item => (
                           <motion.div
                             key={item.cartId}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 20, height: 0, marginBottom: 0 }}
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, x: 40, height: 0, marginBottom: 0, paddingTop: 0, paddingBottom: 0 }}
                             transition={{ duration: 0.22 }}
-                            className="bg-[#141414] border border-white/8 rounded-2xl p-4"
+                            className="relative rounded-2xl overflow-hidden"
+                            style={{
+                              background: "rgba(255,255,255,0.03)",
+                              border: "1px solid rgba(255,255,255,0.07)",
+                            }}
                           >
-                            <div className="flex items-start gap-3">
-                              <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center text-primary flex-shrink-0">
-                                {item.isCustomized ? <Palette size={20} /> : <ShoppingBag size={18} />}
+                            <div className="flex gap-3 p-3">
+                              {/* Product image */}
+                              <div
+                                className="flex-shrink-0 w-[84px] h-[84px] rounded-xl overflow-hidden"
+                                style={{
+                                  border: "1px solid rgba(255,255,255,0.1)",
+                                  background: "rgba(255,255,255,0.04)",
+                                }}
+                              >
+                                <ProductImage
+                                  src={item.image}
+                                  alt={item.productName}
+                                  colorHex={item.customization?.colorHex}
+                                />
                               </div>
 
+                              {/* Info */}
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-start justify-between gap-2">
-                                  <div>
-                                    <p className="text-white font-semibold text-sm leading-snug">{item.productName}</p>
-                                    <p className="text-gray-500 text-xs mt-0.5">{item.categoryLabel}</p>
-                                  </div>
+                                {/* Name + delete */}
+                                <div className="flex items-start justify-between gap-2 mb-1">
+                                  <p className="text-white font-bold text-sm leading-snug line-clamp-2 flex-1">{item.productName}</p>
                                   <button
                                     onClick={() => removeItem(item.cartId)}
-                                    className="text-gray-600 hover:text-red-400 transition-colors flex-shrink-0 mt-0.5"
+                                    className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all hover:scale-110 group"
+                                    style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}
+                                    title="Remove item"
                                   >
-                                    <Trash2 size={15} />
+                                    <Trash2 size={13} className="text-red-400 group-hover:text-red-300 transition-colors" />
                                   </button>
                                 </div>
 
-                                {item.isCustomized ? (
-                                  <span className="inline-flex items-center gap-1 mt-2 text-[11px] font-semibold text-primary bg-primary/12 border border-primary/25 px-2 py-0.5 rounded-full">
-                                    <Palette size={10} /> Customized Design
-                                  </span>
-                                ) : item.customization ? (
-                                  <span className="inline-flex items-center gap-1 mt-2 text-[11px] font-semibold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">
-                                    ✓ Options Selected
-                                  </span>
-                                ) : (
-                                  <span className="inline-flex items-center gap-1 mt-2 text-[11px] font-semibold text-gray-400 bg-white/6 border border-white/10 px-2 py-0.5 rounded-full">
-                                    Standard Purchase
-                                  </span>
-                                )}
+                                {/* Category */}
+                                <p className="text-gray-500 text-[11px] font-medium mb-2">{item.categoryLabel}</p>
 
-                                {item.customization && (
-                                  <div className="mt-2 space-y-0.5">
-                                    {(item.customization.color || item.customization.gender) && (
-                                      <div className="flex flex-wrap gap-x-3 text-xs text-gray-500">
-                                        {item.customization.color && (
-                                          <span className="flex items-center gap-1">
-                                            {item.customization.colorHex && (
-                                              <span className="w-2.5 h-2.5 rounded-full border border-white/20 inline-block flex-shrink-0"
-                                                style={{ backgroundColor: item.customization.colorHex }} />
-                                            )}
-                                            {item.customization.color}
-                                          </span>
-                                        )}
-                                        {item.customization.gender && <span>{item.customization.gender}</span>}
-                                        {item.customization.variant && <span>{item.customization.variant}</span>}
-                                        {item.customization.size && !item.customization.sizeBreakdown && (
-                                          <span>Size: {item.customization.size}</span>
-                                        )}
-                                      </div>
-                                    )}
-                                    {item.customization.sizeBreakdown && Object.keys(item.customization.sizeBreakdown).length > 0 && (
-                                      <div className="flex flex-wrap gap-1.5 mt-1">
-                                        {Object.entries(item.customization.sizeBreakdown).map(([size, count]) => (
-                                          <span key={size} className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-white/8 border border-white/10 text-gray-300">
-                                            {size} × {count}
-                                          </span>
-                                        ))}
-                                      </div>
-                                    )}
-                                    {item.customization.uploadedFileName && (
-                                      <p className="text-xs text-green-500 truncate">📎 {item.customization.uploadedFileName}</p>
-                                    )}
-                                    {item.customization.customText && (
-                                      <p className="text-xs text-gray-400 truncate">Text: "{item.customization.customText}"</p>
-                                    )}
-                                    {item.customization.designDesc && (
-                                      <p className="text-xs text-gray-500 truncate">Note: {item.customization.designDesc}</p>
-                                    )}
+                                {/* Variant badges */}
+                                <div className="flex flex-wrap gap-1.5 mb-2.5">
+                                  {item.customization?.color && (
+                                    <span
+                                      className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                      style={{ background: "rgba(196,150,42,0.12)", border: "1px solid rgba(196,150,42,0.25)", color: "#C4962A" }}
+                                    >
+                                      {item.customization.colorHex && (
+                                        <span
+                                          className="w-2 h-2 rounded-full inline-block flex-shrink-0"
+                                          style={{ backgroundColor: item.customization.colorHex, border: "1px solid rgba(255,255,255,0.3)" }}
+                                        />
+                                      )}
+                                      {item.customization.color}
+                                    </span>
+                                  )}
+                                  {item.customization?.size && !item.customization.sizeBreakdown && (
+                                    <span
+                                      className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                      style={{ background: "rgba(99,102,241,0.12)", border: "1px solid rgba(99,102,241,0.25)", color: "#818cf8" }}
+                                    >
+                                      <Tag size={9} />
+                                      {item.customization.size}
+                                    </span>
+                                  )}
+                                  {item.customization?.gender && (
+                                    <span
+                                      className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                      style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#9ca3af" }}
+                                    >
+                                      {item.customization.gender}
+                                    </span>
+                                  )}
+                                  {item.isCustomized && (
+                                    <span
+                                      className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                      style={{ background: "rgba(229,62,62,0.1)", border: "1px solid rgba(229,62,62,0.2)", color: "#fc8181" }}
+                                    >
+                                      Custom Design
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Size breakdown */}
+                                {item.customization?.sizeBreakdown && Object.keys(item.customization.sizeBreakdown).length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mb-2">
+                                    {Object.entries(item.customization.sizeBreakdown).map(([size, count]) => (
+                                      <span
+                                        key={size}
+                                        className="text-[10px] font-bold px-1.5 py-0.5 rounded-md"
+                                        style={{ background: "rgba(255,255,255,0.07)", color: "#d1d5db" }}
+                                      >
+                                        {size} ×{count}
+                                      </span>
+                                    ))}
                                   </div>
                                 )}
 
-                                <div className="flex items-center justify-between mt-3">
-                                  <p className="text-primary font-extrabold">{item.priceLabel}</p>
-                                  <div className="flex items-center gap-2">
+                                {/* Price row + qty controls */}
+                                <div className="flex items-center justify-between mt-1">
+                                  <div>
+                                    <p className="text-white font-black text-sm" style={{ color: "#C4962A" }}>
+                                      {item.priceLabel}
+                                    </p>
+                                    {item.quantity > 1 && (
+                                      <p className="text-gray-600 text-[10px]">
+                                        ₹{(item.price * item.quantity).toLocaleString("en-IN")} total
+                                      </p>
+                                    )}
+                                  </div>
+
+                                  {/* Qty controls */}
+                                  <div
+                                    className="flex items-center rounded-xl overflow-hidden"
+                                    style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+                                  >
                                     <button
                                       onClick={() => updateQty(item.cartId, item.quantity - 1)}
-                                      className="w-7 h-7 rounded-lg bg-white/8 hover:bg-white/15 text-white flex items-center justify-center transition-colors"
+                                      className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all"
                                     >
                                       <Minus size={12} />
                                     </button>
-                                    <span className="text-white font-bold text-sm w-5 text-center">{item.quantity}</span>
+                                    <span
+                                      className="text-white font-bold text-sm w-8 text-center"
+                                      style={{ background: "rgba(255,255,255,0.04)" }}
+                                    >
+                                      {item.quantity}
+                                    </span>
                                     <button
                                       onClick={() => updateQty(item.cartId, item.quantity + 1)}
-                                      className="w-7 h-7 rounded-lg bg-white/8 hover:bg-white/15 text-white flex items-center justify-center transition-colors"
+                                      className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all"
                                     >
                                       <Plus size={12} />
                                     </button>
                                   </div>
                                 </div>
-                                <p className="text-gray-600 text-xs mt-1 text-right">
-                                  Subtotal: <span className="text-gray-400 font-semibold">₹{(item.price * item.quantity).toLocaleString("en-IN")}</span>
-                                </p>
                               </div>
                             </div>
+
+                            {/* Extra customization notes */}
+                            {(item.customization?.customText || item.customization?.designDesc || item.customization?.uploadedFileName) && (
+                              <div
+                                className="px-3 pb-3 pt-0"
+                              >
+                                <div
+                                  className="rounded-xl px-3 py-2 space-y-1"
+                                  style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
+                                >
+                                  {item.customization?.uploadedFileName && (
+                                    <p className="text-[11px] text-green-400 truncate">📎 {item.customization.uploadedFileName}</p>
+                                  )}
+                                  {item.customization?.customText && (
+                                    <p className="text-[11px] text-gray-400 truncate">Text: "{item.customization.customText}"</p>
+                                  )}
+                                  {item.customization?.designDesc && (
+                                    <p className="text-[11px] text-gray-500 truncate">Note: {item.customization.designDesc}</p>
+                                  )}
+                                </div>
+                              </div>
+                            )}
                           </motion.div>
                         ))}
                       </AnimatePresence>
                     )}
                   </div>
 
-                  {/* Footer */}
+                  {/* Footer summary + CTA */}
                   {items.length > 0 && (
-                    <div className="flex-shrink-0 border-t border-white/8 px-6 py-5 space-y-4">
-                      <div className="bg-[#141414] border border-white/8 rounded-xl p-4 space-y-2">
-                        <div className="flex justify-between text-sm text-gray-400">
-                          <span>Items ({totalItems})</span>
-                          <span className="text-white">₹{totalPrice.toLocaleString("en-IN")}</span>
+                    <div
+                      className="flex-shrink-0 px-4 py-4 space-y-3"
+                      style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+                    >
+                      {/* Summary card */}
+                      <div
+                        className="rounded-2xl p-4 space-y-2.5"
+                        style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
+                      >
+                        <div className="flex justify-between text-sm text-gray-500">
+                          <span>Total Items</span>
+                          <span className="text-gray-300 font-semibold">{totalItems}</span>
                         </div>
-                        <div className="flex justify-between text-sm text-gray-400">
+                        <div className="flex justify-between text-sm text-gray-500">
+                          <span>Subtotal</span>
+                          <span className="text-gray-300 font-semibold">₹{totalPrice.toLocaleString("en-IN")}</span>
+                        </div>
+                        <div className="flex justify-between text-sm text-gray-500">
                           <span>Shipping</span>
-                          <span className="text-green-400 font-semibold">Calculated at checkout</span>
+                          <span className="text-green-400 font-semibold text-xs">Calculated at checkout</span>
                         </div>
-                        <div className="border-t border-white/8 pt-2 flex justify-between font-extrabold text-base">
-                          <span className="text-white">Total</span>
-                          <span className="text-primary">₹{totalPrice.toLocaleString("en-IN")}</span>
+                        <div
+                          className="flex justify-between font-black text-base pt-2"
+                          style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+                        >
+                          <span className="text-white">Grand Total</span>
+                          <span style={{ color: "#C4962A" }}>₹{totalPrice.toLocaleString("en-IN")}</span>
                         </div>
                       </div>
 
+                      {/* Checkout button */}
                       <motion.button
-                        whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => setStep("checkout")}
-                        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-white text-sm"
-                        style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 18px rgba(229,62,62,0.3)" }}
+                        className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-black text-white text-sm"
+                        style={{
+                          background: "linear-gradient(135deg,#e53e3e 0%,#c53030 100%)",
+                          boxShadow: "0 6px 24px rgba(229,62,62,0.35)",
+                        }}
                       >
-                        Proceed to Checkout <ArrowRight size={15} />
+                        Proceed to Checkout <ArrowRight size={16} />
                       </motion.button>
-                      <p className="text-center text-xs text-gray-600">No payment required now. Finalize details via WhatsApp.</p>
+                      <p className="text-center text-[11px] text-gray-600">
+                        No payment required now · Finalize via WhatsApp
+                      </p>
                     </div>
                   )}
                 </motion.div>
@@ -354,47 +483,58 @@ export function CartDrawer() {
               {step === "checkout" && (
                 <motion.div
                   key="checkout-step"
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  exit={{ opacity: 0, x: -30 }}
                   transition={{ duration: 0.2 }}
                   className="flex flex-col h-full"
                 >
                   {/* Header */}
-                  <div className="flex items-center justify-between px-6 py-5 border-b border-white/8 flex-shrink-0">
+                  <div
+                    className="flex items-center justify-between px-5 py-4 flex-shrink-0"
+                    style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+                  >
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => setStep("cart")}
-                        className="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/8 transition-all"
+                        className="w-8 h-8 rounded-xl flex items-center justify-center text-gray-400 hover:text-white transition-all"
+                        style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
                       >
-                        <ArrowLeft size={18} />
+                        <ArrowLeft size={16} />
                       </button>
                       <div>
-                        <h2 className="text-white font-bold text-lg leading-none">Delivery Details</h2>
+                        <h2 className="text-white font-bold text-base leading-none">Delivery Details</h2>
                         <p className="text-gray-500 text-xs mt-0.5">Step 2 of 2</p>
                       </div>
                     </div>
                     <button
                       onClick={handleClose}
-                      className="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/8 transition-all"
+                      className="w-8 h-8 rounded-xl flex items-center justify-center text-gray-500 hover:text-white transition-all"
+                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
                     >
-                      <X size={18} />
+                      <X size={16} />
                     </button>
                   </div>
 
                   {/* Form */}
-                  <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+                  <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5" style={{ scrollbarWidth: "none" }}>
 
                     {/* Order summary chip */}
-                    <div className="bg-[#141414] border border-white/8 rounded-xl px-4 py-3 flex items-center justify-between">
-                      <span className="text-gray-400 text-sm">{totalItems} item{totalItems !== 1 ? "s" : ""}</span>
-                      <span className="text-primary font-extrabold text-sm">₹{totalPrice.toLocaleString("en-IN")}</span>
+                    <div
+                      className="rounded-2xl px-4 py-3 flex items-center justify-between"
+                      style={{ background: "rgba(196,150,42,0.07)", border: "1px solid rgba(196,150,42,0.2)" }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Package size={14} style={{ color: "#C4962A" }} />
+                        <span className="text-gray-400 text-sm">{totalItems} item{totalItems !== 1 ? "s" : ""}</span>
+                      </div>
+                      <span className="font-black text-sm" style={{ color: "#C4962A" }}>₹{totalPrice.toLocaleString("en-IN")}</span>
                     </div>
 
                     {/* Full Name */}
                     <div>
                       <label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
-                        <User size={12} /> Full Name <span className="text-primary">*</span>
+                        <User size={11} /> Full Name <span className="text-primary">*</span>
                       </label>
                       <input
                         type="text"
@@ -415,7 +555,7 @@ export function CartDrawer() {
                     {/* Phone */}
                     <div>
                       <label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
-                        <Phone size={12} /> Phone Number <span className="text-primary">*</span>
+                        <Phone size={11} /> Phone Number <span className="text-primary">*</span>
                       </label>
                       <input
                         type="tel"
@@ -438,7 +578,7 @@ export function CartDrawer() {
                     {/* Shipping Address */}
                     <div>
                       <label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
-                        <MapPin size={12} /> Shipping Address <span className="text-primary">*</span>
+                        <MapPin size={11} /> Shipping Address <span className="text-primary">*</span>
                       </label>
                       <textarea
                         value={info.address}
@@ -463,68 +603,97 @@ export function CartDrawer() {
                     {/* Email (optional) */}
                     <div>
                       <label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
-                        <Mail size={12} /> Email <span className="text-gray-600 font-normal normal-case tracking-normal">(optional)</span>
+                        <Mail size={11} /> Email <span className="text-gray-600 font-normal normal-case tracking-normal">(optional)</span>
                       </label>
                       <input
                         type="email"
                         value={info.email}
                         onChange={e => handleChange("email", e.target.value)}
-                        placeholder="you@example.com"
+                        placeholder="e.g. rahul@email.com"
                         className={fieldClass("email")}
                         autoComplete="email"
                       />
                     </div>
 
-                    <p className="text-xs text-gray-600 leading-relaxed">
-                      Your details will be shared with Radhe Digital via WhatsApp to process your order. We'll never share them elsewhere.
-                    </p>
+                    {/* Items recap */}
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Your Order</p>
+                      {items.map(item => (
+                        <div
+                          key={item.cartId}
+                          className="flex items-center gap-3 p-2.5 rounded-xl"
+                          style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
+                        >
+                          <div
+                            className="w-10 h-10 rounded-lg flex-shrink-0 overflow-hidden"
+                            style={{ border: "1px solid rgba(255,255,255,0.08)" }}
+                          >
+                            <ProductImage src={item.image} alt={item.productName} colorHex={item.customization?.colorHex} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-white text-xs font-semibold truncate">{item.productName}</p>
+                            <p className="text-gray-500 text-[11px]">Qty {item.quantity}</p>
+                          </div>
+                          <p className="text-xs font-black flex-shrink-0" style={{ color: "#C4962A" }}>
+                            ₹{(item.price * item.quantity).toLocaleString("en-IN")}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Footer */}
-                  <div className="flex-shrink-0 border-t border-white/8 px-6 py-5 space-y-3">
-                    <a
-                      href={Object.keys(validate(info)).length === 0 ? buildWhatsApp() : "#"}
+                  {/* Footer CTA */}
+                  <div
+                    className="flex-shrink-0 px-5 py-4 space-y-3"
+                    style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+                  >
+                    <div
+                      className="flex justify-between font-black text-base px-1"
+                    >
+                      <span className="text-gray-400">Total</span>
+                      <span style={{ color: "#C4962A" }}>₹{totalPrice.toLocaleString("en-IN")}</span>
+                    </div>
+                    <motion.a
+                      href={buildWhatsApp()}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={e => {
-                        const errs = validate(info);
-                        if (Object.keys(errs).length > 0) {
-                          e.preventDefault();
-                          setTouched({ name: true, phone: true, address: true });
-                          setErrors(errs);
-                          return;
-                        }
-                        // Fire-and-forget: save order to database silently
-                        const primaryItem = items[0];
-                        createOrder({
-                          customerName: info.name.trim(),
-                          mobile: info.phone.trim(),
-                          address: info.address.trim(),
-                          email: info.email.trim() || undefined,
-                          productName: items.length === 1
-                            ? primaryItem.productName
-                            : `${primaryItem.productName} (+${items.length - 1} more)`,
-                          category: primaryItem.categoryLabel,
-                          quantity: items.reduce((s, i) => s + i.quantity, 0),
-                          total: totalPrice,
-                          isWhatsapp: true,
-                          notes: JSON.stringify(items.map(i => ({
-                            name: i.productName, qty: i.quantity, price: i.price,
-                            label: i.priceLabel, customization: i.customization ?? null,
-                          }))),
-                        }).catch(() => {/* silent — WhatsApp is the primary channel */});
-                        setTimeout(handleClose, 400);
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={async () => {
+                        try {
+                          await createOrder({
+                            customerName: info.name,
+                            customerPhone: info.phone,
+                            customerAddress: info.address,
+                            customerEmail: info.email || undefined,
+                            items: items.map(i => ({
+                              productId: i.productId,
+                              productName: i.productName,
+                              categorySlug: i.categorySlug,
+                              categoryLabel: i.categoryLabel,
+                              quantity: i.quantity,
+                              price: i.price,
+                              priceLabel: i.priceLabel,
+                              isCustomized: i.isCustomized,
+                              customization: i.customization,
+                            })),
+                            totalAmount: totalPrice,
+                          });
+                        } catch {}
+                        setTimeout(() => { clearCart(); handleClose(); }, 600);
+                      }}
+                      className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-black text-white text-sm no-underline"
+                      style={{
+                        background: "linear-gradient(135deg,#25D366 0%,#1aae55 100%)",
+                        boxShadow: "0 6px 24px rgba(37,211,102,0.3)",
                       }}
                     >
-                      <motion.button
-                        whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-white text-sm"
-                        style={{ background: "linear-gradient(135deg,#25D366,#1da851)", boxShadow: "0 4px 18px rgba(37,211,102,0.3)" }}
-                      >
-                        <MessageCircle size={17} /> Confirm Order on WhatsApp <ArrowRight size={15} />
-                      </motion.button>
-                    </a>
-                    <p className="text-center text-xs text-gray-600">No payment required now · Order confirmed via WhatsApp</p>
+                      <MessageCircle size={18} />
+                      Confirm Order on WhatsApp
+                    </motion.a>
+                    <p className="text-center text-[11px] text-gray-600">
+                      You'll be redirected to WhatsApp to finalize your order
+                    </p>
                   </div>
                 </motion.div>
               )}
