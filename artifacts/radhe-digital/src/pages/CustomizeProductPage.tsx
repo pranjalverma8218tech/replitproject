@@ -320,6 +320,20 @@ export default function CustomizeProductPage() {
   /* ── Quantity ── */
   const [quantity, setQuantity] = useState(1);
 
+  /* ── T-Shirt size breakdown ── */
+  const SIZES = ["S", "M", "L", "XL", "XXL"] as const;
+  type Size = typeof SIZES[number];
+  const [sizeQty, setSizeQty] = useState<Record<Size, number>>({ S: 0, M: 0, L: 0, XL: 0, XXL: 0 });
+  const isTShirt = category === "t-shirts";
+  const totalSizeQty = isTShirt ? Object.values(sizeQty).reduce((a, b) => a + b, 0) : 0;
+  const effectiveQty = isTShirt ? Math.max(1, totalSizeQty) : quantity;
+  const sizeBreakdown = SIZES.filter(s => sizeQty[s] > 0).map(s => `${s}×${sizeQty[s]}`).join(", ");
+
+  const setSizeAmount = (size: Size, val: string) => {
+    const n = Math.max(0, parseInt(val) || 0);
+    setSizeQty(prev => ({ ...prev, [size]: n }));
+  };
+
   /* ── UI states ── */
   const [showError, setShowError] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -375,14 +389,15 @@ export default function CustomizeProductPage() {
       price: product?.price ?? 0,
       priceLabel: product?.priceLabel ?? "",
       isCustomized: true,
-      quantity,
+      quantity: effectiveQty,
       image: product?.image,
       customization: {
         printPosition: printPositionLabel,
         uploadedFileName: designNote,
         logoFileName: logoFile?.name,
         designInstructions: designInstructions.trim() || undefined,
-        quantity,
+        quantity: effectiveQty,
+        size: isTShirt && sizeBreakdown ? sizeBreakdown : undefined,
       },
     });
     setSaved(true);
@@ -398,12 +413,14 @@ export default function CustomizeProductPage() {
       ``,
       `*Product:* ${product?.name ?? category}`,
       `*Print Position:* ${printPositionLabel}`,
-      `*Quantity:* ${quantity}`,
+      isTShirt && sizeBreakdown
+        ? `*Sizes & Quantity:* ${sizeBreakdown} (Total: ${totalSizeQty} pcs)`
+        : `*Quantity:* ${quantity}`,
       logoFile ? `*Logo:* ${logoFile.name}` : "",
       frontFile ? `*Design (Front):* ${frontFile.name}` : "",
       backFile ? `*Design (Back):* ${backFile.name}` : "",
       designInstructions.trim() ? `*Instructions:* ${designInstructions.trim()}` : "",
-      `*Base Price:* ${product?.priceLabel ?? ""}`,
+      `*Base Price:* ${product?.priceLabel ?? ""} × ${effectiveQty} = ₹${(product?.price ?? 0) * effectiveQty}`,
     ].filter(Boolean).join("\n");
     window.open(`https://wa.me/919319903380?text=${encodeURIComponent(lines)}`, "_blank");
   };
@@ -528,11 +545,20 @@ export default function CustomizeProductPage() {
               <div className="space-y-2.5">
                 <SummaryRow label="Product" value={product.name} />
                 <SummaryRow label="Print Position" value={printPositionLabel} valueColor="#DC2626" />
-                <SummaryRow label="Quantity" value={`${quantity} piece${quantity > 1 ? "s" : ""}`} />
+                {isTShirt ? (
+                  <>
+                    {SIZES.filter(s => sizeQty[s] > 0).map(s => (
+                      <SummaryRow key={s} label={`Size ${s}`} value={`${sizeQty[s]} pc${sizeQty[s] > 1 ? "s" : ""}`} />
+                    ))}
+                    <SummaryRow label="Total Pieces" value={`${totalSizeQty} piece${totalSizeQty !== 1 ? "s" : ""}`} />
+                  </>
+                ) : (
+                  <SummaryRow label="Quantity" value={`${quantity} piece${quantity > 1 ? "s" : ""}`} />
+                )}
                 <div className="border-t border-gray-100 pt-2.5 mt-1">
                   <SummaryRow
                     label="Base Total"
-                    value={`₹${(product.price * quantity).toLocaleString("en-IN")}`}
+                    value={`₹${(product.price * effectiveQty).toLocaleString("en-IN")}`}
                     valueColor="#DC2626"
                     bold
                     large
@@ -570,10 +596,123 @@ export default function CustomizeProductPage() {
               </p>
             </div>
 
-            {/* 1. Quantity */}
-            <SectionCard title="QUANTITY" step={1}>
-              <QuantitySelector value={quantity} onChange={setQuantity} />
-            </SectionCard>
+            {/* 1. Quantity / Size */}
+            {isTShirt ? (
+              <SectionCard
+                title="SIZE & QUANTITY"
+                step={1}
+                badge={totalSizeQty > 0 ? `${totalSizeQty} pcs` : "Required"}
+                badgeGreen={totalSizeQty > 0}
+              >
+                <div className="space-y-4">
+                  <p className="text-gray-500 text-sm">Enter how many pieces you need per size. Leave blank if not required.</p>
+
+                  {/* Size grid */}
+                  <div className="space-y-2">
+                    {/* Header row */}
+                    <div className="grid grid-cols-[80px_1fr_auto] gap-3 px-1">
+                      <span className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Size</span>
+                      <span className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Quantity (pieces)</span>
+                      <span className="w-20" />
+                    </div>
+
+                    {SIZES.map(size => (
+                      <div
+                        key={size}
+                        className="grid grid-cols-[80px_1fr_auto] gap-3 items-center p-3 rounded-xl border transition-all duration-150"
+                        style={
+                          sizeQty[size] > 0
+                            ? { borderColor: "#DC2626", background: "rgba(220,38,38,0.04)" }
+                            : { borderColor: "#e5e7eb", background: "#fafafa" }
+                        }
+                      >
+                        {/* Size badge */}
+                        <span
+                          className="w-12 h-10 rounded-lg flex items-center justify-center text-sm font-black border-2"
+                          style={
+                            sizeQty[size] > 0
+                              ? { background: "#DC2626", color: "#fff", borderColor: "#DC2626" }
+                              : { background: "#fff", color: "#374151", borderColor: "#e5e7eb" }
+                          }
+                        >
+                          {size}
+                        </span>
+
+                        {/* Quantity input */}
+                        <input
+                          type="number"
+                          min={0}
+                          value={sizeQty[size] === 0 ? "" : sizeQty[size]}
+                          onChange={e => setSizeAmount(size, e.target.value)}
+                          placeholder="0"
+                          className="w-full h-10 rounded-xl border-2 px-3 text-sm font-bold text-gray-900 outline-none transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          style={{
+                            borderColor: sizeQty[size] > 0 ? "#DC2626" : "#e5e7eb",
+                            background: "#fff",
+                          }}
+                        />
+
+                        {/* +/- stepper */}
+                        <div className="flex items-center gap-1 w-20 flex-shrink-0">
+                          <button
+                            onClick={() => setSizeAmount(size, String(Math.max(0, sizeQty[size] - 1)))}
+                            className="w-8 h-8 rounded-lg border flex items-center justify-center transition-colors"
+                            style={{ borderColor: "#e5e7eb", color: "#6b7280" }}
+                          >
+                            <Minus size={12} />
+                          </button>
+                          <button
+                            onClick={() => setSizeAmount(size, String(sizeQty[size] + 1))}
+                            className="w-8 h-8 rounded-lg border flex items-center justify-center transition-colors"
+                            style={{ borderColor: "#DC2626", color: "#DC2626", background: "rgba(220,38,38,0.05)" }}
+                          >
+                            <Plus size={12} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Total bar */}
+                  <div
+                    className="flex items-center justify-between px-4 py-3 rounded-xl border-2"
+                    style={
+                      totalSizeQty > 0
+                        ? { borderColor: "#DC2626", background: "rgba(220,38,38,0.06)" }
+                        : { borderColor: "#e5e7eb", background: "#f9fafb" }
+                    }
+                  >
+                    <span className="text-sm font-bold text-gray-700">Total T-Shirts</span>
+                    <div className="flex items-center gap-2">
+                      {sizeBreakdown && (
+                        <span className="text-xs text-gray-400 font-medium">{sizeBreakdown}</span>
+                      )}
+                      <span
+                        className="text-2xl font-black"
+                        style={{ color: totalSizeQty > 0 ? "#DC2626" : "#d1d5db" }}
+                      >
+                        {totalSizeQty}
+                      </span>
+                    </div>
+                  </div>
+
+                  {totalSizeQty >= 10 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold"
+                      style={{ background: "rgba(234,179,8,0.1)", color: "#b45309", border: "1px solid rgba(234,179,8,0.3)" }}
+                    >
+                      🎉 Bulk order! You qualify for a special bulk discount price.
+                    </motion.div>
+                  )}
+                </div>
+              </SectionCard>
+            ) : (
+              <SectionCard title="QUANTITY" step={1}>
+                <QuantitySelector value={quantity} onChange={setQuantity} />
+              </SectionCard>
+            )}
 
             {/* 2. Print Position */}
             {positions.length > 0 && (
@@ -741,7 +880,7 @@ export default function CustomizeProductPage() {
                     <Sparkles size={20} />
                     PROCEED TO ORDER
                     <span className="ml-auto text-sm font-bold opacity-80">
-                      {quantity} pc{quantity > 1 ? "s" : ""} · ₹{(product.price * quantity).toLocaleString("en-IN")}
+                      {effectiveQty} pc{effectiveQty > 1 ? "s" : ""} · ₹{(product.price * effectiveQty).toLocaleString("en-IN")}
                     </span>
                   </>
                 ) : (
