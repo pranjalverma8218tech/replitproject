@@ -38,6 +38,16 @@
         "view": "front",
         "label": "Front View",
         "url": "/api/uploads/1781084359819-ragyhhu9kv.jpg"
+      },
+      {
+        "view": "back",
+        "label": "Back View",
+        "url": "/api/uploads/1781242665212-my166c67z4c.webp"
+      },
+      {
+        "view": "side",
+        "label": "Side View",
+        "url": "/api/uploads/1781242668968-25sgvs2dzl2.webp"
       }
     ],
     "features": [],
@@ -45,7 +55,8 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T10:02:49.281Z"
+    "updatedAt": "2026-06-12T05:37:51.476Z",
+    "variants": []
   },
   {
     "id": "ts-003",
