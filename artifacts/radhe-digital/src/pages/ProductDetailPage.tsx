@@ -235,7 +235,7 @@ export default function ProductDetailPage() {
               style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.12)" }}
             >
               {activeRealImage
-                ? <img src={activeRealImage.url} alt={`${product.name} – ${activeRealImage.label}`} className="w-full h-full object-cover" />
+                ? <img src={activeRealImage.url} alt={`${product.name} – ${activeRealImage.label}`} className="w-full h-full object-cover" loading="lazy" />
                 : <GallerySVG slug={slug ?? ""} angle={galleryViews[activeView]?.angle ?? "front"} color={selectedColorHex} active />
               }
               {product.badge && (
@@ -259,7 +259,7 @@ export default function ProductDetailPage() {
                       }`}
                       style={activeView === i ? { borderColor: "#C4962A", boxShadow: "0 2px 12px rgba(196,150,42,0.25)" } : {}}
                     >
-                      <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
+                      <img src={img.url} alt={img.label} className="w-full h-full object-cover" loading="lazy" />
                     </button>
                   ))
                 : galleryViews.map((view, i) => (

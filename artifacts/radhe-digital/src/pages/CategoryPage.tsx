@@ -130,7 +130,7 @@ function ProductCard({ product, slug, categoryLabel, index, realImageUrl }: {
         <Link href={`/categories/${slug}/${product.id}`}>
           <div className="relative aspect-square overflow-hidden bg-[#f5f5f5] cursor-pointer">
             {realImageUrl
-              ? <img src={realImageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              ? <img src={realImageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
               : <ProductSVG slug={slug} index={index} />
             }
             {product.badge && (

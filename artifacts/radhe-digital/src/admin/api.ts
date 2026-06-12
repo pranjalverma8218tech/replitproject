@@ -170,6 +170,42 @@ export async function uploadImage(file: File): Promise<{ url: string }> {
   return data as { url: string };
 }
 
+export function uploadImageWithProgress(
+  file: File,
+  onProgress: (percent: number) => void
+): Promise<{ url: string }> {
+  return new Promise((resolve, reject) => {
+    const token = getToken();
+    const form = new FormData();
+    form.append("file", file);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `${BASE}/upload`);
+    if (token) xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+    xhr.upload.addEventListener("progress", e => {
+      if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+    });
+
+    xhr.addEventListener("load", () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try { resolve(JSON.parse(xhr.responseText)); }
+        catch { reject(new Error("Invalid server response")); }
+      } else {
+        try {
+          const d = JSON.parse(xhr.responseText);
+          reject(new Error(d.message ?? `Upload failed (${xhr.status})`));
+        } catch {
+          reject(new Error(`Upload failed (${xhr.status})`));
+        }
+      }
+    });
+    xhr.addEventListener("error", () => reject(new Error("Network error. Check your connection.")));
+    xhr.addEventListener("abort", () => reject(new Error("Upload cancelled.")));
+    xhr.send(form);
+  });
+}
+
 export async function deleteUploadedImage(filename: string): Promise<void> {
   const token = getToken();
   await fetch(`${BASE}/upload/${encodeURIComponent(filename)}`, {

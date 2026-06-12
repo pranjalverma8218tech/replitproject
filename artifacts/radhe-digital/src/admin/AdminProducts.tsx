@@ -10,9 +10,10 @@ import {
 } from "lucide-react";
 import {
   getProducts, createProduct, updateProduct, deleteProduct,
-  uploadImage,
+  uploadImage, uploadImageWithProgress,
   type Product, type ProductImage, type ProductSpec, type ProductVariant, DB_NOT_CONNECTED_MSG
 } from "./api";
+import { compressImage, validateImageFile } from "./imageUtils";
 import { invalidateApiProductsCache } from "@/hooks/useApiProducts";
 import type { ProductCategory } from "./sampleData";
 
@@ -113,10 +114,9 @@ export default function AdminProducts() {
   // delete
   const [deleteId,      setDeleteId]      = useState<string | null>(null);
 
-  // upload
-  const [uploadingIdx,       setUploadingIdx]       = useState<number | null>(null);
+  // upload — keyed progress: "img-{idx}" or "v-{vi}-{imgIdx}" → 0-100
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
   const fileRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const [uploadingVariantKey, setUploadingVariantKey] = useState<string | null>(null);
   const variantFileRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   // ── Load ──
@@ -273,11 +273,25 @@ export default function AdminProducts() {
   const setImage = (idx: number, url: string) =>
     setForm(f => ({ ...f, images: f.images.map((img, i) => i === idx ? { ...img, url } : img) }));
 
+  const setProgress = (key: string, pct: number | null) =>
+    setUploadProgress(prev => {
+      if (pct === null) { const n = { ...prev }; delete n[key]; return n; }
+      return { ...prev, [key]: pct };
+    });
+
   const handleFileUpload = async (idx: number, file: File) => {
-    setUploadingIdx(idx);
-    try { const { url } = await uploadImage(file); setImage(idx, url); }
-    catch (e: any) { setError(e.message ?? "Upload failed"); }
-    finally { setUploadingIdx(null); }
+    const key = `img-${idx}`;
+    setProgress(key, 0);
+    try {
+      validateImageFile(file);
+      const { file: compressed } = await compressImage(file);
+      const { url } = await uploadImageWithProgress(compressed, pct => setProgress(key, pct));
+      setImage(idx, url);
+    } catch (e: any) {
+      setError(e.message ?? "Upload failed");
+    } finally {
+      setProgress(key, null);
+    }
   };
 
   // ── Variant Handlers ──
@@ -296,11 +310,18 @@ export default function AdminProducts() {
         : v),
     }));
   const handleVariantImageUpload = async (vi: number, imgIdx: number, file: File) => {
-    const key = `${vi}-${imgIdx}`;
-    setUploadingVariantKey(key);
-    try { const { url } = await uploadImage(file); setVariantImage(vi, imgIdx, url); }
-    catch (e: any) { setError(e.message ?? "Upload failed"); }
-    finally { setUploadingVariantKey(null); }
+    const key = `v-${vi}-${imgIdx}`;
+    setProgress(key, 0);
+    try {
+      validateImageFile(file);
+      const { file: compressed } = await compressImage(file);
+      const { url } = await uploadImageWithProgress(compressed, pct => setProgress(key, pct));
+      setVariantImage(vi, imgIdx, url);
+    } catch (e: any) {
+      setError(e.message ?? "Upload failed");
+    } finally {
+      setProgress(key, null);
+    }
   };
 
   const setFeature  = (idx: number, val: string) => setForm(f => ({ ...f, features: f.features.map((v, i) => i === idx ? val : v) }));
@@ -744,10 +765,13 @@ export default function AdminProducts() {
                           className="hidden" />
                         <div className="flex gap-4 p-4">
                           <button type="button" onClick={() => fileRefs.current[idx]?.click()}
-                            disabled={uploadingIdx === idx}
+                            disabled={`img-${idx}` in uploadProgress}
                             className="flex-shrink-0 w-24 h-24 rounded-xl border-2 border-dashed border-white/15 hover:border-primary/50 bg-[#0d0d0d] hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-1.5 overflow-hidden relative group">
-                            {uploadingIdx === idx ? (
-                              <Loader2 size={20} className="animate-spin text-primary" />
+                            {`img-${idx}` in uploadProgress ? (
+                              <div className="flex flex-col items-center gap-1">
+                                <Loader2 size={16} className="animate-spin text-primary" />
+                                <span className="text-[11px] font-bold text-primary">{uploadProgress[`img-${idx}`]}%</span>
+                              </div>
                             ) : img.url ? (
                               <>
                                 <img src={img.url} alt={img.label} className="absolute inset-0 w-full h-full object-cover" onError={() => {}} />
@@ -774,9 +798,9 @@ export default function AdminProducts() {
                             </div>
                             <div className="flex gap-2">
                               <button type="button" onClick={() => fileRefs.current[idx]?.click()}
-                                disabled={uploadingIdx === idx}
+                                disabled={`img-${idx}` in uploadProgress}
                                 className="flex items-center gap-1.5 px-3 h-9 rounded-lg bg-primary/15 hover:bg-primary/25 text-primary text-xs font-bold transition-all border border-primary/20 flex-shrink-0 disabled:opacity-50">
-                                <Upload size={12} />{uploadingIdx === idx ? "Uploading…" : "Upload"}
+                                <Upload size={12} />{`img-${idx}` in uploadProgress ? `${uploadProgress[`img-${idx}`]}%` : "Upload"}
                               </button>
                               <div className="relative flex-1 min-w-0">
                                 <Link2 size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" />
@@ -790,7 +814,7 @@ export default function AdminProducts() {
                       </div>
                     ))}
                     <div className="bg-white/3 border border-white/6 rounded-xl px-4 py-3 text-[11px] text-gray-500 leading-relaxed">
-                      <span className="font-bold text-gray-400">Supported formats:</span> JPG, PNG, WebP, GIF · Max 10 MB per image
+                      <span className="font-bold text-gray-400">Supported formats:</span> JPG, PNG, WebP, GIF · Max 20 MB · Auto-compressed to WebP ≤500 KB before upload
                     </div>
                   </div>
                 )}
@@ -859,8 +883,8 @@ export default function AdminProducts() {
                             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-3">Images for this color</p>
                             <div className="grid grid-cols-4 gap-2">
                               {variant.images.map((img, imgIdx) => {
-                                const refKey = `${vi}-${imgIdx}`;
-                                const isUploading = uploadingVariantKey === refKey;
+                                const refKey = `v-${vi}-${imgIdx}`;
+                                const isUploading = refKey in uploadProgress;
                                 return (
                                   <div key={img.view} className="space-y-1">
                                     <input type="file" accept="image/jpeg,image/png,image/webp,image/gif"
@@ -872,7 +896,10 @@ export default function AdminProducts() {
                                       disabled={isUploading}
                                       className="w-full aspect-square rounded-xl border-2 border-dashed border-white/12 hover:border-primary/40 bg-[#0d0d0d] hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-1 overflow-hidden relative group">
                                       {isUploading ? (
-                                        <Loader2 size={16} className="animate-spin text-primary" />
+                                        <div className="flex flex-col items-center gap-0.5">
+                                          <Loader2 size={13} className="animate-spin text-primary" />
+                                          <span className="text-[9px] font-bold text-primary">{uploadProgress[refKey] ?? 0}%</span>
+                                        </div>
                                       ) : img.url ? (
                                         <>
                                           <img src={img.url} alt={img.label} className="absolute inset-0 w-full h-full object-cover" />
