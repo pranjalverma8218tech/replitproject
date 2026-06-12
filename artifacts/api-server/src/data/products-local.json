@@ -1,0 +1,458 @@
+[
+  {
+    "id": "PRD-TSHIRT-001",
+    "name": "Classic Round Neck T-Shirt",
+    "category": "T-Shirt Printing",
+    "categorySlug": "t-shirts",
+    "description": "Premium 180 GSM cotton round neck t-shirt with vibrant full-color printing. Perfect for teams, events, and brand promotions.",
+    "price": 199,
+    "priceLabel": "₹199",
+    "badge": "Best Seller",
+    "tags": ["t-shirt", "round neck", "cotton", "custom print"],
+    "images": [],
+    "variants": [
+      { "id": "v-tshirt-001-white", "color": "White", "hex": "#ffffff", "images": [], "stock": 100 },
+      { "id": "v-tshirt-001-black", "color": "Black", "hex": "#1a1a1a", "images": [], "stock": 100 },
+      { "id": "v-tshirt-001-red", "color": "Red", "hex": "#e53e3e", "images": [], "stock": 80 },
+      { "id": "v-tshirt-001-navy", "color": "Navy Blue", "hex": "#1a365d", "images": [], "stock": 60 },
+      { "id": "v-tshirt-001-royal", "color": "Royal Blue", "hex": "#2b6cb0", "images": [], "stock": 60 }
+    ],
+    "features": ["180 GSM Premium Cotton", "Vibrant Digital Print", "Pre-shrunk fabric", "Available in all sizes"],
+    "specifications": [
+      { "label": "Material", "value": "100% Cotton" },
+      { "label": "GSM", "value": "180 GSM" },
+      { "label": "Print Type", "value": "DTG / Screen Print" },
+      { "label": "Sizes", "value": "S, M, L, XL, XXL" },
+      { "label": "Min Order", "value": "1 piece" },
+      { "label": "Delivery", "value": "3–5 business days" }
+    ],
+    "status": "Active",
+    "stock": 500,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-TSHIRT-002",
+    "name": "Polo T-Shirt with Logo Print",
+    "category": "T-Shirt Printing",
+    "categorySlug": "t-shirts",
+    "description": "Smart corporate polo t-shirt with embroidered or printed logo. Ideal for office uniforms and brand merchandise.",
+    "price": 299,
+    "priceLabel": "₹299",
+    "badge": "Corporate Pick",
+    "tags": ["polo", "t-shirt", "corporate", "uniform"],
+    "images": [],
+    "variants": [
+      { "id": "v-tshirt-002-white", "color": "White", "hex": "#ffffff", "images": [], "stock": 80 },
+      { "id": "v-tshirt-002-black", "color": "Black", "hex": "#1a1a1a", "images": [], "stock": 80 },
+      { "id": "v-tshirt-002-grey", "color": "Grey", "hex": "#718096", "images": [], "stock": 60 },
+      { "id": "v-tshirt-002-maroon", "color": "Maroon", "hex": "#742a2a", "images": [], "stock": 50 }
+    ],
+    "features": ["200 GSM Pique Cotton", "Collar & Button Placket", "Embroidery or Print", "Wrinkle resistant"],
+    "specifications": [
+      { "label": "Material", "value": "Pique Cotton" },
+      { "label": "GSM", "value": "200 GSM" },
+      { "label": "Print Type", "value": "Embroidery / DTG" },
+      { "label": "Sizes", "value": "S, M, L, XL, XXL" },
+      { "label": "Min Order", "value": "1 piece" },
+      { "label": "Delivery", "value": "4–6 business days" }
+    ],
+    "status": "Active",
+    "stock": 300,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-TSHIRT-003",
+    "name": "Dry-Fit Sports T-Shirt",
+    "category": "T-Shirt Printing",
+    "categorySlug": "t-shirts",
+    "description": "Lightweight dry-fit polyester t-shirt for sports and athletic events. Moisture-wicking with custom sublimation printing.",
+    "price": 249,
+    "priceLabel": "₹249",
+    "badge": "Sports Edition",
+    "tags": ["dry-fit", "sports", "sublimation", "polyester"],
+    "images": [],
+    "variants": [
+      { "id": "v-tshirt-003-white", "color": "White", "hex": "#ffffff", "images": [], "stock": 100 },
+      { "id": "v-tshirt-003-red", "color": "Red", "hex": "#e53e3e", "images": [], "stock": 80 },
+      { "id": "v-tshirt-003-blue", "color": "Sky Blue", "hex": "#63b3ed", "images": [], "stock": 70 },
+      { "id": "v-tshirt-003-green", "color": "Green", "hex": "#38a169", "images": [], "stock": 60 },
+      { "id": "v-tshirt-003-yellow", "color": "Yellow", "hex": "#d69e2e", "images": [], "stock": 50 }
+    ],
+    "features": ["100% Polyester", "Moisture Wicking", "All-over Sublimation", "Lightweight 140 GSM"],
+    "specifications": [
+      { "label": "Material", "value": "100% Polyester" },
+      { "label": "GSM", "value": "140 GSM" },
+      { "label": "Print Type", "value": "Sublimation" },
+      { "label": "Sizes", "value": "S, M, L, XL, XXL" },
+      { "label": "Min Order", "value": "1 piece" },
+      { "label": "Delivery", "value": "3–5 business days" }
+    ],
+    "status": "Active",
+    "stock": 400,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-MUG-001",
+    "name": "Ceramic Photo Mug",
+    "category": "Mug Printing",
+    "categorySlug": "mugs",
+    "description": "High-quality 11oz ceramic mug with full wraparound photo printing. Dishwasher safe with vibrant, long-lasting colors.",
+    "price": 249,
+    "priceLabel": "₹249",
+    "badge": "Most Gifted",
+    "tags": ["mug", "ceramic", "photo", "gift"],
+    "images": [],
+    "variants": [
+      { "id": "v-mug-001-white", "color": "White", "hex": "#ffffff", "images": [], "stock": 200 },
+      { "id": "v-mug-001-black", "color": "Black", "hex": "#1a1a1a", "images": [], "stock": 100 }
+    ],
+    "features": ["11oz Ceramic", "Full Wraparound Print", "Dishwasher Safe", "Microwave Safe"],
+    "specifications": [
+      { "label": "Capacity", "value": "11 oz / 330 ml" },
+      { "label": "Material", "value": "Premium Ceramic" },
+      { "label": "Print Type", "value": "Sublimation" },
+      { "label": "Dishwasher Safe", "value": "Yes" },
+      { "label": "Min Order", "value": "1 piece" },
+      { "label": "Delivery", "value": "3–5 business days" }
+    ],
+    "status": "Active",
+    "stock": 300,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-MUG-002",
+    "name": "Magic Color-Changing Mug",
+    "category": "Mug Printing",
+    "categorySlug": "mugs",
+    "description": "Unique heat-sensitive magic mug that reveals your photo or design when filled with hot liquid. Perfect surprise gift.",
+    "price": 349,
+    "priceLabel": "₹349",
+    "badge": "Trending",
+    "tags": ["magic mug", "color changing", "gift", "surprise"],
+    "images": [],
+    "variants": [],
+    "features": ["Heat Sensitive Coating", "Reveals Design with Hot Liquid", "11oz Capacity", "Unique Gift Idea"],
+    "specifications": [
+      { "label": "Capacity", "value": "11 oz" },
+      { "label": "Material", "value": "Ceramic with Heat Coating" },
+      { "label": "Print Type", "value": "Sublimation" },
+      { "label": "Min Order", "value": "1 piece" },
+      { "label": "Delivery", "value": "4–6 business days" }
+    ],
+    "status": "Active",
+    "stock": 150,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-MUG-003",
+    "name": "Corporate Logo Mug (Set of 6)",
+    "category": "Mug Printing",
+    "categorySlug": "mugs",
+    "description": "Premium branded ceramic mugs with your company logo. Ideal for corporate gifting, office use, and brand promotions.",
+    "price": 1199,
+    "priceLabel": "₹1,199 / set",
+    "badge": "Bulk Deal",
+    "tags": ["corporate", "mug", "logo", "bulk", "gift set"],
+    "images": [],
+    "variants": [
+      { "id": "v-mug-003-white", "color": "White", "hex": "#ffffff", "images": [], "stock": 50 },
+      { "id": "v-mug-003-black", "color": "Black", "hex": "#1a1a1a", "images": [], "stock": 50 }
+    ],
+    "features": ["Set of 6 Mugs", "Company Logo Print", "Gift Box Packaging", "Premium Ceramic"],
+    "specifications": [
+      { "label": "Quantity", "value": "Set of 6" },
+      { "label": "Capacity", "value": "11 oz each" },
+      { "label": "Print Type", "value": "Sublimation" },
+      { "label": "Packaging", "value": "Gift Box" },
+      { "label": "Delivery", "value": "5–7 business days" }
+    ],
+    "status": "Active",
+    "stock": 100,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-CAP-001",
+    "name": "Snapback Cap with Logo",
+    "category": "Cap Printing",
+    "categorySlug": "caps",
+    "description": "Stylish snapback cap with front panel logo printing or embroidery. One size fits all with adjustable strap.",
+    "price": 179,
+    "priceLabel": "₹179",
+    "badge": "Popular",
+    "tags": ["cap", "snapback", "logo", "embroidery"],
+    "images": [],
+    "variants": [
+      { "id": "v-cap-001-black", "color": "Black", "hex": "#1a1a1a", "images": [], "stock": 100 },
+      { "id": "v-cap-001-white", "color": "White", "hex": "#ffffff", "images": [], "stock": 80 },
+      { "id": "v-cap-001-navy", "color": "Navy Blue", "hex": "#1a365d", "images": [], "stock": 60 },
+      { "id": "v-cap-001-red", "color": "Red", "hex": "#e53e3e", "images": [], "stock": 50 }
+    ],
+    "features": ["Adjustable Snapback", "Front Panel Embroidery", "Structured Crown", "One Size Fits All"],
+    "specifications": [
+      { "label": "Style", "value": "Snapback / Flat Brim" },
+      { "label": "Print Type", "value": "Embroidery / Print" },
+      { "label": "Size", "value": "One Size (Adjustable)" },
+      { "label": "Min Order", "value": "1 piece" },
+      { "label": "Delivery", "value": "4–6 business days" }
+    ],
+    "status": "Active",
+    "stock": 300,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-CAP-002",
+    "name": "Dad Cap (Unstructured)",
+    "category": "Cap Printing",
+    "categorySlug": "caps",
+    "description": "Classic low-profile unstructured dad cap with custom embroidery. Soft, comfortable, and perfect for everyday wear.",
+    "price": 149,
+    "priceLabel": "₹149",
+    "badge": null,
+    "tags": ["cap", "dad cap", "unstructured", "casual"],
+    "images": [],
+    "variants": [
+      { "id": "v-cap-002-beige", "color": "Beige", "hex": "#d4a96a", "images": [], "stock": 80 },
+      { "id": "v-cap-002-black", "color": "Black", "hex": "#1a1a1a", "images": [], "stock": 80 },
+      { "id": "v-cap-002-olive", "color": "Olive", "hex": "#68703a", "images": [], "stock": 60 }
+    ],
+    "features": ["Unstructured Soft Crown", "Metal Buckle Strap", "Low Profile Style", "Custom Embroidery"],
+    "specifications": [
+      { "label": "Style", "value": "Dad Cap / Low Profile" },
+      { "label": "Print Type", "value": "Embroidery" },
+      { "label": "Size", "value": "One Size (Adjustable)" },
+      { "label": "Min Order", "value": "1 piece" },
+      { "label": "Delivery", "value": "4–6 business days" }
+    ],
+    "status": "Active",
+    "stock": 220,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-PEN-001",
+    "name": "Metal Branded Pen",
+    "category": "Pen Printing",
+    "categorySlug": "pens",
+    "description": "Premium metal ballpoint pen with laser engraving or UV printing of your logo. Perfect corporate gift and giveaway item.",
+    "price": 49,
+    "priceLabel": "₹49",
+    "badge": "Best Value",
+    "tags": ["pen", "metal", "laser engraving", "corporate gift"],
+    "images": [],
+    "variants": [
+      { "id": "v-pen-001-silver", "color": "Silver", "hex": "#a0aec0", "images": [], "stock": 500 },
+      { "id": "v-pen-001-gold", "color": "Gold", "hex": "#C4962A", "images": [], "stock": 300 },
+      { "id": "v-pen-001-black", "color": "Black", "hex": "#1a1a1a", "images": [], "stock": 500 }
+    ],
+    "features": ["Metal Body", "Laser Engraving", "Smooth Writing", "Premium Packaging"],
+    "specifications": [
+      { "label": "Material", "value": "Metal / Aluminium" },
+      { "label": "Print Type", "value": "Laser Engraving / UV Print" },
+      { "label": "Ink Color", "value": "Blue / Black" },
+      { "label": "Min Order", "value": "10 pieces" },
+      { "label": "Delivery", "value": "3–5 business days" }
+    ],
+    "status": "Active",
+    "stock": 1000,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-PEN-002",
+    "name": "Plastic Promotional Pen (Pack of 50)",
+    "category": "Pen Printing",
+    "categorySlug": "pens",
+    "description": "Budget-friendly promotional plastic pens with your logo printed. Ideal for bulk orders, events, and mass giveaways.",
+    "price": 999,
+    "priceLabel": "₹999 / 50 pcs",
+    "badge": "Bulk Offer",
+    "tags": ["pen", "plastic", "promotional", "bulk", "giveaway"],
+    "images": [],
+    "variants": [
+      { "id": "v-pen-002-blue", "color": "Blue", "hex": "#3182ce", "images": [], "stock": 200 },
+      { "id": "v-pen-002-red", "color": "Red", "hex": "#e53e3e", "images": [], "stock": 200 },
+      { "id": "v-pen-002-black", "color": "Black", "hex": "#1a1a1a", "images": [], "stock": 200 }
+    ],
+    "features": ["Pack of 50 Pens", "Logo Pad Printing", "Smooth Ballpoint", "Cost Effective"],
+    "specifications": [
+      { "label": "Material", "value": "ABS Plastic" },
+      { "label": "Print Type", "value": "Pad Printing" },
+      { "label": "Quantity", "value": "50 pcs / pack" },
+      { "label": "Min Order", "value": "50 pieces" },
+      { "label": "Delivery", "value": "4–6 business days" }
+    ],
+    "status": "Active",
+    "stock": 600,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-BADGE-001",
+    "name": "Round Button Badge",
+    "category": "Badge Printing",
+    "categorySlug": "badges",
+    "description": "Full color printed round button badge with safety pin back. Great for events, campaigns, and brand promotions.",
+    "price": 29,
+    "priceLabel": "₹29",
+    "badge": "Event Favourite",
+    "tags": ["badge", "button badge", "round", "event"],
+    "images": [],
+    "variants": [],
+    "features": ["Full Color Print", "Safety Pin Back", "Durable Coating", "Multiple Sizes Available"],
+    "specifications": [
+      { "label": "Sizes", "value": "25mm, 38mm, 58mm" },
+      { "label": "Print Type", "value": "Digital Print + Lamination" },
+      { "label": "Back Type", "value": "Safety Pin" },
+      { "label": "Min Order", "value": "10 pieces" },
+      { "label": "Delivery", "value": "2–4 business days" }
+    ],
+    "status": "Active",
+    "stock": 1000,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-BADGE-002",
+    "name": "Name Badge with Clip",
+    "category": "Badge Printing",
+    "categorySlug": "badges",
+    "description": "Professional name badge with printed name, designation, and company logo. Essential for corporate events and offices.",
+    "price": 39,
+    "priceLabel": "₹39",
+    "badge": null,
+    "tags": ["name badge", "corporate", "clip", "office"],
+    "images": [],
+    "variants": [
+      { "id": "v-badge-002-white", "color": "White", "hex": "#ffffff", "images": [], "stock": 500 },
+      { "id": "v-badge-002-silver", "color": "Silver", "hex": "#a0aec0", "images": [], "stock": 300 }
+    ],
+    "features": ["Custom Name & Designation", "Company Logo", "Alligator Clip or Pin", "Reusable Slot Holder"],
+    "specifications": [
+      { "label": "Size", "value": "85mm x 55mm" },
+      { "label": "Material", "value": "PVC / ABS" },
+      { "label": "Print Type", "value": "Digital Print" },
+      { "label": "Min Order", "value": "5 pieces" },
+      { "label": "Delivery", "value": "2–4 business days" }
+    ],
+    "status": "Active",
+    "stock": 800,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-FRAME-001",
+    "name": "Personalized Photo Frame",
+    "category": "Photo Frame Printing",
+    "categorySlug": "photo-frames",
+    "description": "Beautiful personalized photo frame with your custom message. Printed on premium MDF with vibrant colors. Perfect gift.",
+    "price": 299,
+    "priceLabel": "₹299",
+    "badge": "Gift Pick",
+    "tags": ["photo frame", "personalized", "gift", "MDF"],
+    "images": [],
+    "variants": [
+      { "id": "v-frame-001-wood", "color": "Wooden Brown", "hex": "#8B4513", "images": [], "stock": 100 },
+      { "id": "v-frame-001-black", "color": "Black", "hex": "#1a1a1a", "images": [], "stock": 100 },
+      { "id": "v-frame-001-white", "color": "White", "hex": "#ffffff", "images": [], "stock": 80 }
+    ],
+    "features": ["MDF Board Construction", "Vibrant Color Printing", "Easel Stand Included", "Custom Message Option"],
+    "specifications": [
+      { "label": "Sizes", "value": "4x6, 5x7, 6x8, 8x10 inches" },
+      { "label": "Material", "value": "MDF Board" },
+      { "label": "Print Type", "value": "UV Digital Print" },
+      { "label": "Stand", "value": "Easel Back Stand" },
+      { "label": "Min Order", "value": "1 piece" },
+      { "label": "Delivery", "value": "3–5 business days" }
+    ],
+    "status": "Active",
+    "stock": 200,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-FRAME-002",
+    "name": "Acrylic LED Photo Frame",
+    "category": "Photo Frame Printing",
+    "categorySlug": "photo-frames",
+    "description": "Stunning acrylic LED-lit photo frame that glows beautifully at night. Comes with USB power and multiple light modes.",
+    "price": 599,
+    "priceLabel": "₹599",
+    "badge": "Premium",
+    "tags": ["acrylic", "LED", "photo frame", "glowing", "premium"],
+    "images": [],
+    "variants": [],
+    "features": ["LED Edge Lighting", "Clear Acrylic", "USB Powered", "Multiple Light Modes"],
+    "specifications": [
+      { "label": "Sizes", "value": "5x7, 6x8 inches" },
+      { "label": "Material", "value": "Premium Acrylic" },
+      { "label": "Lighting", "value": "LED Edge Light (USB)" },
+      { "label": "Print", "value": "UV / Laser Engraving" },
+      { "label": "Min Order", "value": "1 piece" },
+      { "label": "Delivery", "value": "4–6 business days" }
+    ],
+    "status": "Active",
+    "stock": 80,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-GIFT-001",
+    "name": "Corporate Gift Combo – Mug + Pen + Keychain",
+    "category": "Corporate Gifts",
+    "categorySlug": "corporate-gifts",
+    "description": "Premium corporate gift set including custom-branded ceramic mug, metal pen, and keychain. Beautifully boxed for gifting.",
+    "price": 499,
+    "priceLabel": "₹499",
+    "badge": "Top Gifted",
+    "tags": ["corporate gift", "combo", "mug", "pen", "keychain", "gift set"],
+    "images": [],
+    "variants": [],
+    "features": ["3-Piece Gift Set", "Custom Branding on All Items", "Premium Gift Box", "Company Logo Print"],
+    "specifications": [
+      { "label": "Includes", "value": "Mug + Metal Pen + Keychain" },
+      { "label": "Customization", "value": "Logo + Name on all items" },
+      { "label": "Packaging", "value": "Premium Gift Box" },
+      { "label": "Min Order", "value": "10 sets" },
+      { "label": "Delivery", "value": "5–7 business days" }
+    ],
+    "status": "Active",
+    "stock": 150,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "PRD-GIFT-002",
+    "name": "Executive Gift Kit – Diary + Pen + Card Holder",
+    "category": "Corporate Gifts",
+    "categorySlug": "corporate-gifts",
+    "description": "Sophisticated executive gift set with branded leather diary, metal pen, and card holder. Perfect for senior employee gifts.",
+    "price": 899,
+    "priceLabel": "₹899",
+    "badge": "Executive",
+    "tags": ["executive gift", "diary", "card holder", "corporate", "leather"],
+    "images": [],
+    "variants": [
+      { "id": "v-gift-002-black", "color": "Black", "hex": "#1a1a1a", "images": [], "stock": 50 },
+      { "id": "v-gift-002-brown", "color": "Brown", "hex": "#8B4513", "images": [], "stock": 30 }
+    ],
+    "features": ["Leather Diary (A5)", "Metal Pen with Engraving", "Business Card Holder", "Embossed Logo"],
+    "specifications": [
+      { "label": "Includes", "value": "A5 Diary + Pen + Card Holder" },
+      { "label": "Material", "value": "PU Leather" },
+      { "label": "Customization", "value": "Embossing / UV Print" },
+      { "label": "Min Order", "value": "5 sets" },
+      { "label": "Delivery", "value": "6–8 business days" }
+    ],
+    "status": "Active",
+    "stock": 80,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+]
