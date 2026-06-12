@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, Minus, ClipboardCheck, ImageOff } from "lucide-react";
-import { useCart, type CartCustomization } from "@/context/CartContext";
-import { useToast } from "@/hooks/use-toast";
+import { X, Plus, Minus, ImageOff } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 
+const WHATSAPP_NUMBER = "919319903380";
 const T_SHIRT_SIZES = ["S", "M", "L", "XL", "XXL"];
 const GENDERS = ["Men", "Women", "Unisex"];
 
@@ -42,8 +42,6 @@ export function ProductOptionsModal({
   variantImageUrls = [],
   onClose,
 }: Props) {
-  const { addItemSilent } = useCart();
-  const { toast } = useToast();
   const isTShirt = categorySlug === "t-shirts";
 
   const hasColors = variants.length > 0;
@@ -101,44 +99,37 @@ export function ProductOptionsModal({
     return () => { document.body.style.overflow = ""; };
   }, []);
 
-  const handleConfirmOrder = () => {
+  const handleOrderViaWhatsApp = () => {
     if (totalQty === 0) return;
 
-    const customization: CartCustomization | undefined = (() => {
-      const c: CartCustomization = {};
-      if (!isOriginal && colorName) {
-        c.color = showCustomColor ? colorName : colorName;
-        if (!showCustomColor) c.colorHex = colorHex;
-      } else if (showCustomColor && customColor.trim()) {
-        c.color = customColor.trim();
-      }
-      if (isTShirt) {
-        c.gender = gender;
-        const nonZero = Object.fromEntries(
-          Object.entries(sizeQtys).filter(([, q]) => q > 0)
-        );
-        if (Object.keys(nonZero).length > 0) c.sizeBreakdown = nonZero;
-      }
-      return Object.keys(c).length > 0 ? c : undefined;
-    })();
+    const lines: string[] = [];
+    lines.push(`🛍️ *New Order – Radhe Digital*`);
+    lines.push(`━━━━━━━━━━━━━━━━━━`);
+    lines.push(`*Product:* ${product.name}`);
+    lines.push(`*Category:* ${categoryLabel}`);
 
-    addItemSilent({
-      productId: product.id,
-      productName: product.name,
-      categorySlug,
-      categoryLabel,
-      price: product.price,
-      priceLabel: product.priceLabel ?? `₹${product.price}`,
-      isCustomized: false,
-      quantity: totalQty,
-      customization,
-    });
+    if (!isOriginal && colorName) {
+      lines.push(`*Colour:* ${colorName}`);
+    } else if (showCustomColor && customColor.trim()) {
+      lines.push(`*Colour:* ${customColor.trim()} (custom)`);
+    }
 
-    toast({
-      title: "Order added to cart ✓",
-      description: "Open the cart icon to review & place your order via WhatsApp.",
-    });
+    if (isTShirt) {
+      lines.push(`*Gender:* ${gender}`);
+      const breakdown = Object.entries(sizeQtys)
+        .filter(([, q]) => q > 0)
+        .map(([s, q]) => `${s}: ${q}`)
+        .join(", ");
+      if (breakdown) lines.push(`*Sizes:* ${breakdown}`);
+    }
 
+    lines.push(`*Qty:* ${totalQty} pc${totalQty !== 1 ? "s" : ""}`);
+    lines.push(`*Total:* ₹${total.toLocaleString("en-IN")}`);
+    lines.push(`━━━━━━━━━━━━━━━━━━`);
+    lines.push(`Please confirm my order. Thank you!`);
+
+    const msg = lines.join("\n");
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
     onClose();
   };
 
@@ -378,26 +369,26 @@ export function ProductOptionsModal({
               </div>
             </div>
 
-            {/* ── Confirm Order CTA ── */}
+            {/* ── Order via WhatsApp CTA ── */}
             <div className="pb-2">
               <motion.button
-                onClick={handleConfirmOrder}
+                onClick={handleOrderViaWhatsApp}
                 disabled={totalQty === 0}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-white text-base transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-white text-base transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{
-                  background: totalQty > 0 ? "linear-gradient(135deg,#e53e3e,#c53030)" : "#ccc",
-                  boxShadow: totalQty > 0 ? "0 4px 18px rgba(229,62,62,0.3)" : "none",
+                  background: totalQty > 0 ? "linear-gradient(135deg,#25D366,#1ebe57)" : "#ccc",
+                  boxShadow: totalQty > 0 ? "0 4px 18px rgba(37,211,102,0.35)" : "none",
                 }}
               >
-                <ClipboardCheck size={18} />
+                <FaWhatsapp size={20} />
                 {totalQty === 0
                   ? "Select quantity to continue"
-                  : `Confirm Order · ${totalQty} item${totalQty !== 1 ? "s" : ""}`}
+                  : `Order via WhatsApp · ${totalQty} item${totalQty !== 1 ? "s" : ""}`}
               </motion.button>
               <p className="text-xs text-gray-400 text-center mt-3">
-                No payment upfront · Confirm via WhatsApp
+                No payment upfront · Complete your order on WhatsApp
               </p>
             </div>
           </div>
