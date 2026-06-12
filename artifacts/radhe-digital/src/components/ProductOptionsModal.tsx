@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, Minus, ImageOff } from "lucide-react";
+import { X, Plus, Minus, ImageOff, User, Phone } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 
 const WHATSAPP_NUMBER = "919319903380";
@@ -59,6 +59,9 @@ export function ProductOptionsModal({
     Object.fromEntries(T_SHIRT_SIZES.map(s => [s, 0]))
   );
   const [qty, setQty] = useState(1);
+  const [customerName, setCustomerName] = useState("");
+  const [customerMobile, setCustomerMobile] = useState("");
+  const [errors, setErrors] = useState<{ name?: string; mobile?: string }>({});
 
   const totalQty = isTShirt
     ? Object.values(sizeQtys).reduce((a, b) => a + b, 0)
@@ -99,39 +102,126 @@ export function ProductOptionsModal({
     return () => { document.body.style.overflow = ""; };
   }, []);
 
+  const validate = () => {
+    const errs: { name?: string; mobile?: string } = {};
+    if (!customerName.trim()) errs.name = "Please enter your name";
+    if (!customerMobile.trim()) {
+      errs.mobile = "Please enter your mobile number";
+    } else if (!/^[6-9]\d{9}$/.test(customerMobile.trim())) {
+      errs.mobile = "Enter a valid 10-digit Indian mobile number";
+    }
+    return errs;
+  };
+
   const handleOrderViaWhatsApp = () => {
     if (totalQty === 0) return;
 
-    const lines: string[] = [];
-    lines.push(`🛍️ *New Order – Radhe Digital*`);
-    lines.push(`━━━━━━━━━━━━━━━━━━`);
-    lines.push(`*Product:* ${product.name}`);
-    lines.push(`*Category:* ${categoryLabel}`);
-
-    if (!isOriginal && colorName) {
-      lines.push(`*Colour:* ${colorName}`);
-    } else if (showCustomColor && customColor.trim()) {
-      lines.push(`*Colour:* ${customColor.trim()} (custom)`);
+    const errs = validate();
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
     }
+    setErrors({});
+
+    const divider = `━━━━━━━━━━━━━━`;
+
+    const selectedOption = showCustomColor && customColor.trim()
+      ? `${customColor.trim()} (Custom)`
+      : isOriginal || !colorName
+        ? "Original Product"
+        : colorName;
+
+    const sizeLines = isTShirt
+      ? Object.entries(sizeQtys)
+          .filter(([, q]) => q > 0)
+          .map(([s, q]) => `  ${s}: ${q} pc${q !== 1 ? "s" : ""}`)
+          .join("\n")
+      : null;
+
+    const imageUrl = previewImageUrl ?? "";
+
+    const lines: string[] = [];
+
+    lines.push(`🛍️ *NEW ORDER - RADHE DIGITAL*`);
+    lines.push(``);
+    lines.push(divider);
+    lines.push(``);
+    lines.push(`📦 *PRODUCT DETAILS*`);
+    lines.push(``);
+    lines.push(`*Product:*`);
+    lines.push(`${product.name}`);
+    lines.push(``);
+    lines.push(`*Category:*`);
+    lines.push(`${categoryLabel}`);
+    lines.push(``);
+    lines.push(`*Selected Option:*`);
+    lines.push(`${selectedOption}`);
+    lines.push(``);
 
     if (isTShirt) {
-      lines.push(`*Gender:* ${gender}`);
-      const breakdown = Object.entries(sizeQtys)
-        .filter(([, q]) => q > 0)
-        .map(([s, q]) => `${s}: ${q}`)
-        .join(", ");
-      if (breakdown) lines.push(`*Sizes:* ${breakdown}`);
+      lines.push(`*Gender:*`);
+      lines.push(`${gender}`);
+      lines.push(``);
+      if (sizeLines) {
+        lines.push(`*Sizes & Quantities:*`);
+        lines.push(sizeLines);
+        lines.push(``);
+      }
     }
 
-    lines.push(`*Qty:* ${totalQty} pc${totalQty !== 1 ? "s" : ""}`);
-    lines.push(`*Total:* ₹${total.toLocaleString("en-IN")}`);
-    lines.push(`━━━━━━━━━━━━━━━━━━`);
-    lines.push(`Please confirm my order. Thank you!`);
+    lines.push(`*Quantity:*`);
+    lines.push(`${totalQty} pc${totalQty !== 1 ? "s" : ""}`);
+    lines.push(``);
+    lines.push(`*Unit Price:*`);
+    lines.push(`${product.priceLabel ?? `₹${product.price}`}`);
+    lines.push(``);
+    lines.push(`*Subtotal:*`);
+    lines.push(`₹${total.toLocaleString("en-IN")}`);
+    lines.push(``);
+    lines.push(divider);
+    lines.push(``);
+
+    if (imageUrl) {
+      lines.push(`🖼 *PRODUCT IMAGE*`);
+      lines.push(``);
+      lines.push(`*Image URL:*`);
+      lines.push(imageUrl);
+      lines.push(``);
+      lines.push(divider);
+      lines.push(``);
+    }
+
+    lines.push(`👤 *CUSTOMER DETAILS*`);
+    lines.push(``);
+    lines.push(`*Name:*`);
+    lines.push(`${customerName.trim()}`);
+    lines.push(``);
+    lines.push(`*Mobile:*`);
+    lines.push(`${customerMobile.trim()}`);
+    lines.push(``);
+    lines.push(divider);
+    lines.push(``);
+    lines.push(`💰 *ORDER SUMMARY*`);
+    lines.push(``);
+    lines.push(`*Total Amount:*`);
+    lines.push(`₹${total.toLocaleString("en-IN")}`);
+    lines.push(``);
+    lines.push(divider);
+    lines.push(``);
+    lines.push(`Please confirm availability and payment details.`);
+    lines.push(`Thank you! 🙏`);
 
     const msg = lines.join("\n");
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
     onClose();
   };
+
+  const inputCls = (err?: string) =>
+    `w-full h-11 px-3 rounded-xl border-2 text-sm outline-none transition-colors ${
+      err
+        ? "border-red-400 focus:border-red-500"
+        : "border-gray-200 focus:border-[#25D366]"
+    }`;
 
   return (
     <AnimatePresence>
@@ -366,6 +456,38 @@ export function ProductOptionsModal({
               <div className="border-t border-gray-200 pt-1.5 flex justify-between font-extrabold text-gray-900">
                 <span>Total</span>
                 <span className="text-primary">₹{total.toLocaleString("en-IN")}</span>
+              </div>
+            </div>
+
+            {/* ── Customer Details ── */}
+            <div>
+              <p className="text-sm font-bold text-gray-700 mb-3">Your Details</p>
+              <div className="space-y-3">
+                <div>
+                  <div className="relative">
+                    <User size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <input
+                      value={customerName}
+                      onChange={e => { setCustomerName(e.target.value); setErrors(prev => ({ ...prev, name: undefined })); }}
+                      placeholder="Your full name"
+                      className={`${inputCls(errors.name)} pl-9`}
+                    />
+                  </div>
+                  {errors.name && <p className="text-xs text-red-500 mt-1 pl-1">{errors.name}</p>}
+                </div>
+                <div>
+                  <div className="relative">
+                    <Phone size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <input
+                      value={customerMobile}
+                      onChange={e => { setCustomerMobile(e.target.value.replace(/\D/g, "").slice(0, 10)); setErrors(prev => ({ ...prev, mobile: undefined })); }}
+                      placeholder="10-digit mobile number"
+                      inputMode="numeric"
+                      className={`${inputCls(errors.mobile)} pl-9`}
+                    />
+                  </div>
+                  {errors.mobile && <p className="text-xs text-red-500 mt-1 pl-1">{errors.mobile}</p>}
+                </div>
               </div>
             </div>
 
