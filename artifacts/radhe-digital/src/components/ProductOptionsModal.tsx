@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, Minus, ShoppingCart, ImageOff } from "lucide-react";
+import { X, Plus, Minus, ClipboardCheck, ImageOff } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 const T_SHIRT_SIZES = ["S", "M", "L", "XL", "XXL"];
@@ -386,10 +386,10 @@ export function ProductOptionsModal({
                   boxShadow: totalQty > 0 ? "0 4px 18px rgba(229,62,62,0.3)" : "none",
                 }}
               >
-                <ShoppingCart size={18} />
+                <ClipboardCheck size={18} />
                 {totalQty === 0
                   ? "Select quantity to continue"
-                  : `Add ${totalQty} item${totalQty !== 1 ? "s" : ""} to Cart`}
+                  : `Confirm Order · ${totalQty} item${totalQty !== 1 ? "s" : ""}`}
               </motion.button>
               <p className="text-xs text-gray-400 text-center mt-3">
                 No payment upfront · Confirm via WhatsApp
