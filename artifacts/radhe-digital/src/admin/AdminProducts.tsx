@@ -119,6 +119,10 @@ export default function AdminProducts() {
   const fileRefs = useRef<(HTMLInputElement | null)[]>([]);
   const variantFileRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
+  // variant validation & notifications
+  const [variantErrors, setVariantErrors] = useState<Set<number>>(new Set());
+  const [successMsg,    setSuccessMsg]    = useState<string | null>(null);
+
   // ── Load ──
   const load = useCallback(async () => {
     setLoading(true); setError(null); setDbDown(false);
@@ -162,12 +166,23 @@ export default function AdminProducts() {
   const allVisibleSelected = filteredProducts.length > 0 && filteredProducts.every(p => selectedIds.has(p.id));
 
   // ── Handlers ──
-  const openAdd  = () => { setForm({ ...EMPTY_FORM, category: (selectedCat ?? "T-Shirt Printing") as ProductCategory }); setTab("info"); setModal({ open: true, editing: null }); };
-  const openEdit = (p: Product) => { setForm(productToForm(p)); setTab("info"); setModal({ open: true, editing: p }); };
-  const closeModal = () => setModal({ open: false, editing: null });
+  const openAdd  = () => { setForm({ ...EMPTY_FORM, category: (selectedCat ?? "T-Shirt Printing") as ProductCategory }); setTab("info"); setVariantErrors(new Set()); setSuccessMsg(null); setModal({ open: true, editing: null }); };
+  const openEdit = (p: Product) => { setForm(productToForm(p)); setTab("info"); setVariantErrors(new Set()); setSuccessMsg(null); setModal({ open: true, editing: p }); };
+  const closeModal = () => { setVariantErrors(new Set()); setSuccessMsg(null); setModal({ open: false, editing: null }); };
 
   const handleSave = async () => {
     if (!form.name.trim()) { setTab("info"); return; }
+
+    // Validate: every variant must have a color name
+    const badIndices = new Set<number>();
+    form.variants.forEach((v, i) => { if (!v.color.trim()) badIndices.add(i); });
+    if (badIndices.size > 0) {
+      setVariantErrors(badIndices);
+      setTab("variants");
+      return;
+    }
+    setVariantErrors(new Set());
+
     setSaving(true);
     try {
       const payload: Record<string, unknown> = {
@@ -177,7 +192,7 @@ export default function AdminProducts() {
         badge: form.badge || undefined,
         tags: form.tags ? form.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
         images: form.images.filter(i => i.url.trim()),
-        variants: form.variants.filter(v => v.color.trim()).map(v => ({
+        variants: form.variants.map(v => ({
           ...v, images: v.images.filter(i => i.url.trim()),
         })),
         features: form.features.filter(f => f.trim()),
@@ -188,9 +203,11 @@ export default function AdminProducts() {
       if (modal.editing) {
         const updated = await updateProduct(modal.editing.id, payload);
         setProducts(prev => prev.map(p => p.id === modal.editing!.id ? { ...p, ...updated } : p));
+        setSuccessMsg(`"${updated.name}" saved successfully.`);
       } else {
         const created = await createProduct(payload as Parameters<typeof createProduct>[0]);
         setProducts(prev => [created, ...prev]);
+        setSuccessMsg(`"${created.name}" created successfully.`);
       }
       invalidateApiProductsCache();
       closeModal();
@@ -300,8 +317,12 @@ export default function AdminProducts() {
     variants: [...f.variants, { id: makeVariantId(), color: "", hex: "#000000", images: EMPTY_VARIANT_IMAGES(), stock: 0, priceAdjustment: 0 }],
   }));
   const removeVariant = (vi: number) => setForm(f => ({ ...f, variants: f.variants.filter((_, i) => i !== vi) }));
-  const setVariantField = (vi: number, key: string, val: string | number) =>
+  const setVariantField = (vi: number, key: string, val: string | number) => {
     setForm(f => ({ ...f, variants: f.variants.map((v, i) => i === vi ? { ...v, [key]: val } : v) }));
+    if (key === "color" && typeof val === "string" && val.trim()) {
+      setVariantErrors(prev => { const n = new Set(prev); n.delete(vi); return n; });
+    }
+  };
   const setVariantImage = (vi: number, imgIdx: number, url: string) =>
     setForm(f => ({
       ...f,
@@ -376,6 +397,13 @@ export default function AdminProducts() {
       </div>
 
       {/* ── Alerts ── */}
+      {successMsg && (
+        <div className="flex items-center gap-3 bg-green-500/8 border border-green-500/20 rounded-xl px-4 py-3">
+          <CheckCircle2 size={16} className="text-green-400 flex-shrink-0" />
+          <p className="text-green-300 text-sm flex-1">{successMsg}</p>
+          <button onClick={() => setSuccessMsg(null)}><X size={14} className="text-green-400" /></button>
+        </div>
+      )}
       {dbDown && (
         <div className="flex items-start gap-3 bg-yellow-500/8 border border-yellow-500/20 rounded-xl px-4 py-4">
           <WifiOff size={16} className="text-yellow-400 flex-shrink-0 mt-0.5" />
@@ -841,18 +869,27 @@ export default function AdminProducts() {
                     )}
 
                     <div className="space-y-4">
-                      {form.variants.map((variant, vi) => (
-                        <div key={variant.id} className="bg-[#1a1a1a] border border-white/8 rounded-xl overflow-hidden">
+                      {form.variants.map((variant, vi) => {
+                        const hasColorError = variantErrors.has(vi);
+                        return (
+                        <div key={variant.id} className={`bg-[#1a1a1a] rounded-xl overflow-hidden border ${hasColorError ? "border-red-500/60" : "border-white/8"}`}>
                           {/* Variant Header */}
-                          <div className="flex items-center gap-3 px-4 py-3 border-b border-white/6">
+                          <div className={`flex items-center gap-3 px-4 py-3 border-b ${hasColorError ? "border-red-500/30 bg-red-500/5" : "border-white/6"}`}>
                             <div className="w-5 h-5 rounded-full border border-white/20 flex-shrink-0"
                               style={{ backgroundColor: variant.hex || "#555" }} />
-                            <input
-                              value={variant.color}
-                              onChange={e => setVariantField(vi, "color", e.target.value)}
-                              placeholder="Color name (e.g. Black, White, Red)"
-                              className="flex-1 h-8 bg-transparent text-sm text-white placeholder-gray-600 outline-none font-semibold min-w-0"
-                            />
+                            <div className="flex-1 min-w-0">
+                              <input
+                                value={variant.color}
+                                onChange={e => setVariantField(vi, "color", e.target.value)}
+                                placeholder="Color name (e.g. Black, White, Red)"
+                                className={`w-full h-8 bg-transparent text-sm placeholder-gray-600 outline-none font-semibold min-w-0 ${hasColorError ? "text-red-300 placeholder-red-700" : "text-white"}`}
+                              />
+                              {hasColorError && (
+                                <p className="text-red-400 text-[11px] font-semibold mt-0.5 flex items-center gap-1">
+                                  <AlertCircle size={10} /> Please enter a color name.
+                                </p>
+                              )}
+                            </div>
                             <div className="flex items-center gap-2 flex-shrink-0">
                               <label className="text-[10px] text-gray-600 font-semibold">HEX</label>
                               <div className="relative">
@@ -945,7 +982,7 @@ export default function AdminProducts() {
                             </div>
                           </div>
                         </div>
-                      ))}
+                      ); })}
                     </div>
 
                     {form.variants.length > 0 && (

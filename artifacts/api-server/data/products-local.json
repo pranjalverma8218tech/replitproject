@@ -25,7 +25,6 @@
     "id": "ts-002",
     "name": "Premium Polo / Collar Tee",
     "category": "T-Shirt Printing",
-    "description": "Corporate-grade polo with embroidered or heat-press logo. Ideal for uniforms.",
     "price": 450,
     "priceLabel": "199",
     "badge": "Popular",
@@ -56,8 +55,23 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-12T07:41:15.262Z",
-    "variants": [],
+    "updatedAt": "2026-06-12T07:55:02.735Z",
+    "variants": [
+      {
+        "id": "v-royal-blue-001",
+        "color": "Royal Blue",
+        "hex": "#2563eb",
+        "images": [
+          {
+            "view": "front",
+            "label": "Front View",
+            "url": "/api/uploads/1781250902361-9pe07qou3c.jpg"
+          }
+        ],
+        "stock": 0,
+        "priceAdjustment": 0
+      }
+    ],
     "categorySlug": "t-shirts"
   },
   {
