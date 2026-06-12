@@ -554,7 +554,21 @@ export default function ProductDetailPage() {
                 </motion.button>
               </div>
               <motion.button
-                onClick={() => setLocation(`/customize/${slug}`)}
+                onClick={() => {
+                  const params = new URLSearchParams();
+                  params.set("productId", product.id);
+                  if (activeColor >= 0 && selectedVariant) {
+                    params.set("variantId", selectedVariant.id ?? selectedVariant.color);
+                    params.set("color", selectedVariant.color);
+                    params.set("colorHex", selectedVariant.hex ?? "");
+                    const variantImgUrl = activeRealImage?.url ?? productLevelImages[0]?.url ?? "";
+                    if (variantImgUrl) params.set("imageUrl", variantImgUrl);
+                  } else {
+                    const imgUrl = activeRealImage?.url ?? productLevelImages[0]?.url ?? "";
+                    if (imgUrl) params.set("imageUrl", imgUrl);
+                  }
+                  setLocation(`/customize/${slug}?${params.toString()}`);
+                }}
                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                 className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-white text-sm"
                 style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 20px rgba(229,62,62,0.3)" }}

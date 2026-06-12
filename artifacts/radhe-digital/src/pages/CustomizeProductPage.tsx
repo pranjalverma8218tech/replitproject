@@ -3,12 +3,11 @@ import { useLocation, useParams } from "wouter";
 import { motion } from "framer-motion";
 import {
   Upload, CheckCircle2, ShoppingCart, MessageCircle,
-  X, ArrowLeft, Shirt, Coffee, HardHat, Pen, Award, Image as ImageIcon, Gift, Palette
+  X, ArrowLeft, Shirt, Coffee, HardHat, Pen, Award, Image as ImageIcon, Gift, Lock
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/context/CartContext";
-import { useApiProducts, useApiProductsLoaded } from "@/hooks/useApiProducts";
 
 /* ─── Constants ─── */
 const T_SHIRT_SIZES = ["S", "M", "L", "XL", "XXL"] as const;
@@ -44,57 +43,25 @@ function Step({ n }: { n: number }) {
   );
 }
 
-/* ─── Color Swatch ─── */
-function ColorSwatch({ hex, name, active, onClick }: {
-  hex: string; name: string; active: boolean; onClick: () => void;
-}) {
-  const isLight = ["#ffffff", "#f5f5f5", "#fff"].includes(hex.toLowerCase());
-  const hasBorder = isLight;
-  return (
-    <button
-      onClick={onClick}
-      title={name}
-      className="flex flex-col items-center gap-2 focus:outline-none"
-      style={{ minWidth: 52 }}
-    >
-      <span
-        className="relative w-10 h-10 rounded-full flex-shrink-0 transition-all duration-200"
-        style={{
-          backgroundColor: hex,
-          border: active
-            ? "3px solid rgba(229,62,62,0.9)"
-            : hasBorder
-              ? "2px solid rgba(255,255,255,0.2)"
-              : "2px solid transparent",
-          boxShadow: active
-            ? "0 0 0 3px rgba(229,62,62,0.2), 0 4px 14px rgba(0,0,0,0.3)"
-            : "0 2px 8px rgba(0,0,0,0.25)",
-        }}
-      >
-        {active && (
-          <span
-            className="absolute inset-0 flex items-center justify-center rounded-full"
-            style={{ background: isLight ? "rgba(0,0,0,0.1)" : "rgba(0,0,0,0.18)" }}
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M2.5 7.5L5.5 10.5L11.5 4" stroke={isLight ? "#222" : "white"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
-        )}
-      </span>
-      <span
-        className="text-[11px] font-semibold text-center leading-tight w-12 break-words"
-        style={{ color: active ? "#e53e3e" : "rgba(255,255,255,0.5)" }}
-      >
-        {name}
-      </span>
-    </button>
-  );
-}
-
 export default function CustomizeProductPage() {
   const { category } = useParams<{ category: string }>();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+
+  /* ── Parse locked variant from URL query params ── */
+  const lockedVariant = useMemo(() => {
+    const search = window.location.search;
+    if (!search) return null;
+    const p = new URLSearchParams(search);
+    const color = p.get("color");
+    const colorHex = p.get("colorHex");
+    const variantId = p.get("variantId");
+    const imageUrl = p.get("imageUrl");
+    const productId = p.get("productId");
+    if (!color && !imageUrl) return null;
+    return { color: color ?? "", colorHex: colorHex ?? "", variantId: variantId ?? "", imageUrl: imageUrl ?? "", productId: productId ?? "" };
+  }, []);
+
+  const isVariantLocked = !!lockedVariant?.color;
 
   const meta = CATEGORY_META[category ?? ""] ?? CATEGORY_META["t-shirts"];
   const Icon = meta.icon;
@@ -102,34 +69,11 @@ export default function CustomizeProductPage() {
 
   const { addItem, openCart } = useCart();
 
-  /* ── Load API products and extract unique color variants for this category ── */
-  const apiProducts = useApiProducts();
-  const apiLoaded = useApiProductsLoaded();
-
-  const categoryVariants = useMemo(() => {
-    const seen = new Set<string>();
-    const variants: { id: string; color: string; hex: string }[] = [];
-    Object.values(apiProducts).forEach(p => {
-      if (p.categorySlug !== category) return;
-      (p.variants ?? []).forEach((v: any) => {
-        if (!v.color?.trim() || seen.has(v.color)) return;
-        seen.add(v.color);
-        variants.push({ id: v.id ?? v.color, color: v.color, hex: v.hex ?? "#888" });
-      });
-    });
-    return variants;
-  }, [apiProducts, category]);
-
-  const hasColors = categoryVariants.length > 0;
-
   /* ── Tab ── */
   const [tab, setTab] = useState<Tab>("upload");
 
   /* ── T-Shirt specific ── */
   const [gender, setGender] = useState<Gender>("Unisex");
-  const [selectedColorIdx, setSelectedColorIdx] = useState<number | null>(null);
-  const [customColor, setCustomColor] = useState("");
-  const [showCustomColor, setShowCustomColor] = useState(false);
   const [sizeQty, setSizeQty] = useState<Record<TShirtSize, number>>({
     S: 0, M: 0, L: 0, XL: 0, XXL: 0,
   });
@@ -140,18 +84,9 @@ export default function CustomizeProductPage() {
     setSizeQty(prev => ({ ...prev, [size]: n }));
   };
 
-  /* Derived color name and hex */
-  const selectedColor = showCustomColor
-    ? (customColor.trim() || "Custom Color")
-    : selectedColorIdx !== null
-      ? (categoryVariants[selectedColorIdx]?.color ?? "")
-      : "";
-
-  const selectedColorHex = showCustomColor
-    ? "#888888"
-    : selectedColorIdx !== null
-      ? (categoryVariants[selectedColorIdx]?.hex ?? "#888888")
-      : "";
+  /* ── Locked color values ── */
+  const effectiveColor = isVariantLocked ? lockedVariant!.color : "";
+  const effectiveColorHex = isVariantLocked ? lockedVariant!.colorHex : "";
 
   /* ── Non-T-Shirt quantity ── */
   const [quantity, setQuantity] = useState(1);
@@ -200,10 +135,19 @@ export default function CustomizeProductPage() {
 
   const effectiveQty = isTShirt ? totalQty : quantity;
 
+  /* ── Back navigation ── */
+  const handleBack = () => {
+    if (lockedVariant?.productId && category) {
+      history.back();
+    } else {
+      setLocation("/customize");
+    }
+  };
+
   /* ── Add to Cart ── */
   const handleAddToCart = () => {
     addItem({
-      productId: `${category}-custom`,
+      productId: lockedVariant?.productId ?? `${category}-custom`,
       productName: `Custom ${meta.label}`,
       categorySlug: category ?? "",
       categoryLabel: meta.label,
@@ -211,9 +155,10 @@ export default function CustomizeProductPage() {
       priceLabel: meta.priceLabel,
       isCustomized: true,
       quantity: effectiveQty || 1,
+      image: lockedVariant?.imageUrl || undefined,
       customization: {
-        color: isTShirt ? selectedColor || undefined : undefined,
-        colorHex: isTShirt ? selectedColorHex || undefined : undefined,
+        color: isTShirt ? effectiveColor || undefined : undefined,
+        colorHex: isTShirt ? effectiveColorHex || undefined : undefined,
         size: isTShirt ? sizeBreakdown || undefined : undefined,
         quantity: effectiveQty || 1,
         uploadedFileName: designFile?.name,
@@ -225,15 +170,14 @@ export default function CustomizeProductPage() {
 
   /* ── Submit Request (WhatsApp) ── */
   const handleSubmitRequest = () => {
-    const colorLabel = showCustomColor
-      ? `Custom (${customColor.trim() || "to be discussed"})`
-      : selectedColor || "Not specified";
     const lines = [
       `Hello Radhe Digital! I'd like to request a custom design.`,
       ``,
       `*Product:* ${meta.label}`,
       isTShirt ? `*Gender:* ${gender}` : "",
-      isTShirt ? `*Color:* ${colorLabel}` : "",
+      isTShirt && effectiveColor ? `*Color:* ${effectiveColor}` : "",
+      lockedVariant?.variantId ? `*Variant ID:* ${lockedVariant.variantId}` : "",
+      lockedVariant?.imageUrl ? `*Product Image:* ${lockedVariant.imageUrl}` : "",
       isTShirt
         ? T_SHIRT_SIZES.filter(s => sizeQty[s] > 0).map(s => `*${s}:* ${sizeQty[s]} pcs`).join("\n")
         : `*Quantity:* ${quantity}`,
@@ -248,8 +192,12 @@ export default function CustomizeProductPage() {
     setTimeout(() => setSubmitted(false), 4000);
   };
 
-  const uploadStepStart = isTShirt ? 4 : 1;
-  const requestStepStart = isTShirt ? 4 : 1;
+  /* ── Step numbering ── */
+  // T-shirt: Step1=Gender, Step2=Size+Qty (color step removed when locked), upload starts at 3
+  // Without lock: Step1=Gender, Step2=Color, Step3=Size+Qty, upload starts at 4
+  const sizeStepNum = isTShirt ? (isVariantLocked ? 2 : 3) : 1;
+  const uploadStepStart = isTShirt ? (isVariantLocked ? 3 : 4) : 1;
+  const requestStepStart = isTShirt ? (isVariantLocked ? 3 : 4) : 1;
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -258,10 +206,10 @@ export default function CustomizeProductPage() {
       <section className="bg-[#0a0a0a] border-b border-white/8 py-10">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
           <button
-            onClick={() => setLocation("/customize")}
+            onClick={handleBack}
             className="flex items-center gap-2 text-gray-500 hover:text-white text-sm mb-5 transition-colors"
           >
-            <ArrowLeft size={14} /> Back to Categories
+            <ArrowLeft size={14} /> {lockedVariant?.productId ? "Back to Product" : "Back to Categories"}
           </button>
           <div className="flex items-center gap-4">
             <div
@@ -280,6 +228,49 @@ export default function CustomizeProductPage() {
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-5">
 
+        {/* ── Locked Variant Banner ── */}
+        {isVariantLocked && (
+          <div
+            className="flex items-center gap-4 rounded-2xl p-4 border"
+            style={{ background: "rgba(196,150,42,0.07)", borderColor: "rgba(196,150,42,0.25)" }}
+          >
+            {lockedVariant!.imageUrl ? (
+              <img
+                src={lockedVariant!.imageUrl}
+                alt={lockedVariant!.color}
+                className="w-16 h-16 rounded-xl object-cover flex-shrink-0 border border-white/10"
+              />
+            ) : (
+              <span
+                className="w-16 h-16 rounded-xl flex-shrink-0 border border-white/10"
+                style={{ backgroundColor: lockedVariant!.colorHex || "#888" }}
+              />
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <Lock size={12} style={{ color: "#C4962A" }} />
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "#C4962A" }}>
+                  Variant Locked
+                </span>
+              </div>
+              <p className="text-white font-bold text-sm leading-snug">
+                {lockedVariant!.color ? `Color: ${lockedVariant!.color}` : "Original Product"}
+              </p>
+              <p className="text-gray-500 text-xs mt-0.5">
+                {lockedVariant!.colorHex
+                  ? "This color is locked from your product selection."
+                  : "Original product selected — no color variant."}
+              </p>
+            </div>
+            {lockedVariant!.colorHex && (
+              <span
+                className="w-8 h-8 rounded-full flex-shrink-0 border-2 border-white/20"
+                style={{ backgroundColor: lockedVariant!.colorHex }}
+              />
+            )}
+          </div>
+        )}
+
         {/* Tab switcher */}
         <div className="grid grid-cols-2 gap-2 bg-[#111] border border-white/8 rounded-2xl p-1.5">
           {(["upload", "request"] as Tab[]).map(t => (
@@ -295,7 +286,7 @@ export default function CustomizeProductPage() {
           ))}
         </div>
 
-        {/* ── T-Shirt shared options (gender, color, sizes) ── */}
+        {/* ── T-Shirt shared options ── */}
         {isTShirt && (
           <>
             {/* Step 1: Gender */}
@@ -320,94 +311,28 @@ export default function CustomizeProductPage() {
               </div>
             </div>
 
-            {/* Step 2: Color — loaded from API only */}
-            <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
-              <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                <Step n={2} /> T-Shirt Color
-              </h2>
-
-              {!apiLoaded ? (
-                <div className="flex items-center gap-2 text-gray-500 text-sm py-2">
-                  <div className="w-4 h-4 rounded-full border-2 border-gray-600 border-t-transparent animate-spin" />
-                  Loading available colors…
-                </div>
-              ) : !hasColors ? (
-                <div
-                  className="flex items-center gap-3 px-4 py-4 rounded-xl"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
-                >
-                  <Palette size={18} className="text-gray-500 flex-shrink-0" />
-                  <div>
-                    <p className="text-gray-300 text-sm font-semibold">No color variants available</p>
-                    <p className="text-gray-600 text-xs mt-0.5">
-                      Describe your preferred color in the custom color field below.
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-x-4 gap-y-4 mb-4">
-                  {categoryVariants.map((v, i) => (
-                    <ColorSwatch
-                      key={v.id}
-                      hex={v.hex}
-                      name={v.color}
-                      active={!showCustomColor && selectedColorIdx === i}
-                      onClick={() => {
-                        setShowCustomColor(false);
-                        setSelectedColorIdx(selectedColorIdx === i ? null : i);
-                      }}
-                    />
-                  ))}
-                </div>
-              )}
-
-              {/* Custom color input */}
-              <div className="mt-3">
-                <button
-                  onClick={() => {
-                    setShowCustomColor(v => !v);
-                    if (!showCustomColor) setSelectedColorIdx(null);
-                  }}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-all duration-200 ${
-                    showCustomColor
-                      ? "bg-primary/20 border-primary text-primary"
-                      : "bg-white/6 border-white/15 text-gray-400 hover:text-white hover:border-white/25"
-                  }`}
-                >
-                  + Enter Custom Color
-                </button>
-                {showCustomColor && (
-                  <div className="mt-3">
-                    <Input
-                      value={customColor}
-                      onChange={e => setCustomColor(e.target.value)}
-                      placeholder="Describe your color (e.g. Sky Blue, Maroon, Olive Green...)"
-                      className="bg-[#1a1a1a] border-white/12 text-white placeholder-gray-600 focus:border-primary/50 h-11 rounded-xl"
-                      autoFocus
-                    />
-                  </div>
-                )}
-              </div>
-
-              {selectedColor && (
-                <p className="text-gray-500 text-xs mt-3">
-                  Selected: <span className="text-white font-semibold flex items-center gap-1.5 inline-flex">
-                    {selectedColorHex && !showCustomColor && (
-                      <span
-                        className="w-3 h-3 rounded-full inline-block border border-white/20"
-                        style={{ backgroundColor: selectedColorHex }}
-                      />
-                    )}
-                    {selectedColor}
-                  </span>
+            {/* Step 2 (only shown when NOT locked): Color picker */}
+            {!isVariantLocked && (
+              <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
+                <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
+                  <Step n={2} /> T-Shirt Color
+                </h2>
+                <p className="text-gray-500 text-sm">
+                  Please select a color from the product page before customizing, or describe your preferred color below.
                 </p>
-              )}
-            </div>
+                <div className="mt-3">
+                  <Input
+                    placeholder="Describe your color (e.g. Sky Blue, Maroon, Olive Green...)"
+                    className="bg-[#1a1a1a] border-white/12 text-white placeholder-gray-600 focus:border-primary/50 h-11 rounded-xl"
+                  />
+                </div>
+              </div>
+            )}
 
-            {/* Step 3: Size + Quantity table */}
+            {/* Size + Quantity */}
             <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
               <h2 className="text-white font-bold text-base mb-1 flex items-center gap-2">
-                <Step n={3} /> Size &amp; Quantity
+                <Step n={sizeStepNum} /> Size &amp; Quantity
               </h2>
               <p className="text-gray-500 text-xs mb-5 ml-8">Enter how many pieces you need per size. Leave blank if not required.</p>
 
