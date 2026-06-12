@@ -47,9 +47,12 @@ export function ProductOptionsModal({
   const isTShirt = categorySlug === "t-shirts";
 
   const hasColors = variants.length > 0;
-  const clampedInitial = hasColors
-    ? Math.max(0, Math.min(initialColorIndex, variants.length - 1))
-    : 0;
+  // -1 means "Original Product" — no variant pre-selected
+  const clampedInitial = !hasColors
+    ? -1
+    : initialColorIndex < 0
+      ? -1
+      : Math.min(initialColorIndex, variants.length - 1);
 
   const [selectedColor, setSelectedColor] = useState(clampedInitial);
   const [customColor, setCustomColor] = useState("");
@@ -64,31 +67,39 @@ export function ProductOptionsModal({
     ? Object.values(sizeQtys).reduce((a, b) => a + b, 0)
     : qty;
 
+  const isOriginal = selectedColor < 0;
+
   const colorName = showCustomColor
     ? (customColor.trim() || "Custom Colour")
-    : (hasColors ? variants[selectedColor]?.color ?? "" : "");
+    : isOriginal
+      ? ""
+      : (variants[selectedColor]?.color ?? "");
 
   const colorHex = showCustomColor
     ? "#888"
-    : (hasColors ? (variants[selectedColor]?.hex ?? "#e53e3e") : "#e53e3e");
+    : isOriginal
+      ? "#888"
+      : (variants[selectedColor]?.hex ?? "#e53e3e");
 
   const total = product.price * totalQty;
 
-  // Derive the preview image dynamically as the user changes colour inside the modal
+  // Derive the preview image dynamically as the user changes colour inside the modal.
+  // Priority: variant image → original product image → undefined (shows placeholder)
   const previewImageUrl: string | undefined = (() => {
     if (showCustomColor) return originalImageUrl;
-    if (hasColors) {
-      const variantImg = variantImageUrls[selectedColor];
-      return variantImg ?? originalImageUrl;
+    if (!isOriginal && hasColors) {
+      // Variant selected — use variant image, fall back to original
+      return variantImageUrls[selectedColor] ?? originalImageUrl;
     }
+    // Original Product — always use the product-level image
     return originalImageUrl;
   })();
 
   const previewLabel = showCustomColor
     ? (customColor.trim() ? `Custom: ${customColor.trim()}` : "Custom Colour")
-    : hasColors
-      ? (variants[selectedColor]?.color ?? "Original Product")
-      : "Original Product";
+    : isOriginal
+      ? "Original Product"
+      : (variants[selectedColor]?.color ?? "Original Product");
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -226,7 +237,7 @@ export function ProductOptionsModal({
                         onClick={() => { setSelectedColor(i); setShowCustomColor(false); }}
                         title={v.color}
                         className={`w-9 h-9 rounded-full transition-all duration-200 ${
-                          !showCustomColor && selectedColor === i
+                          !showCustomColor && !isOriginal && selectedColor === i
                             ? "ring-2 ring-[#C4962A] ring-offset-2 scale-110"
                             : "hover:scale-105"
                         }`}
@@ -340,7 +351,7 @@ export function ProductOptionsModal({
                 <span>Price per piece</span>
                 <span className="font-semibold text-gray-900">{product.priceLabel ?? `₹${product.price}`}</span>
               </div>
-              {hasColors && !showCustomColor && colorName && (
+              {hasColors && !isOriginal && !showCustomColor && colorName && (
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>Colour</span>
                   <span className="flex items-center gap-1.5 font-semibold text-gray-900">
