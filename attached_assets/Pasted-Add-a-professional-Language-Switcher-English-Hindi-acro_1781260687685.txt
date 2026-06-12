@@ -1,0 +1,77 @@
+Add a professional Language Switcher (English ↔ Hindi) across the entire website.
+
+Requirements:
+
+1. Language Switcher Visibility
+- The language switcher must be globally visible on every page.
+- Place it in the Header/Navbar.
+- Make it clearly visible from a distance.
+- Use a prominent button or dropdown with:
+  🇮🇳 हिन्दी | 🇬🇧 English
+- Keep it sticky so it remains visible while scrolling.
+- It should appear on:
+  - Home Page
+  - Category Pages
+  - Product Pages
+  - Cart Page
+  - Checkout / Buy Now
+  - Contact Page
+  - About Us
+  - All Admin-independent public pages
+
+2. Language Persistence
+- When a user selects Hindi, the entire website should stay in Hindi.
+- Save the preference in localStorage.
+- Do not reset language when changing pages or refreshing.
+
+3. Full Hindi Translation
+Translate ALL user-facing text, including:
+
+Header:
+- Home → होम
+- Categories → श्रेणियाँ
+- Products → उत्पाद
+- Contact → संपर्क करें
+- About Us → हमारे बारे में
+
+Product Page:
+- Available Colors → उपलब्ध रंग
+- Original Product → मूल उत्पाद
+- Select Size → आकार चुनें
+- Quantity → मात्रा
+- Buy Now → अभी ऑर्डर करें
+- Add To Cart → कार्ट में जोड़ें
+- Description → विवरण
+- Features → विशेषताएँ
+
+Cart:
+- Shopping Cart → शॉपिंग कार्ट
+- Total → कुल राशि
+- Checkout → ऑर्डर करें
+- Remove → हटाएँ
+- Continue Shopping → खरीदारी जारी रखें
+
+WhatsApp Order:
+- Order Via WhatsApp → WhatsApp पर ऑर्डर करें
+
+Footer:
+- All Rights Reserved → सर्वाधिकार सुरक्षित
+
+4. Professional Translation System
+- Use a centralized translation file.
+- Do NOT hardcode Hindi text inside components.
+- Use a proper translation dictionary/object.
+- Make future translations easy.
+
+5. UI Design
+- Language switcher should match website theme.
+- Modern pill-style button or dropdown.
+- Clear active state.
+- Good visibility on mobile and desktop.
+
+6. Testing
+Verify:
+- Every page translates correctly.
+- No mixed Hindi-English text.
+- No untranslated labels remain.
+- Language selection works after refresh.

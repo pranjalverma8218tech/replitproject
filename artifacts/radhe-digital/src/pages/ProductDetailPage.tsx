@@ -118,32 +118,49 @@ function GallerySVG({
   );
 }
 
-/* ─── Colour Dot ─── */
-function ColorDot({ hex, border, name, active, onClick }: {
-  hex: string; border?: boolean; name: string; active: boolean; onClick: () => void;
+/* ─── Colour Swatch ─── */
+function ColorSwatch({ hex, hasBorder, name, active, onClick }: {
+  hex: string; hasBorder?: boolean; name: string; active: boolean; onClick: () => void;
 }) {
+  const isLight = ["#ffffff", "#f5f5f5", "#FFFFFF", "#fff"].includes(hex.toLowerCase());
   return (
     <button
       onClick={onClick}
       title={name}
-      className={`relative w-12 h-12 rounded-full transition-all duration-200 flex-shrink-0 ${
-        active
-          ? "scale-110 ring-2 ring-[#e53e3e] ring-offset-2 ring-offset-white shadow-[0_4px_16px_rgba(229,62,62,0.35)]"
-          : "hover:scale-105 hover:shadow-md"
-      }`}
-      style={{ backgroundColor: hex, border: border ? "2px solid rgba(0,0,0,0.18)" : "none" }}
+      className="flex flex-col items-center gap-2 group focus:outline-none"
+      style={{ minWidth: 56 }}
     >
-      {active && (
-        <span
-          className="absolute inset-0 flex items-center justify-center rounded-full"
-          style={{ background: "rgba(0,0,0,0.18)" }}
-        >
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M4 9.5L7.5 13L14 6" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
-              style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))" }} />
-          </svg>
-        </span>
-      )}
+      <span
+        className="relative w-11 h-11 rounded-full flex-shrink-0 transition-all duration-200"
+        style={{
+          backgroundColor: hex,
+          border: active
+            ? "3px solid #C4962A"
+            : hasBorder
+              ? "2px solid rgba(0,0,0,0.15)"
+              : "2px solid transparent",
+          boxShadow: active
+            ? "0 0 0 3px rgba(196,150,42,0.18), 0 4px 14px rgba(0,0,0,0.12)"
+            : "0 2px 8px rgba(0,0,0,0.08)",
+        }}
+      >
+        {active && (
+          <span
+            className="absolute inset-0 flex items-center justify-center rounded-full"
+            style={{ background: isLight ? "rgba(0,0,0,0.12)" : "rgba(0,0,0,0.20)" }}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8.5L6.5 12L13 5" stroke={isLight ? "#333" : "white"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+        )}
+      </span>
+      <span
+        className="text-[11px] font-semibold text-center leading-tight transition-colors duration-150 w-14 break-words"
+        style={{ color: active ? "#C4962A" : "#6b7280" }}
+      >
+        {name}
+      </span>
     </button>
   );
 }
@@ -373,102 +390,99 @@ export default function ProductDetailPage() {
                   ? (apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.color ?? null)
                   : (details!.colors[activeColor]?.name ?? null);
               return (
-                <div className="space-y-4 py-1">
+                <div className="space-y-3 py-1">
                   {/* ── Section heading ── */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2.5 mb-1">
-                        <span className="block w-1 h-5 rounded-full bg-primary flex-shrink-0" />
-                        <span className="text-[11px] font-extrabold tracking-[0.22em] uppercase text-gray-400">
-                          Available Colours
-                        </span>
-                        <span className="text-[11px] font-extrabold bg-primary/10 text-primary px-2 py-0.5 rounded-full leading-none">
-                          {colorCount}
-                        </span>
-                      </div>
-                      <div className="pl-[22px]">
-                        {selectedColorName ? (
-                          <p className="text-base font-extrabold text-gray-900 flex items-center gap-2">
-                            <span
-                              className="w-3.5 h-3.5 rounded-full flex-shrink-0 border border-gray-200 inline-block"
-                              style={{
-                                backgroundColor: hasVariants
-                                  ? (apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.hex ?? "#e53e3e")
-                                  : (details!.colors[activeColor]?.hex ?? "#e53e3e"),
-                              }}
-                            />
-                            {selectedColorName}
-                          </p>
-                        ) : activeColor === -1 && hasVariants ? (
-                          <p className="text-sm font-bold text-gray-400">Original Product selected</p>
-                        ) : (
-                          <p className="text-sm text-gray-400">Choose your preferred colour</p>
+                  <div className="flex items-center gap-2">
+                    <span className="block w-1 h-5 rounded-full flex-shrink-0" style={{ background: "#C4962A" }} />
+                    <span className="text-sm font-bold text-gray-800">Available Colors</span>
+                    <span
+                      className="text-[11px] font-bold px-2 py-0.5 rounded-full ml-1"
+                      style={{ background: "rgba(196,150,42,0.1)", color: "#C4962A", border: "1px solid rgba(196,150,42,0.2)" }}
+                    >
+                      {colorCount}
+                    </span>
+                    {(selectedColorName || (activeColor === -1 && hasVariants)) && (
+                      <span className="ml-auto text-sm font-semibold text-gray-700 flex items-center gap-1.5">
+                        {selectedColorName && (
+                          <span
+                            className="w-3 h-3 rounded-full inline-block border border-gray-200 flex-shrink-0"
+                            style={{
+                              backgroundColor: hasVariants
+                                ? (apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.hex ?? "#e53e3e")
+                                : (details!.colors[activeColor]?.hex ?? "#e53e3e"),
+                            }}
+                          />
                         )}
-                      </div>
-                    </div>
+                        {selectedColorName ?? "Original"}
+                      </span>
+                    )}
                   </div>
 
-                  {/* ── Colour swatches (horizontal scroll on mobile) ── */}
-                  <div className="overflow-x-auto pb-2 -mx-1 scrollbar-hide">
-                    <div className="flex gap-3 items-end px-1" style={{ minWidth: "max-content" }}>
+                  {/* ── Colour swatches — wrapping grid ── */}
+                  <div className="flex flex-wrap gap-x-4 gap-y-4">
 
-                      {/* "Original Product" pill — only when API variants exist */}
-                      {hasVariants && (
-                        <div className="flex flex-col items-center gap-2 flex-shrink-0">
-                          <button
-                            onClick={() => { setActiveColor(-1); setActiveView(0); }}
-                            title="View original product images"
-                            className={`w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                              activeColor === -1
-                                ? "ring-2 ring-primary ring-offset-2 ring-offset-white border-primary bg-primary/8 scale-110 shadow-[0_4px_16px_rgba(229,62,62,0.3)]"
-                                : "border-gray-200 bg-gray-50 hover:scale-105 hover:border-gray-400"
-                            }`}
-                          >
-                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                              <rect x="3" y="3" width="7" height="7" rx="1.5" fill={activeColor === -1 ? "#e53e3e" : "#9ca3af"} />
-                              <rect x="12" y="3" width="7" height="7" rx="1.5" fill={activeColor === -1 ? "#e53e3e" : "#9ca3af"} opacity="0.6" />
-                              <rect x="3" y="12" width="7" height="7" rx="1.5" fill={activeColor === -1 ? "#e53e3e" : "#9ca3af"} opacity="0.6" />
-                              <rect x="12" y="12" width="7" height="7" rx="1.5" fill={activeColor === -1 ? "#e53e3e" : "#9ca3af"} opacity="0.3" />
+                    {/* "Original Product" chip — only when API variants exist */}
+                    {hasVariants && (
+                      <button
+                        onClick={() => { setActiveColor(-1); setActiveView(0); }}
+                        className="flex flex-col items-center gap-2 focus:outline-none group"
+                        style={{ minWidth: 56 }}
+                      >
+                        <span
+                          className="relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200"
+                          style={{
+                            background: activeColor === -1 ? "rgba(196,150,42,0.12)" : "#f3f4f6",
+                            border: activeColor === -1 ? "3px solid #C4962A" : "2px solid #e5e7eb",
+                            boxShadow: activeColor === -1
+                              ? "0 0 0 3px rgba(196,150,42,0.18), 0 4px 14px rgba(0,0,0,0.08)"
+                              : "0 2px 8px rgba(0,0,0,0.06)",
+                          }}
+                        >
+                          {activeColor === -1 ? (
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                              <path d="M3 8.5L6.5 12L13 5" stroke="#C4962A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
-                          </button>
-                          <span className={`text-[10px] font-bold text-center leading-tight max-w-[52px] ${activeColor === -1 ? "text-primary" : "text-gray-400"}`}>
-                            Original
-                          </span>
-                        </div>
-                      )}
+                          ) : (
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                              <rect x="2" y="2" width="6" height="6" rx="1.5" fill="#9ca3af" />
+                              <rect x="10" y="2" width="6" height="6" rx="1.5" fill="#9ca3af" opacity="0.6" />
+                              <rect x="2" y="10" width="6" height="6" rx="1.5" fill="#9ca3af" opacity="0.6" />
+                              <rect x="10" y="10" width="6" height="6" rx="1.5" fill="#9ca3af" opacity="0.35" />
+                            </svg>
+                          )}
+                        </span>
+                        <span
+                          className="text-[11px] font-semibold text-center leading-tight w-14"
+                          style={{ color: activeColor === -1 ? "#C4962A" : "#6b7280" }}
+                        >
+                          Original
+                        </span>
+                      </button>
+                    )}
 
-                      {/* Colour dots */}
-                      {hasVariants
-                        ? apiVariants.map((v: any, i: number) => (
-                            <div key={v.id ?? i} className="flex flex-col items-center gap-2 flex-shrink-0">
-                              <ColorDot
-                                hex={v.hex}
-                                border={v.hex === "#ffffff" || v.hex === "#f5f5f5" || v.hex === "#FFFFFF"}
-                                name={v.color}
-                                active={activeColor === i}
-                                onClick={() => { setActiveColor(activeColor === i ? -1 : i); setActiveView(0); }}
-                              />
-                              <span className={`text-[10px] font-bold text-center leading-tight max-w-[52px] ${activeColor === i ? "text-primary" : "text-gray-400"}`}>
-                                {v.color.length > 8 ? v.color.slice(0, 7) + "…" : v.color}
-                              </span>
-                            </div>
-                          ))
-                        : details!.colors.map((c, i) => (
-                            <div key={c.name} className="flex flex-col items-center gap-2 flex-shrink-0">
-                              <ColorDot
-                                hex={c.hex}
-                                border={c.border}
-                                name={c.name}
-                                active={activeColor === i}
-                                onClick={() => setActiveColor(i)}
-                              />
-                              <span className={`text-[10px] font-bold text-center leading-tight max-w-[52px] ${activeColor === i ? "text-primary" : "text-gray-400"}`}>
-                                {c.name.length > 8 ? c.name.slice(0, 7) + "…" : c.name}
-                              </span>
-                            </div>
-                          ))
-                      }
-                    </div>
+                    {/* Colour swatches */}
+                    {hasVariants
+                      ? apiVariants.map((v: any, i: number) => (
+                          <ColorSwatch
+                            key={v.id ?? i}
+                            hex={v.hex}
+                            hasBorder={["#ffffff", "#f5f5f5", "#FFFFFF"].includes(v.hex)}
+                            name={v.color}
+                            active={activeColor === i}
+                            onClick={() => { setActiveColor(activeColor === i ? -1 : i); setActiveView(0); }}
+                          />
+                        ))
+                      : details!.colors.map((c, i) => (
+                          <ColorSwatch
+                            key={c.name}
+                            hex={c.hex}
+                            hasBorder={c.border}
+                            name={c.name}
+                            active={activeColor === i}
+                            onClick={() => setActiveColor(i)}
+                          />
+                        ))
+                    }
                   </div>
                 </div>
               );
