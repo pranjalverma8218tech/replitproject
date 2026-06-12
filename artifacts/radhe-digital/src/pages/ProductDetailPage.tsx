@@ -275,9 +275,7 @@ export default function ProductDetailPage() {
 
   const selectedColorHex = (hasVariants && activeColor >= 0)
     ? (apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.hex ?? "#e53e3e")
-    : (!hasVariants && activeColor >= 0)
-      ? (details?.colors?.[activeColor]?.hex ?? "#e53e3e")
-      : "#e53e3e";
+    : "#e53e3e";
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -382,13 +380,11 @@ export default function ProductDetailPage() {
               <span className="text-gray-400 text-sm pb-1">per piece · inclusive of printing</span>
             </div>
 
-            {(hasVariants || details?.colors) && (() => {
-              const colorCount = hasVariants ? apiVariants.length : details!.colors.length;
+            {hasVariants && (() => {
+              const colorCount = apiVariants.length;
               const selectedColorName = activeColor === -1
                 ? null
-                : hasVariants
-                  ? (apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.color ?? null)
-                  : (details!.colors[activeColor]?.name ?? null);
+                : (apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.color ?? null);
               return (
                 <div className="space-y-3 py-1">
                   {/* ── Section heading ── */}
@@ -401,16 +397,12 @@ export default function ProductDetailPage() {
                     >
                       {colorCount}
                     </span>
-                    {(selectedColorName || (activeColor === -1 && hasVariants)) && (
+                    {(selectedColorName || activeColor === -1) && (
                       <span className="ml-auto text-sm font-semibold text-gray-700 flex items-center gap-1.5">
                         {selectedColorName && (
                           <span
                             className="w-3 h-3 rounded-full inline-block border border-gray-200 flex-shrink-0"
-                            style={{
-                              backgroundColor: hasVariants
-                                ? (apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.hex ?? "#e53e3e")
-                                : (details!.colors[activeColor]?.hex ?? "#e53e3e"),
-                            }}
+                            style={{ backgroundColor: apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.hex ?? "#e53e3e" }}
                           />
                         )}
                         {selectedColorName ?? "Original"}
@@ -421,68 +413,54 @@ export default function ProductDetailPage() {
                   {/* ── Colour swatches — wrapping grid ── */}
                   <div className="flex flex-wrap gap-x-4 gap-y-4">
 
-                    {/* "Original Product" chip — only when API variants exist */}
-                    {hasVariants && (
-                      <button
-                        onClick={() => { setActiveColor(-1); setActiveView(0); }}
-                        className="flex flex-col items-center gap-2 focus:outline-none group"
-                        style={{ minWidth: 56 }}
+                    {/* "Original Product" chip */}
+                    <button
+                      onClick={() => { setActiveColor(-1); setActiveView(0); }}
+                      className="flex flex-col items-center gap-2 focus:outline-none group"
+                      style={{ minWidth: 56 }}
+                    >
+                      <span
+                        className="relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200"
+                        style={{
+                          background: activeColor === -1 ? "rgba(196,150,42,0.12)" : "#f3f4f6",
+                          border: activeColor === -1 ? "3px solid #C4962A" : "2px solid #e5e7eb",
+                          boxShadow: activeColor === -1
+                            ? "0 0 0 3px rgba(196,150,42,0.18), 0 4px 14px rgba(0,0,0,0.08)"
+                            : "0 2px 8px rgba(0,0,0,0.06)",
+                        }}
                       >
-                        <span
-                          className="relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200"
-                          style={{
-                            background: activeColor === -1 ? "rgba(196,150,42,0.12)" : "#f3f4f6",
-                            border: activeColor === -1 ? "3px solid #C4962A" : "2px solid #e5e7eb",
-                            boxShadow: activeColor === -1
-                              ? "0 0 0 3px rgba(196,150,42,0.18), 0 4px 14px rgba(0,0,0,0.08)"
-                              : "0 2px 8px rgba(0,0,0,0.06)",
-                          }}
-                        >
-                          {activeColor === -1 ? (
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                              <path d="M3 8.5L6.5 12L13 5" stroke="#C4962A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                          ) : (
-                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                              <rect x="2" y="2" width="6" height="6" rx="1.5" fill="#9ca3af" />
-                              <rect x="10" y="2" width="6" height="6" rx="1.5" fill="#9ca3af" opacity="0.6" />
-                              <rect x="2" y="10" width="6" height="6" rx="1.5" fill="#9ca3af" opacity="0.6" />
-                              <rect x="10" y="10" width="6" height="6" rx="1.5" fill="#9ca3af" opacity="0.35" />
-                            </svg>
-                          )}
-                        </span>
-                        <span
-                          className="text-[11px] font-semibold text-center leading-tight w-14"
-                          style={{ color: activeColor === -1 ? "#C4962A" : "#6b7280" }}
-                        >
-                          Original
-                        </span>
-                      </button>
-                    )}
+                        {activeColor === -1 ? (
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M3 8.5L6.5 12L13 5" stroke="#C4962A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        ) : (
+                          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <rect x="2" y="2" width="6" height="6" rx="1.5" fill="#9ca3af" />
+                            <rect x="10" y="2" width="6" height="6" rx="1.5" fill="#9ca3af" opacity="0.6" />
+                            <rect x="2" y="10" width="6" height="6" rx="1.5" fill="#9ca3af" opacity="0.6" />
+                            <rect x="10" y="10" width="6" height="6" rx="1.5" fill="#9ca3af" opacity="0.35" />
+                          </svg>
+                        )}
+                      </span>
+                      <span
+                        className="text-[11px] font-semibold text-center leading-tight w-14"
+                        style={{ color: activeColor === -1 ? "#C4962A" : "#6b7280" }}
+                      >
+                        Original
+                      </span>
+                    </button>
 
-                    {/* Colour swatches */}
-                    {hasVariants
-                      ? apiVariants.map((v: any, i: number) => (
-                          <ColorSwatch
-                            key={v.id ?? i}
-                            hex={v.hex}
-                            hasBorder={["#ffffff", "#f5f5f5", "#FFFFFF"].includes(v.hex)}
-                            name={v.color}
-                            active={activeColor === i}
-                            onClick={() => { setActiveColor(activeColor === i ? -1 : i); setActiveView(0); }}
-                          />
-                        ))
-                      : details!.colors.map((c, i) => (
-                          <ColorSwatch
-                            key={c.name}
-                            hex={c.hex}
-                            hasBorder={c.border}
-                            name={c.name}
-                            active={activeColor === i}
-                            onClick={() => setActiveColor(i)}
-                          />
-                        ))
-                    }
+                    {/* API variant swatches — only from product.variants */}
+                    {apiVariants.map((v: any, i: number) => (
+                      <ColorSwatch
+                        key={v.id ?? i}
+                        hex={v.hex}
+                        hasBorder={["#ffffff", "#f5f5f5", "#FFFFFF"].includes(v.hex)}
+                        name={v.color}
+                        active={activeColor === i}
+                        onClick={() => { setActiveColor(activeColor === i ? -1 : i); setActiveView(0); }}
+                      />
+                    ))}
                   </div>
                 </div>
               );
