@@ -1,0 +1,86 @@
+The Add to Cart flow and Buy Now flow are currently mixed together and creating a poor user experience.
+
+Current Problems:
+
+1. Clicking "Buy Now" opens the same interface used for Add to Cart.
+2. Clicking "Add to Cart" also opens the same interface.
+3. The user cannot clearly understand whether they are buying immediately or adding to cart.
+4. The Add to Cart popup/theme looks unprofessional and does not match the website design.
+5. Add to Cart should not automatically open a large modal.
+
+Required Fix:
+
+========================
+BUY NOW FLOW
+========================
+
+When the user clicks Buy Now:
+
+- Open a dedicated Buy Now modal/page.
+- Show:
+  - Product Image
+  - Product Name
+  - Selected Color/Variant
+  - Quantity
+  - Customer Details Form
+  - Order Summary
+  - Place Order button
+
+Do NOT show any Add to Cart content inside Buy Now.
+
+The Buy Now flow should focus only on placing an order.
+
+========================
+ADD TO CART FLOW
+========================
+
+When the user clicks Add to Cart:
+
+- Add the product directly to the cart.
+- Do NOT open any large popup/modal.
+- Show only a small success notification:
+
+  ✓ Product Added to Cart
+
+- Notification disappears automatically after a few seconds.
+
+OR
+
+- Update the cart count badge instantly.
+
+========================
+CART VIEW
+========================
+
+The cart interface should open ONLY when:
+
+- User clicks the Cart icon in the header/navbar.
+
+Not when clicking Add to Cart.
+
+========================
+DESIGN IMPROVEMENTS
+========================
+
+- Remove the current black popup style.
+- Use the website's premium White + Red + Black theme.
+- Better spacing.
+- Modern ecommerce appearance.
+- Mobile responsive.
+
+========================
+VERIFY
+========================
+
+Buy Now:
+→ Dedicated order flow only
+
+Add to Cart:
+→ Adds product silently
+→ Updates cart count
+→ No large modal
+
+Cart Icon:
+→ Opens cart page/drawer
+
+Implement full functionality and remove any shared modal logic between Buy Now and Add to Cart.

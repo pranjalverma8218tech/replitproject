@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus, ClipboardCheck, ImageOff } from "lucide-react";
-import { useCart } from "@/context/CartContext";
+import { useCart, type CartCustomization } from "@/context/CartContext";
+import { useToast } from "@/hooks/use-toast";
 
 const T_SHIRT_SIZES = ["S", "M", "L", "XL", "XXL"];
 const GENDERS = ["Men", "Women", "Unisex"];
@@ -26,9 +27,7 @@ interface Props {
   categoryLabel: string;
   variants?: ProductVariant[];
   initialColorIndex?: number;
-  /** URL of the original product image (no colour selected) */
   originalImageUrl?: string;
-  /** One image URL per variant, indexed parallel to `variants`. undefined = no image for that variant. */
   variantImageUrls?: (string | undefined)[];
   onClose: () => void;
 }
@@ -43,11 +42,11 @@ export function ProductOptionsModal({
   variantImageUrls = [],
   onClose,
 }: Props) {
-  const { addItem } = useCart();
+  const { addItemSilent } = useCart();
+  const { toast } = useToast();
   const isTShirt = categorySlug === "t-shirts";
 
   const hasColors = variants.length > 0;
-  // -1 means "Original Product" — no variant pre-selected
   const clampedInitial = !hasColors
     ? -1
     : initialColorIndex < 0
@@ -83,15 +82,11 @@ export function ProductOptionsModal({
 
   const total = product.price * totalQty;
 
-  // Derive the preview image dynamically as the user changes colour inside the modal.
-  // Priority: variant image → original product image → undefined (shows placeholder)
   const previewImageUrl: string | undefined = (() => {
     if (showCustomColor) return originalImageUrl;
     if (!isOriginal && hasColors) {
-      // Variant selected — use variant image, fall back to original
       return variantImageUrls[selectedColor] ?? originalImageUrl;
     }
-    // Original Product — always use the product-level image
     return originalImageUrl;
   })();
 
@@ -106,33 +101,44 @@ export function ProductOptionsModal({
     return () => { document.body.style.overflow = ""; };
   }, []);
 
-  const handleAddToCart = () => {
+  const handleConfirmOrder = () => {
     if (totalQty === 0) return;
-    if (isTShirt) {
-      Object.entries(sizeQtys).forEach(([size, q]) => {
-        if (q > 0) {
-          addItem({
-            id: `${product.id}-${size}-${colorName}`,
-            name: product.name,
-            price: product.price,
-            quantity: q,
-            category: categoryLabel,
-            customization: colorName
-              ? `${gender} · ${size} · ${colorName}`
-              : `${gender} · ${size}`,
-          });
-        }
-      });
-    } else {
-      addItem({
-        id: `${product.id}-${colorName || "default"}`,
-        name: product.name,
-        price: product.price,
-        quantity: qty,
-        category: categoryLabel,
-        customization: colorName || undefined,
-      });
-    }
+
+    const customization: CartCustomization | undefined = (() => {
+      const c: CartCustomization = {};
+      if (!isOriginal && colorName) {
+        c.color = showCustomColor ? colorName : colorName;
+        if (!showCustomColor) c.colorHex = colorHex;
+      } else if (showCustomColor && customColor.trim()) {
+        c.color = customColor.trim();
+      }
+      if (isTShirt) {
+        c.gender = gender;
+        const nonZero = Object.fromEntries(
+          Object.entries(sizeQtys).filter(([, q]) => q > 0)
+        );
+        if (Object.keys(nonZero).length > 0) c.sizeBreakdown = nonZero;
+      }
+      return Object.keys(c).length > 0 ? c : undefined;
+    })();
+
+    addItemSilent({
+      productId: product.id,
+      productName: product.name,
+      categorySlug,
+      categoryLabel,
+      price: product.price,
+      priceLabel: product.priceLabel ?? `₹${product.price}`,
+      isCustomized: false,
+      quantity: totalQty,
+      customization,
+    });
+
+    toast({
+      title: "Order added to cart ✓",
+      description: "Open the cart icon to review & place your order via WhatsApp.",
+    });
+
     onClose();
   };
 
@@ -175,7 +181,6 @@ export function ProductOptionsModal({
               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 pt-3 pb-1.5">
                 Product Preview
               </p>
-              {/* Image area */}
               <motion.div
                 key={previewImageUrl ?? "no-img"}
                 initial={{ opacity: 0.5 }}
@@ -194,16 +199,15 @@ export function ProductOptionsModal({
                   <div className="w-full h-full flex flex-col items-center justify-center gap-2">
                     <div
                       className="w-14 h-14 rounded-full opacity-80 flex items-center justify-center"
-                      style={{ backgroundColor: colorHex }}
+                      style={{ backgroundColor: isOriginal ? "#555" : colorHex }}
                     >
                       <ImageOff size={20} className="text-white opacity-60" />
                     </div>
                     <p className="text-xs text-gray-500">No image uploaded</p>
                   </div>
                 )}
-                {/* Colour badge overlay */}
                 <div className="absolute bottom-2 left-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-sm">
-                  {hasColors && !showCustomColor && (
+                  {hasColors && !isOriginal && !showCustomColor && (
                     <span
                       className="w-2.5 h-2.5 rounded-full flex-shrink-0 border border-white/30"
                       style={{ backgroundColor: colorHex }}
@@ -212,8 +216,6 @@ export function ProductOptionsModal({
                   <span className="text-[11px] font-semibold text-white">{previewLabel}</span>
                 </div>
               </motion.div>
-
-              {/* Name row */}
               <div className="px-4 py-3 flex items-center justify-between">
                 <span className="text-sm font-bold text-gray-800 truncate">{product.name}</span>
                 <span className="text-sm font-extrabold text-primary ml-3 flex-shrink-0">
@@ -226,7 +228,10 @@ export function ProductOptionsModal({
             {hasColors && (
               <div>
                 <p className="text-sm font-bold text-gray-700 mb-3">
-                  Colour: <span className="text-gray-900">{colorName}</span>
+                  Colour:{" "}
+                  <span className="text-gray-900">
+                    {isOriginal ? "Not selected" : colorName}
+                  </span>
                 </p>
                 <div className="flex flex-wrap gap-2.5 mb-3">
                   {variants.map((v, i) => {
@@ -293,7 +298,7 @@ export function ProductOptionsModal({
               </div>
             )}
 
-            {/* ── Size + Qty ── */}
+            {/* ── Sizes & Qty ── */}
             {isTShirt ? (
               <div>
                 <p className="text-sm font-bold text-gray-700 mb-3">Sizes & Quantities</p>
@@ -373,10 +378,10 @@ export function ProductOptionsModal({
               </div>
             </div>
 
-            {/* ── CTA ── */}
+            {/* ── Confirm Order CTA ── */}
             <div className="pb-2">
               <motion.button
-                onClick={handleAddToCart}
+                onClick={handleConfirmOrder}
                 disabled={totalQty === 0}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}

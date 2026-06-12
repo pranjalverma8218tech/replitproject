@@ -8,6 +8,7 @@ import {
 import { CATEGORY_MAP } from "@/data/products";
 import { CATEGORY_DETAILS, type GalleryView } from "@/data/productDetails";
 import { useCart } from "@/context/CartContext";
+import { useToast } from "@/hooks/use-toast";
 import { ProductOptionsModal } from "@/components/ProductOptionsModal";
 import {
   useApiProducts, useApiProductsLoaded, getViewImages,
@@ -169,6 +170,9 @@ export default function ProductDetailPage() {
   const [, setLocation] = useLocation();
   const categoryConfig = CATEGORY_MAP[slug ?? ""];
   const details = CATEGORY_DETAILS[slug ?? ""];
+
+  const { addItemSilent } = useCart();
+  const { toast } = useToast();
 
   const [activeView, setActiveView] = useState(0);
   const [activeColor, setActiveColor] = useState(-1); // -1 = no color selected
@@ -455,7 +459,30 @@ export default function ProductDetailPage() {
                   <ShoppingBag size={17} /> Buy Now
                 </motion.button>
                 <motion.button
-                  onClick={() => setShowModal(true)}
+                  onClick={() => {
+                    const apiVariantsNow = (product.variants ?? []).filter((v: any) => v.color?.trim());
+                    const hasVar = apiVariantsNow.length > 0;
+                    addItemSilent({
+                      productId: product.id,
+                      productName: product.name,
+                      categorySlug: slug ?? "",
+                      categoryLabel,
+                      price: product.price,
+                      priceLabel: product.priceLabel ?? `₹${product.price}`,
+                      isCustomized: false,
+                      quantity: 1,
+                      customization: (hasVar && activeColor >= 0)
+                        ? {
+                            color: apiVariantsNow[Math.min(activeColor, apiVariantsNow.length - 1)]?.color,
+                            colorHex: apiVariantsNow[Math.min(activeColor, apiVariantsNow.length - 1)]?.hex,
+                          }
+                        : undefined,
+                    });
+                    toast({
+                      title: "Added to cart ✓",
+                      description: `${product.name} — tap the cart icon to review your order.`,
+                    });
+                  }}
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   className="flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-gray-700 border border-gray-200 hover:border-[#C4962A] hover:text-[#C4962A] transition-all text-sm"
                 >

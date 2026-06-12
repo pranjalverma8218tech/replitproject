@@ -35,7 +35,10 @@ interface CartContextValue {
   openCart: () => void;
   closeCart: () => void;
   toggleCart: () => void;
+  /** Adds item AND opens the cart drawer. */
   addItem: (item: Omit<CartItem, "cartId">) => void;
+  /** Adds item silently — does NOT open the cart drawer. Use for Buy Now / direct Add to Cart. */
+  addItemSilent: (item: Omit<CartItem, "cartId">) => void;
   removeItem: (cartId: string) => void;
   updateQty: (cartId: string, qty: number) => void;
   clearCart: () => void;
@@ -61,6 +64,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsOpen(true);
   }, []);
 
+  const addItemSilent = useCallback((item: Omit<CartItem, "cartId">) => {
+    setItems(prev => [...prev, { ...item, cartId: genId() }]);
+  }, []);
+
   const removeItem = useCallback((cartId: string) => {
     setItems(prev => prev.filter(i => i.cartId !== cartId));
   }, []);
@@ -76,7 +83,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const totalPrice = items.reduce((s, i) => s + i.price * i.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ items, isOpen, totalItems, totalPrice, openCart, closeCart, toggleCart, addItem, removeItem, updateQty, clearCart }}>
+    <CartContext.Provider value={{ items, isOpen, totalItems, totalPrice, openCart, closeCart, toggleCart, addItem, addItemSilent, removeItem, updateQty, clearCart }}>
       {children}
     </CartContext.Provider>
   );
