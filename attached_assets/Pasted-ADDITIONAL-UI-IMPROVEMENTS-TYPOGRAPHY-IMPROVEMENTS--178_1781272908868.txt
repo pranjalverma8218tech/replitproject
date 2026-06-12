@@ -1,0 +1,132 @@
+ADDITIONAL UI IMPROVEMENTS
+
+=================================
+TYPOGRAPHY IMPROVEMENTS
+=======================
+
+Current Problem:
+
+Text is too small and does not attract attention.
+
+Required:
+
+* Increase overall font size throughout the Customization Studio.
+* Improve readability on mobile and desktop.
+* Make important information highly visible.
+
+=================================
+SECTION HEADINGS
+================
+
+Use large bold headings.
+
+Examples:
+
+CUSTOMIZE YOUR PRODUCT
+
+UPLOAD YOUR LOGO
+
+UPLOAD YOUR DESIGN
+
+PRINT POSITION
+
+QUANTITY
+
+DESIGN INSTRUCTIONS
+
+Heading Style:
+
+* Large font size
+* Bold weight
+* Strong contrast
+* Proper spacing above and below
+
+=================================
+IMPORTANT OPTIONS
+=================
+
+Highlight critical selections:
+
+* Selected Product
+* Selected Color
+* Quantity
+* Print Position
+
+Use:
+
+* Larger text
+* Bold labels
+* Colored badges
+* Clear visual indicators
+
+=================================
+PRODUCT INFORMATION
+===================
+
+Display prominently:
+
+Product Name
+Selected Color
+Selected Size
+Base Price
+
+Use larger typography and premium styling.
+
+=================================
+BUTTON TEXT
+===========
+
+Make button text larger and bolder.
+
+Examples:
+
+UPLOAD LOGO
+
+UPLOAD DESIGN
+
+PROCEED TO ORDER
+
+SUBMIT CUSTOMIZATION
+
+Buttons should be clearly visible from a distance.
+
+=================================
+FORM LABELS
+===========
+
+Increase label font size.
+
+Examples:
+
+Quantity
+
+Print Position
+
+Design Instructions
+
+Upload Logo
+
+Upload Design
+
+Must be easy to read on mobile devices.
+
+=================================
+VISUAL HIERARCHY
+================
+
+The customer should instantly notice:
+
+1. Product Preview
+2. Selected Product Information
+3. Upload Design Section
+4. Print Position
+5. Quantity
+6. Order Button
+
+Use font size, weight, spacing, and card design to create a professional hierarchy.
+
+=================================
+GOAL
+====
+
+The customization page should feel like a premium ecommerce configurator with large, clear, highly visible text and modern UI elements.

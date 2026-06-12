@@ -1,0 +1,182 @@
+Improve the entire Customization Studio UI and Quantity Selector.
+
+=================================
+QUANTITY IMPROVEMENTS
+=====================
+
+Current Problem:
+
+Quantity can only be changed in one way.
+
+Required:
+
+Provide BOTH methods:
+
+1. Plus / Minus Buttons
+
+[-] 1 [+]
+
+2. Manual Quantity Input
+
+Customer can directly type:
+
+1
+5
+10
+25
+100
+500
+
+Behavior:
+
+* Plus button increases quantity
+* Minus button decreases quantity
+* Manual input updates quantity instantly
+* Quantity cannot go below 1
+* Mobile friendly
+
+=================================
+CUSTOMIZATION PAGE DESIGN
+=========================
+
+Current Problem:
+
+The customization page looks too dark and unprofessional.
+
+Too much black color.
+Poor visual hierarchy.
+Feels unfinished.
+
+=================================
+NEW DESIGN STYLE
+================
+
+Use a premium ecommerce design.
+
+Theme:
+
+Primary:
+Red (#DC2626)
+
+Secondary:
+White (#FFFFFF)
+
+Accent:
+Light Gray (#F8F9FA)
+
+Text:
+Dark Gray / Black
+
+Avoid large solid black backgrounds.
+
+=================================
+LAYOUT
+======
+
+Left Side:
+
+Large Product Preview
+
+* Front View
+* Back View
+* Selected Color
+* Selected Product Image
+
+Right Side:
+
+Customization Form
+
+* Quantity
+* Print Position
+* Upload Logo
+* Upload Design
+* Design Instructions
+
+=================================
+CARDS
+=====
+
+Use modern cards:
+
+* White background
+* Soft shadow
+* Rounded corners
+* Clean spacing
+
+Do NOT use large black containers.
+
+=================================
+BUTTONS
+=======
+
+Primary Buttons:
+
+* Red background
+* White text
+* Hover animation
+* Strong visibility
+
+Secondary Buttons:
+
+* White background
+* Red border
+
+=================================
+UPLOAD AREA
+===========
+
+Modern drag-and-drop style.
+
+Show:
+
+* Upload Logo
+* Upload Design
+
+With icons and preview.
+
+=================================
+PRINT POSITION
+==============
+
+Replace plain radio buttons with premium selectable cards:
+
+○ Front Print
+
+○ Back Print
+
+○ Both Side Print
+
+Selected option:
+
+* Red border
+* Light red background
+
+=================================
+TYPOGRAPHY
+==========
+
+Use professional ecommerce typography.
+
+Increase readability.
+
+Better spacing between sections.
+
+Clear section headings.
+
+=================================
+MOBILE RESPONSIVE
+=================
+
+Must look premium on:
+
+* Mobile
+* Tablet
+* Desktop
+
+=================================
+GOAL
+====
+
+The customization page should look like a modern premium printing website, not a dark admin panel.
+
+Use a clean, professional ecommerce appearance consistent with the website's Red + White branding.
