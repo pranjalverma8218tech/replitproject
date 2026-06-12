@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, Minus, ShoppingCart } from "lucide-react";
+import { X, Plus, Minus, ShoppingCart, ImageOff } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 const T_SHIRT_SIZES = ["S", "M", "L", "XL", "XXL"];
@@ -26,6 +26,10 @@ interface Props {
   categoryLabel: string;
   variants?: ProductVariant[];
   initialColorIndex?: number;
+  /** URL of the original product image (no colour selected) */
+  originalImageUrl?: string;
+  /** One image URL per variant, indexed parallel to `variants`. undefined = no image for that variant. */
+  variantImageUrls?: (string | undefined)[];
   onClose: () => void;
 }
 
@@ -35,13 +39,17 @@ export function ProductOptionsModal({
   categoryLabel,
   variants = [],
   initialColorIndex = 0,
+  originalImageUrl,
+  variantImageUrls = [],
   onClose,
 }: Props) {
   const { addItem } = useCart();
   const isTShirt = categorySlug === "t-shirts";
 
   const hasColors = variants.length > 0;
-  const clampedInitial = hasColors ? Math.max(0, Math.min(initialColorIndex, variants.length - 1)) : 0;
+  const clampedInitial = hasColors
+    ? Math.max(0, Math.min(initialColorIndex, variants.length - 1))
+    : 0;
 
   const [selectedColor, setSelectedColor] = useState(clampedInitial);
   const [customColor, setCustomColor] = useState("");
@@ -58,13 +66,29 @@ export function ProductOptionsModal({
 
   const colorName = showCustomColor
     ? (customColor.trim() || "Custom Colour")
-    : (hasColors ? variants[selectedColor]?.color : "");
+    : (hasColors ? variants[selectedColor]?.color ?? "" : "");
 
   const colorHex = showCustomColor
     ? "#888"
     : (hasColors ? (variants[selectedColor]?.hex ?? "#e53e3e") : "#e53e3e");
 
   const total = product.price * totalQty;
+
+  // Derive the preview image dynamically as the user changes colour inside the modal
+  const previewImageUrl: string | undefined = (() => {
+    if (showCustomColor) return originalImageUrl;
+    if (hasColors) {
+      const variantImg = variantImageUrls[selectedColor];
+      return variantImg ?? originalImageUrl;
+    }
+    return originalImageUrl;
+  })();
+
+  const previewLabel = showCustomColor
+    ? (customColor.trim() ? `Custom: ${customColor.trim()}` : "Custom Colour")
+    : hasColors
+      ? (variants[selectedColor]?.color ?? "Original Product")
+      : "Original Product";
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -119,19 +143,75 @@ export function ProductOptionsModal({
           className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl overflow-hidden"
           style={{ maxHeight: "90vh", overflowY: "auto" }}
         >
-          {/* Header */}
+          {/* Sticky header */}
           <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <div>
               <p className="text-xs font-bold text-primary uppercase tracking-widest">{categoryLabel}</p>
               <h2 className="text-lg font-extrabold text-gray-900 leading-tight">{product.name}</h2>
             </div>
-            <button onClick={onClose} className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors">
+            <button
+              onClick={onClose}
+              className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
               <X size={18} className="text-gray-600" />
             </button>
           </div>
 
           <div className="px-6 py-5 space-y-6">
-            {/* Colour — only shown when variants exist from Admin Panel */}
+
+            {/* ── Product Preview ── */}
+            <div className="rounded-2xl overflow-hidden border border-gray-100 bg-gray-50" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 pt-3 pb-1.5">
+                Product Preview
+              </p>
+              {/* Image area */}
+              <motion.div
+                key={previewImageUrl ?? "no-img"}
+                initial={{ opacity: 0.5 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+                className="relative w-full bg-[#141414] overflow-hidden"
+                style={{ aspectRatio: "16/9" }}
+              >
+                {previewImageUrl ? (
+                  <img
+                    src={previewImageUrl}
+                    alt={`${product.name} – ${previewLabel}`}
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                    <div
+                      className="w-14 h-14 rounded-full opacity-80 flex items-center justify-center"
+                      style={{ backgroundColor: colorHex }}
+                    >
+                      <ImageOff size={20} className="text-white opacity-60" />
+                    </div>
+                    <p className="text-xs text-gray-500">No image uploaded</p>
+                  </div>
+                )}
+                {/* Colour badge overlay */}
+                <div className="absolute bottom-2 left-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-sm">
+                  {hasColors && !showCustomColor && (
+                    <span
+                      className="w-2.5 h-2.5 rounded-full flex-shrink-0 border border-white/30"
+                      style={{ backgroundColor: colorHex }}
+                    />
+                  )}
+                  <span className="text-[11px] font-semibold text-white">{previewLabel}</span>
+                </div>
+              </motion.div>
+
+              {/* Name row */}
+              <div className="px-4 py-3 flex items-center justify-between">
+                <span className="text-sm font-bold text-gray-800 truncate">{product.name}</span>
+                <span className="text-sm font-extrabold text-primary ml-3 flex-shrink-0">
+                  {product.priceLabel ?? `₹${product.price}`}
+                </span>
+              </div>
+            </div>
+
+            {/* ── Colour selector ── */}
             {hasColors && (
               <div>
                 <p className="text-sm font-bold text-gray-700 mb-3">
@@ -180,7 +260,7 @@ export function ProductOptionsModal({
               </div>
             )}
 
-            {/* Gender (T-shirts) */}
+            {/* ── Gender (T-shirts only) ── */}
             {isTShirt && (
               <div>
                 <p className="text-sm font-bold text-gray-700 mb-3">Gender</p>
@@ -190,7 +270,9 @@ export function ProductOptionsModal({
                       key={g}
                       onClick={() => setGender(g)}
                       className={`flex-1 py-2 rounded-xl text-sm font-bold border-2 transition-all ${
-                        gender === g ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 text-gray-600 hover:border-gray-400"
+                        gender === g
+                          ? "border-gray-900 bg-gray-900 text-white"
+                          : "border-gray-200 text-gray-600 hover:border-gray-400"
                       }`}
                     >
                       {g}
@@ -200,13 +282,16 @@ export function ProductOptionsModal({
               </div>
             )}
 
-            {/* Size + Qty (T-shirts) */}
+            {/* ── Size + Qty ── */}
             {isTShirt ? (
               <div>
                 <p className="text-sm font-bold text-gray-700 mb-3">Sizes & Quantities</p>
                 <div className="space-y-2">
                   {T_SHIRT_SIZES.map(size => (
-                    <div key={size} className="flex items-center justify-between py-2 px-3 rounded-xl bg-gray-50 border border-gray-100">
+                    <div
+                      key={size}
+                      className="flex items-center justify-between py-2 px-3 rounded-xl bg-gray-50 border border-gray-100"
+                    >
                       <span className="text-sm font-bold text-gray-700 w-8">{size}</span>
                       <div className="flex items-center gap-3">
                         <button
@@ -249,7 +334,7 @@ export function ProductOptionsModal({
               </div>
             )}
 
-            {/* Summary */}
+            {/* ── Order Summary ── */}
             <div className="bg-gray-50 rounded-2xl p-4 space-y-1.5 border border-gray-100">
               <div className="flex justify-between text-sm text-gray-500">
                 <span>Price per piece</span>
@@ -259,7 +344,10 @@ export function ProductOptionsModal({
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>Colour</span>
                   <span className="flex items-center gap-1.5 font-semibold text-gray-900">
-                    <span className="w-3 h-3 rounded-full inline-block border border-gray-200" style={{ backgroundColor: colorHex }} />
+                    <span
+                      className="w-3 h-3 rounded-full inline-block border border-gray-200"
+                      style={{ backgroundColor: colorHex }}
+                    />
                     {colorName}
                   </span>
                 </div>
@@ -274,7 +362,7 @@ export function ProductOptionsModal({
               </div>
             </div>
 
-            {/* CTA */}
+            {/* ── CTA ── */}
             <div className="pb-2">
               <motion.button
                 onClick={handleAddToCart}
@@ -288,7 +376,9 @@ export function ProductOptionsModal({
                 }}
               >
                 <ShoppingCart size={18} />
-                {totalQty === 0 ? "Select quantity to continue" : `Add ${totalQty} item${totalQty !== 1 ? "s" : ""} to Cart`}
+                {totalQty === 0
+                  ? "Select quantity to continue"
+                  : `Add ${totalQty} item${totalQty !== 1 ? "s" : ""} to Cart`}
               </motion.button>
               <p className="text-xs text-gray-400 text-center mt-3">
                 No payment upfront · Confirm via WhatsApp

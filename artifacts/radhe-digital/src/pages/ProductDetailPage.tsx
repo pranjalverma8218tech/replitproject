@@ -478,21 +478,40 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      {showModal && (
-        <ProductOptionsModal
-          product={product}
-          categorySlug={slug ?? ""}
-          categoryLabel={categoryLabel}
-          variants={apiVariants.map((v: any) => ({
-            id: v.id,
-            color: v.color,
-            hex: v.hex,
-            border: v.hex === "#ffffff" || v.hex === "#f5f5f5" || v.hex === "#FFFFFF",
-          }))}
-          initialColorIndex={activeColor >= 0 ? activeColor : 0}
-          onClose={() => setShowModal(false)}
-        />
-      )}
+      {showModal && (() => {
+        // The URL of the currently displayed image (original product, at the active view)
+        const originalImgUrl =
+          productLevelImages[Math.min(activeView, productLevelImages.length - 1)]?.url
+          ?? productLevelImages[0]?.url;
+
+        // One representative image URL per variant — prefer the angle currently active on
+        // the page, fall back to the first image the variant has.
+        const currentAngle = galleryViews[activeView]?.angle;
+        const varImgUrls: (string | undefined)[] = apiVariants.map((v: any) => {
+          const imgs = (v.images ?? []).filter((i: ApiProductImage) => i.url);
+          if (imgs.length === 0) return originalImgUrl; // use product image as fallback
+          const angleMatch = imgs.find((i: ApiProductImage) => i.view === currentAngle);
+          return (angleMatch ?? imgs[0]).url as string;
+        });
+
+        return (
+          <ProductOptionsModal
+            product={product}
+            categorySlug={slug ?? ""}
+            categoryLabel={categoryLabel}
+            variants={apiVariants.map((v: any) => ({
+              id: v.id,
+              color: v.color,
+              hex: v.hex,
+              border: v.hex === "#ffffff" || v.hex === "#f5f5f5" || v.hex === "#FFFFFF",
+            }))}
+            initialColorIndex={activeColor >= 0 ? activeColor : 0}
+            originalImageUrl={originalImgUrl}
+            variantImageUrls={varImgUrls}
+            onClose={() => setShowModal(false)}
+          />
+        );
+      })()}
 
       {/* Specifications */}
       {details?.specs && (
