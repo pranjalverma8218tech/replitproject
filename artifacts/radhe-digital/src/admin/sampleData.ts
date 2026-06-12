@@ -10,7 +10,7 @@ export type ProductCategory =
   | "T-Shirt Printing"
   | "Mug Printing"
   | "Cap Printing"
-  | "Mobile Cover Printing"
-  | "Corporate Gifts"
-  | "Customized Products"
-  | "Other Products";
+  | "Pen Printing"
+  | "Badge Printing"
+  | "Photo Frame Printing"
+  | "Corporate Gifts";

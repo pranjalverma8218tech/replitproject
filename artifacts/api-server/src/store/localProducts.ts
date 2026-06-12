@@ -31,6 +31,7 @@ export interface LocalProduct {
   id: string;
   name: string;
   category: string;
+  categorySlug?: string;
   description?: string;
   price: number;
   priceLabel?: string;

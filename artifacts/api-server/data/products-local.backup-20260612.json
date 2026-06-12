@@ -18,8 +18,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "t-shirts"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "ts-002",
@@ -57,8 +56,7 @@
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
     "updatedAt": "2026-06-12T05:37:51.476Z",
-    "variants": [],
-    "categorySlug": "t-shirts"
+    "variants": []
   },
   {
     "id": "ts-003",
@@ -78,8 +76,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "t-shirts"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "ts-004",
@@ -100,8 +97,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "t-shirts"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "ts-005",
@@ -121,8 +117,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "t-shirts"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "ts-006",
@@ -143,8 +138,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "t-shirts"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "ts-007",
@@ -164,8 +158,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "t-shirts"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "ts-008",
@@ -186,8 +179,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "t-shirts"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "mg-001",
@@ -208,8 +200,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "mugs"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "mg-002",
@@ -230,8 +221,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "mugs"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "mg-003",
@@ -251,8 +241,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "mugs"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "mg-004",
@@ -273,8 +262,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "mugs"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "mg-005",
@@ -294,8 +282,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "mugs"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "mg-006",
@@ -316,8 +303,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "mugs"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "cp-001",
@@ -338,8 +324,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "caps"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "cp-002",
@@ -360,8 +345,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "caps"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "cp-003",
@@ -381,8 +365,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "caps"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "cp-004",
@@ -402,8 +385,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "caps"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "cp-005",
@@ -424,8 +406,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "caps"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "cp-006",
@@ -446,13 +427,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "caps"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "pn-001",
     "name": "Classic Ball Pen with Logo",
-    "category": "Pen Printing",
+    "category": "Corporate Gifts",
     "description": "Smooth-writing ball pen with barrel imprint. Most popular promotional item.",
     "price": 29,
     "priceLabel": "₹29",
@@ -468,13 +448,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "pens"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "pn-002",
     "name": "Executive Metal Pen",
-    "category": "Pen Printing",
+    "category": "Corporate Gifts",
     "description": "Premium brushed metal pen with laser-engraved branding. Gift-box ready.",
     "price": 149,
     "priceLabel": "₹149",
@@ -490,13 +469,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "pens"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "pn-003",
     "name": "Stylus Touch Pen",
-    "category": "Pen Printing",
+    "category": "Corporate Gifts",
     "description": "Dual-purpose pen with capacitive stylus tip. Great for tech-savvy giveaways.",
     "price": 79,
     "priceLabel": "₹79",
@@ -511,13 +489,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "pens"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "pn-004",
     "name": "Eco Recycled Pen",
-    "category": "Pen Printing",
+    "category": "Corporate Gifts",
     "description": "Made from recycled materials. Sustainable branding choice for green businesses.",
     "price": 39,
     "priceLabel": "₹39",
@@ -533,13 +510,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "pens"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "pn-005",
     "name": "Gel Ink Pen with Imprint",
-    "category": "Pen Printing",
+    "category": "Corporate Gifts",
     "description": "Smooth gel writing with vibrant ink. Barrel print or clip engraving available.",
     "price": 49,
     "priceLabel": "₹49",
@@ -554,13 +530,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "pens"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "pn-006",
     "name": "Pen Gift Set (3-Piece)",
-    "category": "Pen Printing",
+    "category": "Corporate Gifts",
     "description": "Premium 3-pen set in a branded box. Perfect corporate gift or welcome kit.",
     "price": 399,
     "priceLabel": "₹399",
@@ -576,13 +551,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "pens"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "bd-001",
     "name": "Round Button Badge (58mm)",
-    "category": "Badge Printing",
+    "category": "Customized Products",
     "description": "Full-colour pin-back button badge. Ideal for events, elections, and promotions.",
     "price": 19,
     "priceLabel": "₹19",
@@ -598,13 +572,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "badges"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "bd-002",
     "name": "Rectangular Name Badge",
-    "category": "Badge Printing",
+    "category": "Customized Products",
     "description": "Professional name badges with metal pin or magnetic back for corporate use.",
     "price": 49,
     "priceLabel": "₹49",
@@ -620,13 +593,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "badges"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "bd-003",
     "name": "Metal Enamel Badge",
-    "category": "Badge Printing",
+    "category": "Customized Products",
     "description": "Die-cast metal badge with soft or hard enamel fill. Premium branded merchandise.",
     "price": 149,
     "priceLabel": "₹149",
@@ -642,13 +614,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "badges"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "bd-004",
     "name": "School / College ID Badge",
-    "category": "Badge Printing",
+    "category": "Customized Products",
     "description": "Durable PVC ID card badge with lanyard hole. Bulk orders for schools and colleges.",
     "price": 39,
     "priceLabel": "₹39",
@@ -663,13 +634,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "badges"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "bd-005",
     "name": "Event Lanyard Badge",
-    "category": "Badge Printing",
+    "category": "Customized Products",
     "description": "Printed lanyard with attached badge holder. Complete event identity solution.",
     "price": 59,
     "priceLabel": "₹59",
@@ -684,13 +654,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "badges"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "bd-006",
     "name": "Custom Logo Badge (Bulk)",
-    "category": "Badge Printing",
+    "category": "Customized Products",
     "description": "Minimum 100-piece custom logo badges for conferences, roadshows, and launches.",
     "price": 15,
     "priceLabel": "From ₹15",
@@ -706,13 +675,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "badges"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "pf-001",
     "name": "Classic Wood Photo Frame (5×7)",
-    "category": "Photo Frame Printing",
+    "category": "Customized Products",
     "description": "Natural wood frame with printed photo insert. A timeless personal gift.",
     "price": 299,
     "priceLabel": "₹299",
@@ -728,13 +696,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "photo-frames"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "pf-002",
     "name": "Collage Photo Frame (Multi-Photo)",
-    "category": "Photo Frame Printing",
+    "category": "Customized Products",
     "description": "Display up to 6 photos in a single premium frame. Perfect for anniversaries.",
     "price": 449,
     "priceLabel": "₹449",
@@ -750,13 +717,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "photo-frames"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "pf-003",
     "name": "Acrylic LED Photo Frame",
-    "category": "Photo Frame Printing",
+    "category": "Customized Products",
     "description": "Clear acrylic frame with backlit LED glow. Stunning table display for any occasion.",
     "price": 599,
     "priceLabel": "₹599",
@@ -772,13 +738,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "photo-frames"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "pf-004",
     "name": "Magnetic Fridge Photo Frame",
-    "category": "Photo Frame Printing",
+    "category": "Customized Products",
     "description": "Fun magnetic frame for the fridge. Great promotional and gifting item.",
     "price": 149,
     "priceLabel": "₹149",
@@ -793,13 +758,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "photo-frames"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "pf-005",
     "name": "Corporate Award Frame",
-    "category": "Photo Frame Printing",
+    "category": "Customized Products",
     "description": "Premium matt-finish frame for certificates and appreciation awards.",
     "price": 699,
     "priceLabel": "₹699",
@@ -815,13 +779,12 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "photo-frames"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "pf-006",
     "name": "Personalised Birthday Frame",
-    "category": "Photo Frame Printing",
+    "category": "Customized Products",
     "description": "Custom text + photo frame with name and date. Ideal birthday gift.",
     "price": 349,
     "priceLabel": "₹349",
@@ -836,8 +799,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "photo-frames"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "cg-001",
@@ -858,8 +820,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "corporate-gifts"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "cg-002",
@@ -880,8 +841,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "corporate-gifts"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "cg-003",
@@ -901,8 +861,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "corporate-gifts"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "cg-004",
@@ -923,8 +882,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "corporate-gifts"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "cg-005",
@@ -945,8 +903,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "corporate-gifts"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "cg-006",
@@ -967,8 +924,7 @@
     "status": "Active",
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
-    "updatedAt": "2026-06-10T09:20:51.204Z",
-    "categorySlug": "corporate-gifts"
+    "updatedAt": "2026-06-10T09:20:51.204Z"
   },
   {
     "id": "PRD-1781241809515",
@@ -1016,7 +972,6 @@
     "status": "Active",
     "stock": 50,
     "createdAt": "2026-06-12T05:23:29.516Z",
-    "updatedAt": "2026-06-12T05:23:29.516Z",
-    "categorySlug": "t-shirts"
+    "updatedAt": "2026-06-12T05:23:29.516Z"
   }
 ]

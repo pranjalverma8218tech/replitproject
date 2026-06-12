@@ -7,6 +7,19 @@ import {
 
 const router = Router();
 
+const CATEGORY_TO_SLUG: Record<string, string> = {
+  "T-Shirt Printing": "t-shirts",
+  "Mug Printing": "mugs",
+  "Cap Printing": "caps",
+  "Pen Printing": "pens",
+  "Badge Printing": "badges",
+  "Photo Frame Printing": "photo-frames",
+  "Corporate Gifts": "corporate-gifts",
+  "Customized Products": "corporate-gifts",
+  "Mobile Cover Printing": "corporate-gifts",
+  "Other Products": "corporate-gifts",
+};
+
 function parseJson(val: unknown): unknown {
   if (typeof val !== "string" || !val) return val ?? null;
   try { return JSON.parse(val); } catch { return val; }
@@ -27,6 +40,11 @@ function hydrate(row: Record<string, unknown>) {
     features:       parseJson(row.features),
     specifications: parseJson(row.specifications),
   };
+}
+
+function deriveSlug(category: string, explicitSlug?: string): string {
+  if (explicitSlug) return explicitSlug;
+  return CATEGORY_TO_SLUG[category] ?? "corporate-gifts";
 }
 
 // GET /api/products
@@ -88,10 +106,12 @@ router.post("/", async (req, res) => {
     return;
   }
   const id = req.body.id ?? `PRD-${Date.now()}`;
+  const categorySlug = deriveSlug(category, req.body.categorySlug);
 
   if (!dbConfigured) {
     const product = localCreate({
-      id, name, category, description: description ?? undefined,
+      id, name, category, categorySlug,
+      description: description ?? undefined,
       price: Number(price), priceLabel: priceLabel ?? undefined,
       badge: badge ?? undefined,
       tags: Array.isArray(tags) ? tags : (typeof tags === "string" ? tags.split(",").map((t: string) => t.trim()).filter(Boolean) : []),
@@ -110,16 +130,16 @@ router.post("/", async (req, res) => {
   try {
     await execute(
       `INSERT INTO products
-        (id, name, category, description, price, price_label, badge, tags, images, variants, features, specifications, image_url, status, stock)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (id, name, category, category_slug, description, price, price_label, badge, tags, images, variants, features, specifications, image_url, status, stock)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
-        name=VALUES(name), category=VALUES(category), description=VALUES(description),
-        price=VALUES(price), price_label=VALUES(price_label), badge=VALUES(badge),
-        tags=VALUES(tags), images=VALUES(images), variants=VALUES(variants),
+        name=VALUES(name), category=VALUES(category), category_slug=VALUES(category_slug),
+        description=VALUES(description), price=VALUES(price), price_label=VALUES(price_label),
+        badge=VALUES(badge), tags=VALUES(tags), images=VALUES(images), variants=VALUES(variants),
         features=VALUES(features), specifications=VALUES(specifications),
         image_url=VALUES(image_url), status=VALUES(status), stock=VALUES(stock)`,
       [
-        id, name, category, description ?? null, price,
+        id, name, category, categorySlug, description ?? null, price,
         priceLabel ?? null, badge ?? null,
         toJson(tags), toJson(images), toJson(variants ?? []),
         toJson(features), toJson(specifications),
@@ -140,9 +160,12 @@ router.put("/:id", async (req, res) => {
     tags, images, variants, features, specifications, imageUrl, status, stock
   } = req.body as Record<string, any>;
 
+  const categorySlug = deriveSlug(category, req.body.categorySlug);
+
   if (!dbConfigured) {
     const updated = localUpdate(req.params.id, {
-      name, category, description: description ?? undefined,
+      name, category, categorySlug,
+      description: description ?? undefined,
       price: Number(price), priceLabel: priceLabel ?? undefined,
       badge: badge ?? undefined,
       tags: Array.isArray(tags) ? tags : (typeof tags === "string" ? tags.split(",").map((t: string) => t.trim()).filter(Boolean) : []),
@@ -162,11 +185,11 @@ router.put("/:id", async (req, res) => {
   try {
     const result = await execute(
       `UPDATE products SET
-        name=?, category=?, description=?, price=?, price_label=?, badge=?,
+        name=?, category=?, category_slug=?, description=?, price=?, price_label=?, badge=?,
         tags=?, images=?, variants=?, features=?, specifications=?, image_url=?, status=?, stock=?
        WHERE id=?`,
       [
-        name, category, description ?? null, price,
+        name, category, categorySlug, description ?? null, price,
         priceLabel ?? null, badge ?? null,
         toJson(tags), toJson(images), toJson(variants ?? []),
         toJson(features), toJson(specifications),

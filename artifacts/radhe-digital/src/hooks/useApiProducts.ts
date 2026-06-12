@@ -17,22 +17,31 @@ export interface ApiProductVariant {
 
 export interface ApiProductData {
   id: string;
+  name: string;
+  description?: string;
+  price: number;
+  priceLabel?: string;
+  badge?: string;
+  tags?: string[];
+  status?: "Active" | "Inactive";
+  category?: string;
+  categorySlug?: string;
   images?: ApiProductImage[];
   variants?: ApiProductVariant[];
   features?: string[];
   specifications?: Array<{ label: string; value: string }>;
-  priceLabel?: string;
-  badge?: string;
-  tags?: string[];
 }
 
 let cache: Record<string, ApiProductData> | null = null;
 let fetchPromise: Promise<void> | null = null;
-const listeners: Set<(map: Record<string, ApiProductData>) => void> = new Set();
+let globalLoaded = false;
+const mapListeners: Set<(map: Record<string, ApiProductData>) => void> = new Set();
+const loadedListeners: Set<(v: boolean) => void> = new Set();
 
 export function invalidateApiProductsCache() {
   cache = null;
   fetchPromise = null;
+  globalLoaded = false;
 }
 
 function doFetch() {
@@ -41,11 +50,15 @@ function doFetch() {
     .then(r => r.ok ? r.json() : [])
     .then((rows: ApiProductData[]) => {
       cache = Object.fromEntries(rows.map(r => [r.id, r]));
-      listeners.forEach(fn => fn(cache!));
+      globalLoaded = true;
+      mapListeners.forEach(fn => fn(cache!));
+      loadedListeners.forEach(fn => fn(true));
     })
     .catch(() => {
       cache = {};
-      listeners.forEach(fn => fn({}));
+      globalLoaded = true;
+      mapListeners.forEach(fn => fn({}));
+      loadedListeners.forEach(fn => fn(true));
     });
   return fetchPromise;
 }
@@ -54,16 +67,27 @@ export function useApiProducts(): Record<string, ApiProductData> {
   const [map, setMap] = useState<Record<string, ApiProductData>>(cache ?? {});
 
   useEffect(() => {
-    listeners.add(setMap);
+    mapListeners.add(setMap);
     if (cache !== null) {
       setMap(cache);
     } else {
       doFetch();
     }
-    return () => { listeners.delete(setMap); };
+    return () => { mapListeners.delete(setMap); };
   }, []);
 
   return map;
+}
+
+export function useApiProductsLoaded(): boolean {
+  const [loaded, setLoaded] = useState(globalLoaded);
+  useEffect(() => {
+    loadedListeners.add(setLoaded);
+    if (globalLoaded) setLoaded(true);
+    else doFetch();
+    return () => { loadedListeners.delete(setLoaded); };
+  }, []);
+  return loaded;
 }
 
 export function getFrontImage(data: ApiProductData | undefined): string | null {

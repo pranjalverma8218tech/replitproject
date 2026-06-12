@@ -8,6 +8,7 @@ import {
   Award, Image, Gift
 } from "lucide-react";
 import { CATEGORIES } from "@/data/products";
+import { useApiProducts, type ApiProductData } from "@/hooks/useApiProducts";
 const logoSrc = "/radhe-logo.png";
 
 /* ─── Category SVG Thumbnails ─── */
@@ -239,6 +240,14 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 
 /* ─── HomePage ─── */
 export default function HomePage() {
+  const apiProducts = useApiProducts();
+  const featuredBySlug: Record<string, ApiProductData> = {};
+  Object.values(apiProducts).forEach(p => {
+    if (p.categorySlug && p.status !== "Inactive" && !featuredBySlug[p.categorySlug]) {
+      featuredBySlug[p.categorySlug] = p;
+    }
+  });
+
   const trustItems = [
     "✦ 10,000+ Happy Customers", "✦ Same-Day Printing Available", "✦ Pan India Delivery",
     "✦ Bulk Order Discounts", "✦ No Minimum Order", "✦ 100% Quality Guarantee",
@@ -495,8 +504,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {CATEGORIES.slice(0, 4).map((cat, i) => {
-              const product = cat.products[0];
-              if (!product) return null;
+              const product = featuredBySlug[cat.slug];
               return (
                 <motion.div
                   key={cat.slug}
@@ -509,22 +517,24 @@ export default function HomePage() {
                     className="group bg-white border border-gray-100 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
                     whileHover={{ y: -6 }}
                     style={{ boxShadow: "0 2px 14px rgba(0,0,0,0.07)" }}
-                    onClick={() => window.location.href = `/categories/${cat.slug}/${product.id}`}
+                    onClick={() => window.location.href = product ? `/categories/${cat.slug}/${product.id}` : `/categories/${cat.slug}`}
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 12px 36px rgba(196,150,42,0.18)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.3)"; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 14px rgba(0,0,0,0.07)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
                   >
                     <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden">
                       <CategorySVG slug={cat.slug}/>
-                      {product.badge && (
+                      {product?.badge && (
                         <span className="absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full bg-primary text-white">{product.badge}</span>
                       )}
                     </div>
                     <div className="p-5">
                       <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C4962A" }}>{cat.label}</span>
-                      <h3 className="text-gray-900 font-bold text-base mt-0.5 mb-1 leading-snug">{product.name}</h3>
-                      <p className="text-gray-500 text-xs mb-3 line-clamp-2">{product.description}</p>
+                      <h3 className="text-gray-900 font-bold text-base mt-0.5 mb-1 leading-snug">{product?.name ?? cat.label}</h3>
+                      <p className="text-gray-500 text-xs mb-3 line-clamp-2">{product?.description ?? cat.description}</p>
                       <div className="flex items-center justify-between">
-                        <span className="text-primary font-extrabold text-lg">{product.priceLabel}</span>
+                        <span className="text-primary font-extrabold text-lg">
+                          {product ? (product.priceLabel ?? `₹${product.price}`) : "View Products"}
+                        </span>
                         <button
                           onClick={e => { e.stopPropagation(); window.location.href = `/customize/${cat.slug}`; }}
                           className="flex items-center gap-1 text-xs font-bold px-3 py-2 rounded-xl text-white bg-primary hover:bg-red-700 transition-colors"

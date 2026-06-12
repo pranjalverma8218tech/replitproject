@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowRight, Shirt, Coffee, HardHat, Pen, Award, Image, Gift } from "lucide-react";
 import { CATEGORIES } from "@/data/products";
+import { useApiProducts } from "@/hooks/useApiProducts";
 
 const ICONS: Record<string, JSX.Element> = {
   "t-shirts": <Shirt size={28} />,
@@ -15,6 +16,18 @@ const ICONS: Record<string, JSX.Element> = {
 };
 
 export default function CategoriesPage() {
+  const apiProducts = useApiProducts();
+
+  const countBySlug = useMemo(() => {
+    const map: Record<string, number> = {};
+    Object.values(apiProducts).forEach(p => {
+      if (p.status !== "Inactive" && p.categorySlug) {
+        map[p.categorySlug] = (map[p.categorySlug] ?? 0) + 1;
+      }
+    });
+    return map;
+  }, [apiProducts]);
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
 
@@ -59,17 +72,23 @@ export default function CategoriesPage() {
                   }}
                 >
                   <div
-                    className="w-14 h-14 rounded-xl flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110"
-                    style={{ background: "rgba(196,150,42,0.1)", border: "1px solid rgba(196,150,42,0.25)", color: "#C4962A" }}
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 text-white transition-transform duration-300 group-hover:scale-110"
+                    style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 16px rgba(229,62,62,0.3)" }}
                   >
-                    {ICONS[cat.slug]}
+                    {ICONS[cat.slug] ?? <Gift size={28} />}
                   </div>
-                  <h3 className="text-gray-900 font-bold text-xl mb-2">{cat.label}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed flex-1 mb-5">{cat.description}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-400">{cat.products.length} products</span>
-                    <span className="flex items-center gap-1 text-sm font-bold group-hover:gap-2 transition-all duration-200" style={{ color: "#C4962A" }}>
-                      Browse <ArrowRight size={15} />
+                  <h3 className="text-xl font-extrabold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+                    {cat.label}
+                  </h3>
+                  <p className="text-gray-500 text-sm leading-relaxed flex-1 mb-4">{cat.description}</p>
+                  <div className="flex items-center justify-between mt-auto">
+                    <span className="text-xs text-gray-400">
+                      {countBySlug[cat.slug] !== undefined
+                        ? `${countBySlug[cat.slug]} product${countBySlug[cat.slug] !== 1 ? "s" : ""}`
+                        : "Browse products"}
+                    </span>
+                    <span className="flex items-center gap-1 text-sm font-bold text-primary transition-all group-hover:gap-2">
+                      View <ArrowRight size={14} />
                     </span>
                   </div>
                 </motion.div>
@@ -78,7 +97,6 @@ export default function CategoriesPage() {
           ))}
         </div>
       </section>
-
     </div>
   );
 }

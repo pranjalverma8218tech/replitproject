@@ -4,9 +4,9 @@ import {
   Plus, Search, Edit2, Trash2, X, Package, ChevronDown, Loader2,
   RefreshCw, WifiOff, AlertCircle, Image as ImageIcon, ListChecks,
   PlusCircle, MinusCircle, Upload, Link2, CheckCircle2, Copy,
-  Eye, ArrowLeft, BarChart2, Layers, Coffee, Smartphone, Gift,
+  Eye, ArrowLeft, BarChart2, Layers, Coffee, Gift,
   Palette, MoreHorizontal, CheckSquare, Square, Tag, ChevronRight,
-  ShirtIcon, HardHat,
+  ShirtIcon, HardHat, Pen, Award, Frame,
 } from "lucide-react";
 import {
   getProducts, createProduct, updateProduct, deleteProduct,
@@ -20,17 +20,17 @@ import type { ProductCategory } from "./sampleData";
 // ─── Category Config ──────────────────────────────────────────────────────────
 const CATEGORIES: ProductCategory[] = [
   "T-Shirt Printing", "Mug Printing", "Cap Printing",
-  "Mobile Cover Printing", "Corporate Gifts", "Customized Products", "Other Products",
+  "Pen Printing", "Badge Printing", "Photo Frame Printing", "Corporate Gifts",
 ];
 
 const CATEGORY_META: Record<string, { icon: React.ReactNode; color: string; bg: string }> = {
-  "T-Shirt Printing":    { icon: <ShirtIcon size={22} />, color: "#e53e3e", bg: "rgba(229,62,62,0.12)" },
-  "Mug Printing":        { icon: <Coffee size={22} />, color: "#ed8936", bg: "rgba(237,137,54,0.12)" },
-  "Cap Printing":        { icon: <HardHat size={22} />, color: "#ecc94b", bg: "rgba(236,201,75,0.12)" },
-  "Mobile Cover Printing": { icon: <Smartphone size={22} />, color: "#48bb78", bg: "rgba(72,187,120,0.12)" },
-  "Corporate Gifts":     { icon: <Gift size={22} />, color: "#9f7aea", bg: "rgba(159,122,234,0.12)" },
-  "Customized Products": { icon: <Palette size={22} />, color: "#4299e1", bg: "rgba(66,153,225,0.12)" },
-  "Other Products":      { icon: <Package size={22} />, color: "#a0aec0", bg: "rgba(160,174,192,0.12)" },
+  "T-Shirt Printing":      { icon: <ShirtIcon size={22} />, color: "#e53e3e", bg: "rgba(229,62,62,0.12)" },
+  "Mug Printing":          { icon: <Coffee size={22} />, color: "#ed8936", bg: "rgba(237,137,54,0.12)" },
+  "Cap Printing":          { icon: <HardHat size={22} />, color: "#ecc94b", bg: "rgba(236,201,75,0.12)" },
+  "Pen Printing":          { icon: <Pen size={22} />, color: "#48bb78", bg: "rgba(72,187,120,0.12)" },
+  "Badge Printing":        { icon: <Award size={22} />, color: "#4299e1", bg: "rgba(66,153,225,0.12)" },
+  "Photo Frame Printing":  { icon: <Frame size={22} />, color: "#d69e2e", bg: "rgba(214,158,46,0.12)" },
+  "Corporate Gifts":       { icon: <Gift size={22} />, color: "#9f7aea", bg: "rgba(159,122,234,0.12)" },
 };
 
 const BADGES = ["", "Best Seller", "Popular", "Trending", "Premium", "Bulk Deal", "Eco", "New"];

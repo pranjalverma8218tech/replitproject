@@ -3,13 +3,16 @@ import { Link, useParams, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import {
   ChevronRight, ShoppingCart, Palette, ShoppingBag,
-  Truck, Shield, Star, ArrowRight, Package, CheckCircle
+  Truck, Shield, Star, ArrowRight, Package, CheckCircle, Loader2
 } from "lucide-react";
-import { CATEGORY_MAP, type Product } from "@/data/products";
+import { CATEGORY_MAP } from "@/data/products";
 import { CATEGORY_DETAILS, type GalleryView } from "@/data/productDetails";
 import { useCart } from "@/context/CartContext";
 import { ProductOptionsModal } from "@/components/ProductOptionsModal";
-import { useApiProducts, getViewImages, type ApiProductImage } from "@/hooks/useApiProducts";
+import {
+  useApiProducts, useApiProductsLoaded, getViewImages,
+  type ApiProductData, type ApiProductImage
+} from "@/hooks/useApiProducts";
 
 /* ─── Gallery SVGs ─── */
 function GallerySVG({
@@ -17,7 +20,7 @@ function GallerySVG({
 }: {
   slug: string; angle: GalleryView["angle"]; color?: string; active?: boolean;
 }) {
-  const isLight = ["#ffffff", "#f5f5f5", "#ffffff"].includes(color);
+  const isLight = ["#ffffff", "#f5f5f5", "#FFFFFF"].includes(color);
   const textCol = isLight ? "#222" : "#fff";
   const bg = active ? "#1a1a1a" : "#141414";
 
@@ -130,7 +133,7 @@ function ColorDot({ hex, border, name, active, onClick }: {
 
 /* ─── Related Product Card ─── */
 function RelatedCard({ product, slug, catLabel, index }: {
-  product: Product; slug: string; catLabel: string; index: number;
+  product: ApiProductData; slug: string; catLabel: string; index: number;
 }) {
   const [, setLocation] = useLocation();
 
@@ -154,7 +157,7 @@ function RelatedCard({ product, slug, catLabel, index }: {
       </div>
       <div className="p-4">
         <p className="text-gray-900 font-bold text-sm leading-snug mb-1">{product.name}</p>
-        <p className="text-primary font-extrabold text-base">{product.priceLabel}</p>
+        <p className="text-primary font-extrabold text-base">{product.priceLabel ?? `₹${product.price}`}</p>
       </div>
     </motion.div>
   );
@@ -164,38 +167,51 @@ function RelatedCard({ product, slug, catLabel, index }: {
 export default function ProductDetailPage() {
   const { slug, productId } = useParams<{ slug: string; productId: string }>();
   const [, setLocation] = useLocation();
-  const category = CATEGORY_MAP[slug ?? ""];
-  const product = category?.products.find(p => p.id === productId);
+  const categoryConfig = CATEGORY_MAP[slug ?? ""];
   const details = CATEGORY_DETAILS[slug ?? ""];
 
   const [activeView, setActiveView] = useState(0);
   const [activeColor, setActiveColor] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const apiProducts = useApiProducts();
+  const loaded = useApiProductsLoaded();
 
-  if (!category || !product) {
+  const product: ApiProductData | undefined = productId ? apiProducts[productId] : undefined;
+
+  if (!loaded) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center text-gray-900">
+        <Loader2 size={48} className="animate-spin text-primary opacity-60 mb-4" />
+        <p className="text-gray-400 text-sm">Loading product…</p>
+      </div>
+    );
+  }
+
+  if (!product) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center text-gray-900 px-4 text-center">
         <Package size={60} className="text-primary mb-6 opacity-50" />
         <h1 className="text-3xl font-extrabold mb-3">Product Not Found</h1>
         <p className="text-gray-500 mb-8">This product doesn't exist or has been removed.</p>
         <button onClick={() => setLocation(`/categories/${slug}`)} className="px-8 py-3 rounded-xl bg-primary text-white font-bold">
-          Back to {category?.label ?? "Products"}
+          Back to {categoryConfig?.label ?? "Products"}
         </button>
       </div>
     );
   }
 
+  const categoryLabel = categoryConfig?.label ?? product.category ?? "Products";
   const galleryViews = details?.galleryViews ?? [{ label: "View", angle: "front" as const }];
-  const related = category.products.filter(p => p.id !== product.id).slice(0, 4);
+  const related = Object.values(apiProducts)
+    .filter(p => p.categorySlug === slug && p.id !== productId && p.status !== "Inactive")
+    .slice(0, 4);
 
-  const apiProduct = apiProducts[product.id];
-  const apiVariants = (apiProduct?.variants ?? []).filter((v: any) => v.color?.trim());
+  const apiVariants = (product.variants ?? []).filter((v: any) => v.color?.trim());
   const hasVariants = apiVariants.length > 0;
 
   const selectedVariant = hasVariants ? apiVariants[Math.min(activeColor, apiVariants.length - 1)] : null;
   const variantImages: ApiProductImage[] = (selectedVariant?.images ?? []).filter((i: ApiProductImage) => i.url);
-  const productLevelImages: ApiProductImage[] = getViewImages(apiProduct);
+  const productLevelImages: ApiProductImage[] = getViewImages(product);
   const realImages: ApiProductImage[] = variantImages.length > 0 ? variantImages : productLevelImages;
   const hasRealImages = realImages.length > 0;
   const activeRealImage = hasRealImages ? realImages[Math.min(activeView, realImages.length - 1)] : null;
@@ -214,7 +230,7 @@ export default function ProductDetailPage() {
           <ChevronRight size={13} />
           <Link href="/categories" className="hover:text-gray-700 transition-colors">Products</Link>
           <ChevronRight size={13} />
-          <Link href={`/categories/${slug}`} className="hover:text-gray-700 transition-colors">{category.label}</Link>
+          <Link href={`/categories/${slug}`} className="hover:text-gray-700 transition-colors">{categoryLabel}</Link>
           <ChevronRight size={13} />
           <span className="text-gray-900 font-semibold truncate max-w-[200px]">{product.name}</span>
         </div>
@@ -284,7 +300,7 @@ export default function ProductDetailPage() {
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-bold tracking-[0.18em] uppercase px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
-                  {category.label}
+                  {categoryLabel}
                 </span>
                 {product.badge && (
                   <span className="text-xs font-bold px-3 py-1 rounded-full bg-primary text-white">{product.badge}</span>
@@ -297,11 +313,13 @@ export default function ProductDetailPage() {
                 ))}
                 <span className="text-gray-400 text-xs ml-2">4.8 · Verified reviews</span>
               </div>
-              <p className="text-gray-600 leading-relaxed">{product.description}</p>
+              <p className="text-gray-600 leading-relaxed">{product.description ?? ""}</p>
             </div>
 
             <div className="flex items-end gap-3 py-4 border-y border-gray-200">
-              <span className="text-primary font-extrabold text-3xl">{product.priceLabel}</span>
+              <span className="text-primary font-extrabold text-3xl">
+                {product.priceLabel ?? `₹${product.price}`}
+              </span>
               <span className="text-gray-400 text-sm pb-1">per piece · inclusive of printing</span>
             </div>
 
@@ -312,7 +330,7 @@ export default function ProductDetailPage() {
                   <span className="text-gray-900">
                     {hasVariants
                       ? apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.color
-                      : details!.colors[activeColor].name}
+                      : details!.colors[activeColor]?.name}
                   </span>
                 </p>
                 <div className="flex flex-wrap gap-3">
@@ -421,7 +439,7 @@ export default function ProductDetailPage() {
         <ProductOptionsModal
           product={product}
           categorySlug={slug ?? ""}
-          categoryLabel={category.label}
+          categoryLabel={categoryLabel}
           onClose={() => setShowModal(false)}
         />
       )}
@@ -454,7 +472,7 @@ export default function ProductDetailPage() {
             <div className="flex items-center justify-between mb-7">
               <h2 className="text-xl font-extrabold flex items-center gap-2 text-white">
                 <span className="w-1 h-6 rounded-full" style={{ background: "#C4962A" }} />
-                More {category.label}
+                More {categoryLabel}
               </h2>
               <Link href={`/categories/${slug}`}>
                 <button className="flex items-center gap-1.5 text-sm font-semibold transition-colors" style={{ color: "#C4962A" }}>
@@ -468,7 +486,7 @@ export default function ProductDetailPage() {
                   key={p.id}
                   product={p}
                   slug={slug ?? ""}
-                  catLabel={category.label}
+                  catLabel={categoryLabel}
                   index={i}
                 />
               ))}

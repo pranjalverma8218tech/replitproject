@@ -3,11 +3,13 @@ import { Link, useParams } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, SlidersHorizontal, Palette, ChevronRight,
-  X, ArrowRight, Package, ShoppingBag, Eye
+  X, ArrowRight, Package, ShoppingBag, Eye, Loader2
 } from "lucide-react";
-import { CATEGORY_MAP, CATEGORIES, type Product } from "@/data/products";
+import { CATEGORY_MAP, CATEGORIES } from "@/data/products";
 import { ProductOptionsModal } from "@/components/ProductOptionsModal";
-import { useApiProducts, getFrontImage } from "@/hooks/useApiProducts";
+import {
+  useApiProducts, useApiProductsLoaded, getFrontImage, type ApiProductData
+} from "@/hooks/useApiProducts";
 
 /* ─── SVG Product Illustrations ─── */
 function ProductSVG({ slug, index }: { slug: string; index: number }) {
@@ -101,10 +103,11 @@ const BADGE_STYLES: Record<string, string> = {
 };
 
 /* ─── Product Card ─── */
-function ProductCard({ product, slug, categoryLabel, index, realImageUrl }: {
-  product: Product; slug: string; categoryLabel: string; index: number; realImageUrl?: string | null;
+function ProductCard({ product, slug, categoryLabel, index }: {
+  product: ApiProductData; slug: string; categoryLabel: string; index: number;
 }) {
   const [showModal, setShowModal] = useState(false);
+  const realImageUrl = getFrontImage(product);
 
   return (
     <>
@@ -153,10 +156,10 @@ function ProductCard({ product, slug, categoryLabel, index, realImageUrl }: {
               {product.name}
             </h3>
           </Link>
-          <p className="text-gray-500 text-sm leading-relaxed flex-1 mb-3">{product.description}</p>
+          <p className="text-gray-500 text-sm leading-relaxed flex-1 mb-3 line-clamp-2">{product.description ?? ""}</p>
 
           <div className="flex flex-wrap gap-1.5 mb-3">
-            {product.tags.slice(0, 2).map(tag => (
+            {(product.tags ?? []).slice(0, 2).map(tag => (
               <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 border border-gray-200">
                 #{tag}
               </span>
@@ -166,7 +169,9 @@ function ProductCard({ product, slug, categoryLabel, index, realImageUrl }: {
           <div className="flex items-end justify-between mb-3">
             <div>
               <span className="text-[10px] text-gray-400 uppercase tracking-widest block">Starting from</span>
-              <span className="text-primary font-extrabold text-xl leading-none">{product.priceLabel}</span>
+              <span className="text-primary font-extrabold text-xl leading-none">
+                {product.priceLabel ?? `₹${product.price}`}
+              </span>
             </div>
           </div>
 
@@ -202,6 +207,7 @@ export default function CategoryPage() {
   const slug = params.slug ?? "";
   const category = CATEGORY_MAP[slug];
   const apiProducts = useApiProducts();
+  const loaded = useApiProductsLoaded();
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc">("default");
@@ -209,29 +215,33 @@ export default function CategoryPage() {
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [visibleCount, setVisibleCount] = useState(6);
 
-  const allTags = useMemo(() => {
-    if (!category) return [];
-    return Array.from(new Set(category.products.flatMap(p => p.tags)));
-  }, [category]);
+  const categoryProducts = useMemo(() =>
+    Object.values(apiProducts).filter(p => p.categorySlug === slug && p.status !== "Inactive"),
+    [apiProducts, slug]
+  );
+
+  const allTags = useMemo(() =>
+    Array.from(new Set(categoryProducts.flatMap(p => p.tags ?? []))),
+    [categoryProducts]
+  );
 
   const filtered = useMemo(() => {
-    if (!category) return [];
-    let list = [...category.products];
+    let list = [...categoryProducts];
     if (search.trim()) {
       const q = search.toLowerCase();
       list = list.filter(p =>
         p.name.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q) ||
-        p.tags.some(t => t.toLowerCase().includes(q))
+        (p.description ?? "").toLowerCase().includes(q) ||
+        (p.tags ?? []).some(t => t.toLowerCase().includes(q))
       );
     }
     if (activeTags.length > 0) {
-      list = list.filter(p => activeTags.every(t => p.tags.includes(t)));
+      list = list.filter(p => activeTags.every(t => (p.tags ?? []).includes(t)));
     }
     if (sortBy === "price-asc") list.sort((a, b) => a.price - b.price);
     if (sortBy === "price-desc") list.sort((a, b) => b.price - a.price);
     return list;
-  }, [category, search, sortBy, activeTags]);
+  }, [categoryProducts, search, sortBy, activeTags]);
 
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
@@ -272,7 +282,7 @@ export default function CategoryPage() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
               <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.35)", background: "rgba(196,150,42,0.1)" }}>
-                {category.products.length} Products
+                {loaded ? `${categoryProducts.length} Product${categoryProducts.length !== 1 ? "s" : ""}` : "Loading…"}
               </span>
               <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-white">{category.banner}</h1>
               <p className="text-gray-400 text-lg max-w-2xl leading-relaxed">{category.description}</p>
@@ -303,7 +313,6 @@ export default function CategoryPage() {
           boxShadow: "0 4px 24px rgba(0,0,0,0.35)",
         }}
       >
-        {/* Right fade to hint horizontal scroll on mobile */}
         <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 z-10 lg:hidden" style={{ background: "linear-gradient(to left, rgba(10,10,10,0.97) 30%, transparent)" }} />
         <div className="overflow-x-auto no-scrollbar" style={{ WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -318,10 +327,7 @@ export default function CategoryPage() {
                     }`}
                     style={
                       cat.slug === slug
-                        ? {
-                            background: "linear-gradient(135deg, #e53e3e, #c53030)",
-                            boxShadow: "0 2px 14px rgba(229,62,62,0.35)",
-                          }
+                        ? { background: "linear-gradient(135deg, #e53e3e, #c53030)", boxShadow: "0 2px 14px rgba(229,62,62,0.35)" }
                         : {}
                     }
                   >
@@ -346,16 +352,8 @@ export default function CategoryPage() {
               placeholder="Search Products, Categories..."
               className="w-full h-12 bg-white border-2 border-gray-200 rounded-xl pl-11 pr-10 text-sm font-medium text-gray-900 placeholder-gray-400 outline-none transition-all duration-200"
               style={search ? { borderColor: "#e53e3e", boxShadow: "0 0 0 3px rgba(229,62,62,0.1)" } : {}}
-              onFocus={e => {
-                e.currentTarget.style.borderColor = "#e53e3e";
-                e.currentTarget.style.boxShadow = "0 0 0 3px rgba(229,62,62,0.12)";
-              }}
-              onBlur={e => {
-                if (!search) {
-                  e.currentTarget.style.borderColor = "#e5e7eb";
-                  e.currentTarget.style.boxShadow = "none";
-                }
-              }}
+              onFocus={e => { e.currentTarget.style.borderColor = "#e53e3e"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(229,62,62,0.12)"; }}
+              onBlur={e => { if (!search) { e.currentTarget.style.borderColor = "#e5e7eb"; e.currentTarget.style.boxShadow = "none"; } }}
             />
             {search && (
               <button onClick={() => setSearch("")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors">
@@ -388,7 +386,7 @@ export default function CategoryPage() {
         </div>
 
         <AnimatePresence>
-          {filterOpen && (
+          {filterOpen && allTags.length > 0 && (
             <motion.div
               initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }}
@@ -424,7 +422,10 @@ export default function CategoryPage() {
 
         <div className="mt-4 flex items-center justify-between">
           <p className="text-sm text-gray-400">
-            Showing <span className="text-gray-900 font-semibold">{visible.length}</span> of <span className="text-gray-900 font-semibold">{filtered.length}</span> products
+            {!loaded
+              ? <span className="flex items-center gap-2"><Loader2 size={14} className="animate-spin" /> Loading products…</span>
+              : <>Showing <span className="text-gray-900 font-semibold">{visible.length}</span> of <span className="text-gray-900 font-semibold">{filtered.length}</span> products</>
+            }
           </p>
           {(search || activeTags.length > 0) && (
             <button onClick={() => { setSearch(""); setActiveTags([]); setVisibleCount(6); }} className="text-xs font-semibold transition-colors" style={{ color: "#C4962A" }}>
@@ -436,13 +437,21 @@ export default function CategoryPage() {
 
       {/* Product Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        {visible.length === 0 ? (
+        {!loaded ? (
+          <div className="flex items-center justify-center py-24">
+            <Loader2 size={40} className="animate-spin text-primary opacity-60" />
+          </div>
+        ) : visible.length === 0 ? (
           <div className="text-center py-24">
             <Package size={56} className="text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg">No products match your search.</p>
-            <button onClick={() => { setSearch(""); setActiveTags([]); }} className="mt-4 font-semibold transition-colors" style={{ color: "#C4962A" }}>
-              Clear filters
-            </button>
+            <p className="text-gray-500 text-lg">
+              {(search || activeTags.length > 0) ? "No products match your search." : "No products in this category yet."}
+            </p>
+            {(search || activeTags.length > 0) && (
+              <button onClick={() => { setSearch(""); setActiveTags([]); }} className="mt-4 font-semibold transition-colors" style={{ color: "#C4962A" }}>
+                Clear filters
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -453,7 +462,6 @@ export default function CategoryPage() {
                 slug={slug}
                 categoryLabel={category.label}
                 index={i}
-                realImageUrl={getFrontImage(apiProducts[product.id])}
               />
             ))}
           </div>
@@ -474,22 +482,36 @@ export default function CategoryPage() {
       </section>
 
       {/* Bottom CTA */}
-      <section className="border-t py-16 text-center text-white" style={{ background: "linear-gradient(135deg, #0a0a0a 0%, #1a1010 100%)", borderColor: "rgba(196,150,42,0.15)" }}>
-        <h2 className="text-2xl md:text-3xl font-extrabold mb-3">Can't find what you need?</h2>
-        <p className="text-gray-400 mb-8 max-w-md mx-auto">
-          We do fully custom orders. Contact us on WhatsApp and our team will design the perfect product for you.
-        </p>
-        <div className="flex gap-4 justify-center flex-wrap">
-          <Link href="/customize">
-            <button className="px-8 py-3 rounded-xl bg-primary text-white font-bold hover:bg-red-700 transition-colors text-sm">
-              Start Designing
-            </button>
-          </Link>
-          <a href="https://wa.me/919319903380" target="_blank" rel="noopener noreferrer">
-            <button className="px-8 py-3 rounded-xl border text-white font-bold hover:bg-white/8 transition-all text-sm" style={{ borderColor: "rgba(196,150,42,0.4)", color: "#C4962A" }}>
-              WhatsApp Us
-            </button>
-          </a>
+      <section className="border-t py-14" style={{ background: "linear-gradient(135deg, #0a0a0a 0%, #1a1010 100%)", borderColor: "rgba(196,150,42,0.15)" }}>
+        <div className="max-w-3xl mx-auto px-4 text-center">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
+            Need a <span style={{ color: "#C4962A" }}>Custom Design?</span>
+          </h2>
+          <p className="text-gray-400 mb-7 text-base">
+            Share your artwork or brief — we'll print, pack, and deliver across India.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/customize">
+              <motion.button
+                whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+                className="px-8 py-3.5 rounded-xl font-bold text-white text-sm"
+                style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 18px rgba(229,62,62,0.35)" }}
+              >
+                <Palette size={15} className="inline mr-2" /> Start Customizing
+              </motion.button>
+            </Link>
+            <a
+              href="https://wa.me/919876543210?text=Hi%2C%20I%20want%20to%20enquire%20about%20custom%20printing."
+              target="_blank" rel="noopener noreferrer"
+            >
+              <motion.button
+                whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+                className="px-8 py-3.5 rounded-xl font-bold text-gray-300 border border-gray-700 hover:border-[#C4962A] hover:text-[#C4962A] transition-all text-sm"
+              >
+                WhatsApp Us <ArrowRight size={14} className="inline ml-1" />
+              </motion.button>
+            </a>
+          </div>
         </div>
       </section>
     </div>
