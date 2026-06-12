@@ -544,6 +544,10 @@ export default function ProductDetailPage() {
                   onClick={() => {
                     const apiVariantsNow = (product.variants ?? []).filter((v: any) => v.color?.trim());
                     const hasVar = apiVariantsNow.length > 0;
+                    const cartImageUrl =
+                      activeRealImage?.url
+                      ?? productLevelImages[0]?.url
+                      ?? undefined;
                     addItemSilent({
                       productId: product.id,
                       productName: product.name,
@@ -553,6 +557,7 @@ export default function ProductDetailPage() {
                       priceLabel: product.priceLabel ?? `₹${product.price}`,
                       isCustomized: false,
                       quantity: 1,
+                      image: cartImageUrl,
                       customization: (hasVar && activeColor >= 0)
                         ? {
                             color: apiVariantsNow[Math.min(activeColor, apiVariantsNow.length - 1)]?.color,
