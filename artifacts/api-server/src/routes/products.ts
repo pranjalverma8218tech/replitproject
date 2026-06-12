@@ -23,6 +23,7 @@ function hydrate(row: Record<string, unknown>) {
     ...row,
     tags:           parseJson(row.tags),
     images:         parseJson(row.images),
+    variants:       parseJson(row.variants),
     features:       parseJson(row.features),
     specifications: parseJson(row.specifications),
   };
@@ -79,7 +80,7 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const {
     name, category, description, price, priceLabel, badge,
-    tags, images, features, specifications, imageUrl, status, stock
+    tags, images, variants, features, specifications, imageUrl, status, stock
   } = req.body as Record<string, any>;
 
   if (!name || !category || price === undefined) {
@@ -95,6 +96,7 @@ router.post("/", async (req, res) => {
       badge: badge ?? undefined,
       tags: Array.isArray(tags) ? tags : (typeof tags === "string" ? tags.split(",").map((t: string) => t.trim()).filter(Boolean) : []),
       images: images ?? [],
+      variants: variants ?? [],
       features: features ?? [],
       specifications: specifications ?? [],
       imageUrl: imageUrl ?? undefined,
@@ -108,18 +110,19 @@ router.post("/", async (req, res) => {
   try {
     await execute(
       `INSERT INTO products
-        (id, name, category, description, price, price_label, badge, tags, images, features, specifications, image_url, status, stock)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (id, name, category, description, price, price_label, badge, tags, images, variants, features, specifications, image_url, status, stock)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
         name=VALUES(name), category=VALUES(category), description=VALUES(description),
         price=VALUES(price), price_label=VALUES(price_label), badge=VALUES(badge),
-        tags=VALUES(tags), images=VALUES(images), features=VALUES(features),
-        specifications=VALUES(specifications), image_url=VALUES(image_url),
-        status=VALUES(status), stock=VALUES(stock)`,
+        tags=VALUES(tags), images=VALUES(images), variants=VALUES(variants),
+        features=VALUES(features), specifications=VALUES(specifications),
+        image_url=VALUES(image_url), status=VALUES(status), stock=VALUES(stock)`,
       [
         id, name, category, description ?? null, price,
         priceLabel ?? null, badge ?? null,
-        toJson(tags), toJson(images), toJson(features), toJson(specifications),
+        toJson(tags), toJson(images), toJson(variants ?? []),
+        toJson(features), toJson(specifications),
         imageUrl ?? null, status ?? "Active", stock ?? 0
       ]
     );
@@ -134,7 +137,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   const {
     name, category, description, price, priceLabel, badge,
-    tags, images, features, specifications, imageUrl, status, stock
+    tags, images, variants, features, specifications, imageUrl, status, stock
   } = req.body as Record<string, any>;
 
   if (!dbConfigured) {
@@ -144,6 +147,7 @@ router.put("/:id", async (req, res) => {
       badge: badge ?? undefined,
       tags: Array.isArray(tags) ? tags : (typeof tags === "string" ? tags.split(",").map((t: string) => t.trim()).filter(Boolean) : []),
       images: images ?? [],
+      variants: variants ?? [],
       features: features ?? [],
       specifications: specifications ?? [],
       imageUrl: imageUrl ?? undefined,
@@ -159,12 +163,13 @@ router.put("/:id", async (req, res) => {
     const result = await execute(
       `UPDATE products SET
         name=?, category=?, description=?, price=?, price_label=?, badge=?,
-        tags=?, images=?, features=?, specifications=?, image_url=?, status=?, stock=?
+        tags=?, images=?, variants=?, features=?, specifications=?, image_url=?, status=?, stock=?
        WHERE id=?`,
       [
         name, category, description ?? null, price,
         priceLabel ?? null, badge ?? null,
-        toJson(tags), toJson(images), toJson(features), toJson(specifications),
+        toJson(tags), toJson(images), toJson(variants ?? []),
+        toJson(features), toJson(specifications),
         imageUrl ?? null, status, stock ?? 0, req.params.id
       ]
     );

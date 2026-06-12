@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS products (
   badge           VARCHAR(60)       DEFAULT NULL COMMENT 'e.g. Best Seller, Trending',
   tags            TEXT              DEFAULT NULL COMMENT 'JSON array of tag strings',
   images          TEXT              DEFAULT NULL COMMENT 'JSON array of {view,label,url} objects',
+  variants        TEXT              DEFAULT NULL COMMENT 'JSON array of {id,color,hex,images,stock,priceAdjustment} objects',
   features        TEXT              DEFAULT NULL COMMENT 'JSON array of feature strings',
   specifications  TEXT              DEFAULT NULL COMMENT 'JSON array of {label,value} objects',
   image_url       VARCHAR(255)      DEFAULT NULL COMMENT 'Legacy single image (deprecated)',
@@ -43,6 +44,21 @@ CREATE TABLE IF NOT EXISTS products (
   created_at      DATETIME          NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at      DATETIME          NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+-- Migration: add variants column if it doesn't exist (safe to run multiple times)
+SET @col_exists = (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME   = 'products'
+    AND COLUMN_NAME  = 'variants'
+);
+SET @sql = IF(@col_exists = 0,
+  'ALTER TABLE products ADD COLUMN variants TEXT DEFAULT NULL COMMENT ''JSON array of color variant objects'' AFTER images',
+  'SELECT 1'
+);
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 -- Customers table
 CREATE TABLE IF NOT EXISTS customers (

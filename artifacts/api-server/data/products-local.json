@@ -914,5 +914,53 @@
     "stock": 0,
     "createdAt": "2026-06-10T09:20:51.204Z",
     "updatedAt": "2026-06-10T09:20:51.204Z"
+  },
+  {
+    "id": "PRD-1781241809515",
+    "name": "Test Variant Product",
+    "category": "T-Shirt Printing",
+    "price": 299,
+    "priceLabel": "₹299",
+    "tags": [],
+    "images": [],
+    "variants": [
+      {
+        "id": "v-test-1",
+        "color": "Royal Blue",
+        "hex": "#1e3a8a",
+        "images": [
+          {
+            "view": "front",
+            "label": "Front View",
+            "url": "/api/uploads/test-blue-front.jpg"
+          },
+          {
+            "view": "back",
+            "label": "Back View",
+            "url": "/api/uploads/test-blue-back.jpg"
+          }
+        ],
+        "stock": 25
+      },
+      {
+        "id": "v-test-2",
+        "color": "Cherry Red",
+        "hex": "#e53e3e",
+        "images": [
+          {
+            "view": "front",
+            "label": "Front View",
+            "url": "/api/uploads/test-red-front.jpg"
+          }
+        ],
+        "stock": 30
+      }
+    ],
+    "features": [],
+    "specifications": [],
+    "status": "Active",
+    "stock": 50,
+    "createdAt": "2026-06-12T05:23:29.516Z",
+    "updatedAt": "2026-06-12T05:23:29.516Z"
   }
 ]
