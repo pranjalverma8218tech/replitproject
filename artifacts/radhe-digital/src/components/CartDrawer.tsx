@@ -102,9 +102,11 @@ export function CartDrawer() {
           parts.push(`Size: ${c.size}`);
         }
         if (c.variant) parts.push(`Variant: ${c.variant}`);
+        if (c.uploadedFileName) parts.push(`Design File: ${c.uploadedFileName}`);
+        if (c.logoFileName) parts.push(`Logo File: ${c.logoFileName}`);
+        if (c.designInstructions) parts.push(`Instructions: ${c.designInstructions}`);
         if (c.customText) parts.push(`Text: "${c.customText}"`);
         if (c.designDesc) parts.push(`Note: ${c.designDesc}`);
-        if (c.uploadedFileName) parts.push(`Design File: ${c.uploadedFileName}`);
         if (parts.length > 0) optLine = `\n   ↳ ${parts.join(" | ")}`;
       }
       const label = item.isCustomized ? "Customized" : "Standard";
@@ -409,16 +411,20 @@ export function CartDrawer() {
                             </div>
 
                             {/* Extra customization notes */}
-                            {(item.customization?.customText || item.customization?.designDesc || item.customization?.uploadedFileName) && (
-                              <div
-                                className="px-3 pb-3 pt-0"
-                              >
+                            {(item.customization?.customText || item.customization?.designDesc || item.customization?.uploadedFileName || item.customization?.logoFileName || item.customization?.designInstructions) && (
+                              <div className="px-3 pb-3 pt-0">
                                 <div
                                   className="rounded-xl px-3 py-2 space-y-1"
                                   style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
                                 >
                                   {item.customization?.uploadedFileName && (
-                                    <p className="text-[11px] text-green-400 truncate">📎 {item.customization.uploadedFileName}</p>
+                                    <p className="text-[11px] text-green-400 truncate">🖼 Design: {item.customization.uploadedFileName}</p>
+                                  )}
+                                  {item.customization?.logoFileName && (
+                                    <p className="text-[11px] text-blue-400 truncate">🏷 Logo: {item.customization.logoFileName}</p>
+                                  )}
+                                  {item.customization?.designInstructions && (
+                                    <p className="text-[11px] text-gray-300 line-clamp-2">📝 {item.customization.designInstructions}</p>
                                   )}
                                   {item.customization?.customText && (
                                     <p className="text-[11px] text-gray-400 truncate">Text: "{item.customization.customText}"</p>

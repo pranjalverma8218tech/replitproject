@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, CheckCircle2, MessageCircle, X, ArrowLeft,
   Shirt, Coffee, HardHat, Pen, Award, Image as ImageIcon, Gift,
-  Lock, Sparkles, RotateCcw, AlignCenter, AlignLeft, AlignRight
+  Lock, Sparkles, RotateCcw, AlignCenter, AlertTriangle, FileText
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -210,6 +210,12 @@ export default function CustomizeProductPage() {
   /* ── Cart saved state ── */
   const [saved, setSaved] = useState(false);
 
+  /* ── Design instructions (upload tab) ── */
+  const [designInstructions, setDesignInstructions] = useState("");
+
+  /* ── Validation error display ── */
+  const [showError, setShowError] = useState(false);
+
   /* ── Request tab state ── */
   const [customText, setCustomText] = useState("");
   const [requirements, setRequirements] = useState("");
@@ -241,6 +247,13 @@ export default function CustomizeProductPage() {
   /* ── Print position label for orders ── */
   const printPositionLabel = positions.find(p => p.id === printPosition)?.label ?? printPosition;
 
+  /* ── Validation: upload tab needs at least one of: design file, logo, instructions ── */
+  const hasDesignFile = !!(frontFile || backFile);
+  const isUploadValid = hasDesignFile || !!logoFile || designInstructions.trim().length > 0;
+
+  /* ── Validation: request tab needs at least one text field ── */
+  const isRequestValid = customText.trim().length > 0 || requirements.trim().length > 0 || instructions.trim().length > 0;
+
   /* ── Derived values ── */
   const sizeBreakdown = T_SHIRT_SIZES.filter(s => sizeQty[s] > 0).map(s => `${s}×${sizeQty[s]}`).join(", ");
   const effectiveQty = isTShirt ? totalQty : quantity;
@@ -253,6 +266,9 @@ export default function CustomizeProductPage() {
 
   /* ── Save Customization to Cart ── */
   const handleSaveToCart = () => {
+    if (!isUploadValid) { setShowError(true); return; }
+    setShowError(false);
+
     const uploadNote = isBothSides
       ? [frontFile?.name && `Front: ${frontFile.name}`, backFile?.name && `Back: ${backFile.name}`].filter(Boolean).join(" | ")
       : frontFile?.name ?? undefined;
@@ -273,6 +289,8 @@ export default function CustomizeProductPage() {
         size: isTShirt ? sizeBreakdown || undefined : undefined,
         quantity: effectiveQty || 1,
         uploadedFileName: uploadNote,
+        logoFileName: logoFile?.name || undefined,
+        designInstructions: designInstructions.trim() || undefined,
         printPosition: hasPositions ? printPositionLabel : undefined,
       },
     });
@@ -282,6 +300,9 @@ export default function CustomizeProductPage() {
 
   /* ── WhatsApp Request ── */
   const handleSubmitRequest = () => {
+    if (!isRequestValid) { setShowError(true); return; }
+    setShowError(false);
+
     const lines = [
       `Hello Radhe Digital! I'd like to request a custom ${meta.label}.`,
       ``,
@@ -314,7 +335,8 @@ export default function CustomizeProductPage() {
   const sizeStep     = isVariantLocked ? genderStep + 1 : colorStep + 1;
   const uploadStep   = isTShirt ? sizeStep + 1 : (hasPositions ? 2 : 1);
   const logoStep     = uploadStep + 1;
-  const qtyStep      = logoStep + 1;
+  const instrStep    = logoStep + 1;
+  const qtyStep      = instrStep + 1;
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -575,14 +597,13 @@ export default function CustomizeProductPage() {
               <h2 className="text-white font-bold text-base mb-1 flex items-center gap-2">
                 <Step n={logoStep} />
                 Upload Your Logo
-                <span className="text-gray-500 text-xs font-normal ml-1">(Optional)</span>
               </h2>
-              <p className="text-gray-500 text-xs mb-4 ml-8">If your design includes a separate logo file, upload it here.</p>
+              <p className="text-gray-500 text-xs mb-4 ml-8">Upload your logo file if you'd like it printed on the product.</p>
               {!logoFile ? (
                 <label className="relative flex items-center gap-3 py-4 px-5 border border-dashed border-white/12 rounded-xl cursor-pointer hover:border-primary/30 hover:bg-primary/4 transition-all">
                   <Upload size={15} className="text-gray-500" />
                   <span className="text-gray-400 text-sm">Tap to upload logo (PNG, SVG)</span>
-                  <input ref={logoRef} type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept=".png,.jpg,.jpeg,.svg" onChange={e => { const f = e.target.files?.[0]; if (f) setLogoFile(f); }} />
+                  <input ref={logoRef} type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept=".png,.jpg,.jpeg,.svg" onChange={e => { const f = e.target.files?.[0]; if (f) { setLogoFile(f); setShowError(false); } }} />
                 </label>
               ) : (
                 <div className="flex items-center justify-between px-4 py-3 bg-[#1a1a1a] border border-white/12 rounded-xl">
@@ -593,6 +614,31 @@ export default function CustomizeProductPage() {
                   <button onClick={() => { setLogoFile(null); if (logoRef.current) logoRef.current.value = ""; }} className="text-gray-500 hover:text-red-400 transition-colors"><X size={14} /></button>
                 </div>
               )}
+            </div>
+
+            {/* Design Instructions */}
+            <div className={`bg-[#111] rounded-2xl p-6 border transition-colors ${
+              showError && !isUploadValid ? "border-red-500/50" : "border-white/8"
+            }`}>
+              <h2 className="text-white font-bold text-base mb-1 flex items-center gap-2">
+                <Step n={instrStep} />
+                <FileText size={15} className="text-gray-400" />
+                Design Instructions
+              </h2>
+              <p className="text-gray-500 text-xs mb-4 ml-8">
+                Describe exactly what to print — text, placement, colours, or any specific details.
+              </p>
+              <Textarea
+                value={designInstructions}
+                onChange={e => { setDesignInstructions(e.target.value); setShowError(false); }}
+                placeholder={`Example: "Print company logo on the front and contact details on the back. Use white text on dark background."`}
+                className={`bg-[#1a1a1a] text-white placeholder-gray-600 focus:border-primary/50 rounded-xl resize-none h-28 transition-colors ${
+                  showError && !isUploadValid ? "border-red-500/60" : "border-white/12"
+                }`}
+              />
+              <p className="text-gray-600 text-[11px] mt-2 ml-1">
+                ✱ At least one of: logo, design file, or instructions is required.
+              </p>
             </div>
 
             {/* Quantity (non-T-shirt) */}
@@ -664,25 +710,62 @@ export default function CustomizeProductPage() {
                       <span className="text-green-400 font-semibold">Uploaded ✓</span>
                     </div>
                   )}
+                  {logoFile && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Logo File</span>
+                      <span className="text-green-400 font-semibold">Uploaded ✓</span>
+                    </div>
+                  )}
+                  {designInstructions.trim() && (
+                    <div className="flex justify-between text-sm gap-4">
+                      <span className="text-gray-400 flex-shrink-0">Instructions</span>
+                      <span className="text-gray-300 text-right text-xs leading-snug line-clamp-2">{designInstructions.trim()}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
 
+            {/* ── Validation Error Banner ── */}
+            <AnimatePresence>
+              {showError && !isUploadValid && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                  className="flex items-start gap-3 rounded-2xl px-4 py-4 border"
+                  style={{ background: "rgba(239,68,68,0.08)", borderColor: "rgba(239,68,68,0.35)" }}
+                >
+                  <AlertTriangle size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-red-300 font-bold text-sm">Design information required</p>
+                    <p className="text-red-400/80 text-xs mt-0.5 leading-snug">
+                      Please upload a logo, upload a design, or describe your design requirements before continuing.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* ── Save Customization Button ── */}
             <motion.button
               onClick={handleSaveToCart}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={isUploadValid ? { scale: 1.02 } : {}}
+              whileTap={isUploadValid ? { scale: 0.98 } : {}}
               className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-bold text-white text-base transition-all duration-200"
               style={saved
                 ? { background: "linear-gradient(135deg,#38a169,#276749)", boxShadow: "0 4px 20px rgba(56,161,105,0.35)" }
-                : { background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 20px rgba(229,62,62,0.35)" }
+                : isUploadValid
+                  ? { background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 20px rgba(229,62,62,0.35)" }
+                  : { background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", cursor: "not-allowed" }
               }
             >
               {saved ? (
                 <><CheckCircle2 size={20} /> Customization Saved — Opening Cart</>
-              ) : (
+              ) : isUploadValid ? (
                 <><Sparkles size={20} /> Save Customization &amp; Add to Cart {isTShirt && totalQty > 0 ? `(${totalQty} pcs)` : ""}</>
+              ) : (
+                <><AlertTriangle size={18} className="text-gray-500" /> Add Design Info to Continue</>
               )}
             </motion.button>
             <p className="text-center text-gray-600 text-xs">
@@ -747,16 +830,44 @@ export default function CustomizeProductPage() {
               </div>
             )}
 
+            {/* ── Request Tab Validation Error ── */}
+            <AnimatePresence>
+              {showError && !isRequestValid && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                  className="flex items-start gap-3 rounded-2xl px-4 py-4 border"
+                  style={{ background: "rgba(239,68,68,0.08)", borderColor: "rgba(239,68,68,0.35)" }}
+                >
+                  <AlertTriangle size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-red-300 font-bold text-sm">Design information required</p>
+                    <p className="text-red-400/80 text-xs mt-0.5 leading-snug">
+                      Please fill in at least one field — custom text, design requirements, or special instructions — before submitting.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <motion.button
               onClick={handleSubmitRequest}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={isRequestValid ? { scale: 1.02 } : {}}
+              whileTap={isRequestValid ? { scale: 0.98 } : {}}
               className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-white text-base transition-all duration-200"
-              style={{ background: "linear-gradient(135deg,#25d366,#128c7e)", boxShadow: "0 4px 20px rgba(37,211,102,0.25)" }}
+              style={submitted
+                ? { background: "linear-gradient(135deg,#38a169,#276749)", boxShadow: "0 4px 20px rgba(56,161,105,0.25)" }
+                : isRequestValid
+                  ? { background: "linear-gradient(135deg,#25d366,#128c7e)", boxShadow: "0 4px 20px rgba(37,211,102,0.25)" }
+                  : { background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", cursor: "not-allowed" }
+              }
             >
               {submitted
                 ? <><CheckCircle2 size={20} /> Request Sent!</>
-                : <><MessageCircle size={20} /> Submit Design Request via WhatsApp {isTShirt && totalQty > 0 ? `(${totalQty} pcs)` : ""}</>
+                : isRequestValid
+                  ? <><MessageCircle size={20} /> Submit Design Request via WhatsApp {isTShirt && totalQty > 0 ? `(${totalQty} pcs)` : ""}</>
+                  : <><AlertTriangle size={18} className="text-gray-500" /> Describe Your Design to Continue</>
               }
             </motion.button>
             <p className="text-center text-gray-600 text-xs">

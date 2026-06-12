@@ -12,6 +12,8 @@ export interface CartCustomization {
   printPosition?: string;
   designDesc?: string;
   uploadedFileName?: string;
+  logoFileName?: string;
+  designInstructions?: string;
   customText?: string;
 }
 
