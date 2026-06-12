@@ -9,6 +9,7 @@ export interface CartCustomization {
   variant?: string;
   quantity?: number;
   position?: string;
+  printPosition?: string;
   designDesc?: string;
   uploadedFileName?: string;
   customText?: string;

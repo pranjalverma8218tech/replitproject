@@ -1,0 +1,115 @@
+Improve the Product Customization Page.
+
+Current Problems:
+
+1. After clicking Customize, the bottom button still shows "Add to Cart".
+2. This is confusing because the customer is currently customizing a product, not simply adding a standard product.
+3. There is no option to choose where the design should be printed.
+
+Required Fix:
+
+=================================
+BUTTON IMPROVEMENT
+==================
+
+Remove the current "Add to Cart" button from the customization page.
+
+Replace it with:
+
+* Save Customization
+  OR
+* Continue with Customized Product
+  OR
+* Add Customized Product to Cart
+
+Use a professional ecommerce design.
+
+The button text must clearly indicate that a customized product is being saved.
+
+=================================
+PRINT POSITION SELECTION
+========================
+
+For T-Shirts:
+
+Add a section:
+
+Choose Print Position
+
+Options:
+
+○ Front Side
+○ Back Side
+○ Both Sides
+
+Display this before customization starts.
+
+=================================
+PREVIEW BEHAVIOR
+================
+
+If Front Side selected:
+
+* Show front preview canvas only.
+
+If Back Side selected:
+
+* Show back preview canvas only.
+
+If Both Sides selected:
+
+* Show Front Preview tab
+* Show Back Preview tab
+
+Allow the customer to customize both separately.
+
+=================================
+ORDER DATA
+==========
+
+Save the selected print position with the order.
+
+Example:
+
+Print Position:
+Front Side
+
+or
+
+Print Position:
+Both Sides
+
+This information must appear in:
+
+* Cart
+* Buy Now
+* WhatsApp Order Message
+* Admin Panel Order Details
+
+=================================
+OTHER PRODUCTS
+==============
+
+For Mugs:
+
+* Front Print
+* Back Print
+* Wrap Around
+
+For Caps:
+
+* Front Print
+* Side Print
+* Back Print
+
+Allow product-specific print positions.
+
+=================================
+VERIFY
+======
+
+* No generic Add to Cart wording.
+* Print position selection works.
+* Preview changes correctly.
+* Selected print position is saved throughout the order flow.
+* WhatsApp order includes print position details.

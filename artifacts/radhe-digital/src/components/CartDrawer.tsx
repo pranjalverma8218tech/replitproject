@@ -92,6 +92,7 @@ export function CartDrawer() {
       const c = item.customization;
       if (c) {
         const parts: string[] = [];
+        if (c.printPosition) parts.push(`Print Position: ${c.printPosition}`);
         if (c.color) parts.push(`Colour: ${c.color}`);
         if (c.gender) parts.push(`Gender: ${c.gender}`);
         if (c.sizeBreakdown && Object.keys(c.sizeBreakdown).length > 0) {
@@ -302,6 +303,14 @@ export function CartDrawer() {
 
                                 {/* Variant badges */}
                                 <div className="flex flex-wrap gap-1.5 mb-2.5">
+                                  {item.customization?.printPosition && (
+                                    <span
+                                      className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                      style={{ background: "rgba(66,153,225,0.12)", border: "1px solid rgba(66,153,225,0.3)", color: "#63b3ed" }}
+                                    >
+                                      📍 {item.customization.printPosition}
+                                    </span>
+                                  )}
                                   {item.customization?.color && (
                                     <span
                                       className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"

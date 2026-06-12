@@ -1,9 +1,10 @@
 import React, { useState, useRef, useMemo } from "react";
 import { useLocation, useParams } from "wouter";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Upload, CheckCircle2, ShoppingCart, MessageCircle,
-  X, ArrowLeft, Shirt, Coffee, HardHat, Pen, Award, Image as ImageIcon, Gift, Lock
+  Upload, CheckCircle2, MessageCircle, X, ArrowLeft,
+  Shirt, Coffee, HardHat, Pen, Award, Image as ImageIcon, Gift,
+  Lock, Sparkles, RotateCcw, AlignCenter, AlignLeft, AlignRight
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,12 +17,28 @@ type TShirtSize = typeof T_SHIRT_SIZES[number];
 const GENDER_OPTIONS = ["Men", "Women", "Unisex"] as const;
 type Gender = typeof GENDER_OPTIONS[number];
 
+interface PrintPosition { id: string; label: string; desc: string }
+
+const PRINT_POSITIONS: Record<string, PrintPosition[]> = {
+  "t-shirts": [
+    { id: "front",  label: "Front Side",  desc: "Print on the front of the T-shirt" },
+    { id: "back",   label: "Back Side",   desc: "Print on the back of the T-shirt" },
+    { id: "both",   label: "Both Sides",  desc: "Separate design on front & back" },
+  ],
+  "mugs": [
+    { id: "front",  label: "Front Print",     desc: "Visible side when drinking" },
+    { id: "back",   label: "Back Print",      desc: "Opposite side of the handle" },
+    { id: "wrap",   label: "Wrap Around",     desc: "Full 360° all-over print" },
+  ],
+  "caps": [
+    { id: "front",  label: "Front Panel",     desc: "Logo on the front panel" },
+    { id: "side",   label: "Side Print",      desc: "Print on the left or right panel" },
+    { id: "back",   label: "Back Print",      desc: "Print above the strap/closure" },
+  ],
+};
+
 const CATEGORY_META: Record<string, {
-  label: string;
-  icon: React.ElementType;
-  color: string;
-  price: number;
-  priceLabel: string;
+  label: string; icon: React.ElementType; color: string; price: number; priceLabel: string;
 }> = {
   "t-shirts":        { label: "T-Shirt",        icon: Shirt,      color: "#e53e3e", price: 199, priceLabel: "₹199" },
   "mugs":            { label: "Mug",             icon: Coffee,     color: "#f6ad55", price: 249, priceLabel: "₹249" },
@@ -33,6 +50,7 @@ const CATEGORY_META: Record<string, {
 };
 
 type Tab = "upload" | "request";
+type DesignSide = "front" | "back";
 
 /* ─── Step badge ─── */
 function Step({ n }: { n: number }) {
@@ -43,9 +61,89 @@ function Step({ n }: { n: number }) {
   );
 }
 
+/* ─── Print Position Card ─── */
+function PositionCard({ pos, active, onClick }: {
+  pos: PrintPosition; active: boolean; onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex-1 flex flex-col items-start gap-1.5 p-4 rounded-xl border text-left transition-all duration-200 ${
+        active
+          ? "border-primary bg-primary/12"
+          : "border-white/10 bg-white/4 hover:border-white/20 hover:bg-white/6"
+      }`}
+    >
+      <div className="flex items-center gap-2 w-full">
+        <span
+          className={`w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
+            active ? "border-primary" : "border-white/30"
+          }`}
+        >
+          {active && <span className="w-2 h-2 rounded-full bg-primary" />}
+        </span>
+        <span className={`text-sm font-bold transition-colors ${active ? "text-white" : "text-gray-300"}`}>
+          {pos.label}
+        </span>
+      </div>
+      <p className="text-xs text-gray-500 ml-6 leading-snug">{pos.desc}</p>
+    </button>
+  );
+}
+
+/* ─── Design Upload Box ─── */
+function DesignUploadBox({
+  label, file, preview, inputRef,
+  onFileChange, onRemove,
+}: {
+  label?: string;
+  file: File | null;
+  preview: string | null;
+  inputRef: React.RefObject<HTMLInputElement>;
+  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemove: () => void;
+}) {
+  return (
+    <div>
+      {label && <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">{label}</p>}
+      {!preview ? (
+        <label className="relative flex flex-col items-center justify-center gap-3 py-8 border-2 border-dashed border-white/15 rounded-xl cursor-pointer hover:border-primary/40 hover:bg-primary/4 transition-all duration-200">
+          <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
+            <Upload size={18} className="text-primary" />
+          </div>
+          <div className="text-center">
+            <p className="text-white font-semibold text-sm">Tap to upload design</p>
+            <p className="text-gray-500 text-xs mt-0.5">PNG, JPG, SVG, PDF — Max 10 MB</p>
+          </div>
+          <input
+            ref={inputRef}
+            type="file"
+            className="absolute inset-0 opacity-0 cursor-pointer"
+            accept=".png,.jpg,.jpeg,.svg,.pdf"
+            onChange={onFileChange}
+          />
+        </label>
+      ) : (
+        <div className="rounded-xl overflow-hidden border border-white/12">
+          <img src={preview} alt="Design" className="w-full max-h-36 object-contain bg-[#0d0d0d] p-4" />
+          <div className="flex items-center justify-between px-4 py-3 bg-[#1a1a1a] border-t border-white/8">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 size={14} className="text-green-400 flex-shrink-0" />
+              <span className="text-green-400 text-sm font-semibold truncate max-w-[200px]">{file?.name}</span>
+            </div>
+            <button onClick={onRemove} className="text-gray-500 hover:text-red-400 transition-colors flex-shrink-0">
+              <X size={14} />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function CustomizeProductPage() {
   const { category } = useParams<{ category: string }>();
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
 
   /* ── Parse locked variant from URL query params ── */
   const lockedVariant = useMemo(() => {
@@ -62,21 +160,25 @@ export default function CustomizeProductPage() {
   }, []);
 
   const isVariantLocked = !!lockedVariant?.color;
-
   const meta = CATEGORY_META[category ?? ""] ?? CATEGORY_META["t-shirts"];
   const Icon = meta.icon;
   const isTShirt = category === "t-shirts";
+  const positions = PRINT_POSITIONS[category ?? ""] ?? [];
+  const hasPositions = positions.length > 0;
 
   const { addItem, openCart } = useCart();
+
+  /* ── Print position ── */
+  const [printPosition, setPrintPosition] = useState<string>(positions[0]?.id ?? "front");
+  const isBothSides = printPosition === "both";
+  const [activeSide, setActiveSide] = useState<DesignSide>("front");
 
   /* ── Tab ── */
   const [tab, setTab] = useState<Tab>("upload");
 
   /* ── T-Shirt specific ── */
   const [gender, setGender] = useState<Gender>("Unisex");
-  const [sizeQty, setSizeQty] = useState<Record<TShirtSize, number>>({
-    S: 0, M: 0, L: 0, XL: 0, XXL: 0,
-  });
+  const [sizeQty, setSizeQty] = useState<Record<TShirtSize, number>>({ S: 0, M: 0, L: 0, XL: 0, XXL: 0 });
   const totalQty = Object.values(sizeQty).reduce((a, b) => a + b, 0);
 
   const setSizeAmount = (size: TShirtSize, val: string) => {
@@ -91,13 +193,22 @@ export default function CustomizeProductPage() {
   /* ── Non-T-Shirt quantity ── */
   const [quantity, setQuantity] = useState(1);
 
-  /* ── Upload tab state ── */
-  const [designFile, setDesignFile] = useState<File | null>(null);
-  const [designPreview, setDesignPreview] = useState<string | null>(null);
+  /* ── Front design upload ── */
+  const [frontFile, setFrontFile] = useState<File | null>(null);
+  const [frontPreview, setFrontPreview] = useState<string | null>(null);
+  const frontRef = useRef<HTMLInputElement>(null);
+
+  /* ── Back design upload (Both Sides only) ── */
+  const [backFile, setBackFile] = useState<File | null>(null);
+  const [backPreview, setBackPreview] = useState<string | null>(null);
+  const backRef = useRef<HTMLInputElement>(null);
+
+  /* ── Logo upload ── */
   const [logoFile, setLogoFile] = useState<File | null>(null);
-  const designRef = useRef<HTMLInputElement>(null);
   const logoRef = useRef<HTMLInputElement>(null);
-  const [addedToCart, setAddedToCart] = useState(false);
+
+  /* ── Cart saved state ── */
+  const [saved, setSaved] = useState(false);
 
   /* ── Request tab state ── */
   const [customText, setCustomText] = useState("");
@@ -106,46 +217,46 @@ export default function CustomizeProductPage() {
   const [submitted, setSubmitted] = useState(false);
 
   /* ── File handlers ── */
-  const handleDesignFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const makeFileHandler = (
+    setFile: React.Dispatch<React.SetStateAction<File | null>>,
+    setPreview: React.Dispatch<React.SetStateAction<string | null>>
+  ) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setDesignFile(file);
+    setFile(file);
     const reader = new FileReader();
-    reader.onload = ev => setDesignPreview(ev.target?.result as string);
+    reader.onload = ev => setPreview(ev.target?.result as string);
     reader.readAsDataURL(file);
   };
-  const handleLogoFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) setLogoFile(file);
-  };
-  const removeDesign = () => {
-    setDesignFile(null); setDesignPreview(null);
-    if (designRef.current) designRef.current.value = "";
-  };
-  const removeLogo = () => {
-    setLogoFile(null);
-    if (logoRef.current) logoRef.current.value = "";
+
+  const makeRemoveHandler = (
+    setFile: React.Dispatch<React.SetStateAction<File | null>>,
+    setPreview: React.Dispatch<React.SetStateAction<string | null>>,
+    ref: React.RefObject<HTMLInputElement>
+  ) => () => {
+    setFile(null); setPreview(null);
+    if (ref.current) ref.current.value = "";
   };
 
-  /* ── Order summary string for WhatsApp / Cart ── */
-  const sizeBreakdown = T_SHIRT_SIZES
-    .filter(s => sizeQty[s] > 0)
-    .map(s => `${s}×${sizeQty[s]}`)
-    .join(", ");
+  /* ── Print position label for orders ── */
+  const printPositionLabel = positions.find(p => p.id === printPosition)?.label ?? printPosition;
 
+  /* ── Derived values ── */
+  const sizeBreakdown = T_SHIRT_SIZES.filter(s => sizeQty[s] > 0).map(s => `${s}×${sizeQty[s]}`).join(", ");
   const effectiveQty = isTShirt ? totalQty : quantity;
 
   /* ── Back navigation ── */
   const handleBack = () => {
-    if (lockedVariant?.productId && category) {
-      history.back();
-    } else {
-      setLocation("/customize");
-    }
+    if (lockedVariant?.productId && category) { history.back(); }
+    else { setLocation("/customize"); }
   };
 
-  /* ── Add to Cart ── */
-  const handleAddToCart = () => {
+  /* ── Save Customization to Cart ── */
+  const handleSaveToCart = () => {
+    const uploadNote = isBothSides
+      ? [frontFile?.name && `Front: ${frontFile.name}`, backFile?.name && `Back: ${backFile.name}`].filter(Boolean).join(" | ")
+      : frontFile?.name ?? undefined;
+
     addItem({
       productId: lockedVariant?.productId ?? `${category}-custom`,
       productName: `Custom ${meta.label}`,
@@ -157,34 +268,36 @@ export default function CustomizeProductPage() {
       quantity: effectiveQty || 1,
       image: lockedVariant?.imageUrl || undefined,
       customization: {
-        color: isTShirt ? effectiveColor || undefined : undefined,
-        colorHex: isTShirt ? effectiveColorHex || undefined : undefined,
+        color: effectiveColor || undefined,
+        colorHex: effectiveColorHex || undefined,
         size: isTShirt ? sizeBreakdown || undefined : undefined,
         quantity: effectiveQty || 1,
-        uploadedFileName: designFile?.name,
+        uploadedFileName: uploadNote,
+        printPosition: hasPositions ? printPositionLabel : undefined,
       },
     });
-    setAddedToCart(true);
-    setTimeout(() => { setAddedToCart(false); openCart(); }, 1500);
+    setSaved(true);
+    setTimeout(() => { setSaved(false); openCart(); }, 1600);
   };
 
-  /* ── Submit Request (WhatsApp) ── */
+  /* ── WhatsApp Request ── */
   const handleSubmitRequest = () => {
     const lines = [
-      `Hello Radhe Digital! I'd like to request a custom design.`,
+      `Hello Radhe Digital! I'd like to request a custom ${meta.label}.`,
       ``,
       `*Product:* ${meta.label}`,
+      hasPositions ? `*Print Position:* ${printPositionLabel}` : "",
       isTShirt ? `*Gender:* ${gender}` : "",
       isTShirt && effectiveColor ? `*Color:* ${effectiveColor}` : "",
       lockedVariant?.variantId ? `*Variant ID:* ${lockedVariant.variantId}` : "",
-      lockedVariant?.imageUrl ? `*Product Image:* ${lockedVariant.imageUrl}` : "",
       isTShirt
         ? T_SHIRT_SIZES.filter(s => sizeQty[s] > 0).map(s => `*${s}:* ${sizeQty[s]} pcs`).join("\n")
         : `*Quantity:* ${quantity}`,
       isTShirt ? `*Total Quantity:* ${totalQty} T-Shirts` : "",
-      customText    ? `*Custom Text:* ${customText}` : "",
-      requirements  ? `*Design Requirements:* ${requirements}` : "",
-      instructions  ? `*Special Instructions:* ${instructions}` : "",
+      customText   ? `*Custom Text:* ${customText}` : "",
+      requirements ? `*Design Requirements:* ${requirements}` : "",
+      instructions ? `*Special Instructions:* ${instructions}` : "",
+      lockedVariant?.imageUrl ? `*Product Image:* ${lockedVariant.imageUrl}` : "",
     ].filter(Boolean).join("\n");
 
     window.open(`https://wa.me/919319903380?text=${encodeURIComponent(lines)}`, "_blank");
@@ -193,11 +306,15 @@ export default function CustomizeProductPage() {
   };
 
   /* ── Step numbering ── */
-  // T-shirt: Step1=Gender, Step2=Size+Qty (color step removed when locked), upload starts at 3
-  // Without lock: Step1=Gender, Step2=Color, Step3=Size+Qty, upload starts at 4
-  const sizeStepNum = isTShirt ? (isVariantLocked ? 2 : 3) : 1;
-  const uploadStepStart = isTShirt ? (isVariantLocked ? 3 : 4) : 1;
-  const requestStepStart = isTShirt ? (isVariantLocked ? 3 : 4) : 1;
+  // Step 1 always = Print Position (when positions exist)
+  // T-shirt: +Gender, +Color(if unlocked), +Size — then uploads
+  const tShirtBaseSteps = hasPositions ? 1 : 0;
+  const genderStep   = tShirtBaseSteps + 1;
+  const colorStep    = genderStep + 1;                          // only when !isVariantLocked
+  const sizeStep     = isVariantLocked ? genderStep + 1 : colorStep + 1;
+  const uploadStep   = isTShirt ? sizeStep + 1 : (hasPositions ? 2 : 1);
+  const logoStep     = uploadStep + 1;
+  const qtyStep      = logoStep + 1;
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -249,25 +366,42 @@ export default function CustomizeProductPage() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <Lock size={12} style={{ color: "#C4962A" }} />
-                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "#C4962A" }}>
-                  Variant Locked
-                </span>
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "#C4962A" }}>Variant Locked</span>
               </div>
-              <p className="text-white font-bold text-sm leading-snug">
-                {lockedVariant!.color ? `Color: ${lockedVariant!.color}` : "Original Product"}
-              </p>
-              <p className="text-gray-500 text-xs mt-0.5">
-                {lockedVariant!.colorHex
-                  ? "This color is locked from your product selection."
-                  : "Original product selected — no color variant."}
-              </p>
+              <p className="text-white font-bold text-sm">{lockedVariant!.color ? `Color: ${lockedVariant!.color}` : "Original Product"}</p>
+              <p className="text-gray-500 text-xs mt-0.5">This color is locked from your product selection.</p>
             </div>
             {lockedVariant!.colorHex && (
-              <span
-                className="w-8 h-8 rounded-full flex-shrink-0 border-2 border-white/20"
-                style={{ backgroundColor: lockedVariant!.colorHex }}
-              />
+              <span className="w-8 h-8 rounded-full flex-shrink-0 border-2 border-white/20" style={{ backgroundColor: lockedVariant!.colorHex }} />
             )}
+          </div>
+        )}
+
+        {/* ── Step 1: Print Position ── */}
+        {hasPositions && (
+          <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
+            <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
+              <Step n={1} />
+              <span>Choose Print Position</span>
+              {printPosition && (
+                <span
+                  className="ml-auto text-xs font-bold px-2.5 py-1 rounded-full"
+                  style={{ background: "rgba(229,62,62,0.12)", color: "#fc8181", border: "1px solid rgba(229,62,62,0.25)" }}
+                >
+                  {printPositionLabel}
+                </span>
+              )}
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-2.5">
+              {positions.map(pos => (
+                <PositionCard
+                  key={pos.id}
+                  pos={pos}
+                  active={printPosition === pos.id}
+                  onClick={() => { setPrintPosition(pos.id); setActiveSide("front"); }}
+                />
+              ))}
+            </div>
           </div>
         )}
 
@@ -289,10 +423,10 @@ export default function CustomizeProductPage() {
         {/* ── T-Shirt shared options ── */}
         {isTShirt && (
           <>
-            {/* Step 1: Gender */}
+            {/* Gender */}
             <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
               <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                <Step n={1} /> Gender Type
+                <Step n={genderStep} /> Gender Type
               </h2>
               <div className="flex gap-3">
                 {GENDER_OPTIONS.map(g => (
@@ -311,31 +445,28 @@ export default function CustomizeProductPage() {
               </div>
             </div>
 
-            {/* Step 2 (only shown when NOT locked): Color picker */}
+            {/* Color (only when NOT locked) */}
             {!isVariantLocked && (
               <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
                 <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                  <Step n={2} /> T-Shirt Color
+                  <Step n={colorStep} /> T-Shirt Color
                 </h2>
-                <p className="text-gray-500 text-sm">
-                  Please select a color from the product page before customizing, or describe your preferred color below.
+                <p className="text-gray-500 text-sm mb-3">
+                  Select a color from the product page, or describe your preferred color below.
                 </p>
-                <div className="mt-3">
-                  <Input
-                    placeholder="Describe your color (e.g. Sky Blue, Maroon, Olive Green...)"
-                    className="bg-[#1a1a1a] border-white/12 text-white placeholder-gray-600 focus:border-primary/50 h-11 rounded-xl"
-                  />
-                </div>
+                <Input
+                  placeholder="e.g. Sky Blue, Maroon, Olive Green, Bottle Green..."
+                  className="bg-[#1a1a1a] border-white/12 text-white placeholder-gray-600 focus:border-primary/50 h-11 rounded-xl"
+                />
               </div>
             )}
 
             {/* Size + Quantity */}
             <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
               <h2 className="text-white font-bold text-base mb-1 flex items-center gap-2">
-                <Step n={sizeStepNum} /> Size &amp; Quantity
+                <Step n={sizeStep} /> Size &amp; Quantity
               </h2>
-              <p className="text-gray-500 text-xs mb-5 ml-8">Enter how many pieces you need per size. Leave blank if not required.</p>
-
+              <p className="text-gray-500 text-xs mb-5 ml-8">Enter how many pieces per size. Leave blank if not needed.</p>
               <div className="space-y-2">
                 <div className="grid grid-cols-2 gap-3 px-1 mb-1">
                   <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Size</span>
@@ -345,25 +476,14 @@ export default function CustomizeProductPage() {
                   <div
                     key={s}
                     className={`grid grid-cols-2 gap-3 items-center px-4 py-3 rounded-xl border transition-colors ${
-                      sizeQty[s] > 0
-                        ? "bg-primary/8 border-primary/30"
-                        : "bg-white/4 border-white/8"
+                      sizeQty[s] > 0 ? "bg-primary/8 border-primary/30" : "bg-white/4 border-white/8"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`w-9 h-9 rounded-lg flex items-center justify-center text-sm font-black border ${
-                          sizeQty[s] > 0
-                            ? "bg-primary text-white border-primary"
-                            : "bg-white/8 text-gray-300 border-white/12"
-                        }`}
-                      >
-                        {s}
-                      </span>
-                    </div>
+                    <span className={`w-9 h-9 rounded-lg flex items-center justify-center text-sm font-black border ${
+                      sizeQty[s] > 0 ? "bg-primary text-white border-primary" : "bg-white/8 text-gray-300 border-white/12"
+                    }`}>{s}</span>
                     <input
-                      type="number"
-                      min={0}
+                      type="number" min={0}
                       value={sizeQty[s] === 0 ? "" : sizeQty[s]}
                       onChange={e => setSizeAmount(s, e.target.value)}
                       placeholder="0"
@@ -372,95 +492,114 @@ export default function CustomizeProductPage() {
                   </div>
                 ))}
               </div>
-
               <div className={`mt-4 flex items-center justify-between px-4 py-3 rounded-xl border ${
                 totalQty > 0 ? "bg-primary/10 border-primary/30" : "bg-white/4 border-white/8"
               }`}>
                 <span className="text-sm font-semibold text-gray-300">Total T-Shirts</span>
-                <span className={`text-xl font-extrabold ${totalQty > 0 ? "text-primary" : "text-gray-600"}`}>
-                  {totalQty}
-                </span>
+                <span className={`text-xl font-extrabold ${totalQty > 0 ? "text-primary" : "text-gray-600"}`}>{totalQty}</span>
               </div>
-              {totalQty >= 10 && (
-                <p className="text-yellow-400 text-xs mt-2 text-center">🎉 Bulk order — we'll offer you a special price!</p>
-              )}
+              {totalQty >= 10 && <p className="text-yellow-400 text-xs mt-2 text-center">🎉 Bulk order — we'll offer you a special price!</p>}
             </div>
           </>
         )}
 
         {/* ── Upload Tab content ── */}
         {tab === "upload" && (
-          <motion.div
-            key="upload"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-4"
-          >
-            {/* Upload Design */}
+          <motion.div key="upload" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+
+            {/* Upload Design — split by side when "Both Sides" */}
             <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
               <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                <Step n={uploadStepStart} /> Upload Your Design
+                <Step n={uploadStep} />
+                {isBothSides ? "Upload Your Designs" : "Upload Your Design"}
               </h2>
-              {!designPreview ? (
-                <label className="relative flex flex-col items-center justify-center gap-3 py-10 border-2 border-dashed border-white/15 rounded-xl cursor-pointer hover:border-primary/40 hover:bg-primary/4 transition-all duration-200">
-                  <div className="w-11 h-11 rounded-xl bg-primary/15 flex items-center justify-center">
-                    <Upload size={20} className="text-primary" />
+
+              {isBothSides ? (
+                <>
+                  {/* Side tab switcher */}
+                  <div className="flex gap-2 mb-4">
+                    {(["front", "back"] as DesignSide[]).map(side => (
+                      <button
+                        key={side}
+                        onClick={() => setActiveSide(side)}
+                        className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-200 flex items-center justify-center gap-2 ${
+                          activeSide === side
+                            ? "bg-primary/20 border-primary text-primary"
+                            : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20 hover:text-white"
+                        }`}
+                      >
+                        {side === "front" ? <AlignCenter size={14} /> : <RotateCcw size={14} />}
+                        {side === "front" ? "Front Design" : "Back Design"}
+                        {side === "front" && frontFile && <CheckCircle2 size={13} className="text-green-400" />}
+                        {side === "back" && backFile && <CheckCircle2 size={13} className="text-green-400" />}
+                      </button>
+                    ))}
                   </div>
-                  <div className="text-center">
-                    <p className="text-white font-semibold text-sm">Tap to upload your design image</p>
-                    <p className="text-gray-500 text-xs mt-1">PNG, JPG, SVG, PDF — Max 10 MB</p>
-                  </div>
-                  <input
-                    ref={designRef}
-                    type="file"
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    accept=".png,.jpg,.jpeg,.svg,.pdf"
-                    onChange={handleDesignFile}
-                  />
-                </label>
+                  <AnimatePresence mode="wait">
+                    {activeSide === "front" ? (
+                      <motion.div key="front" initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }}>
+                        <DesignUploadBox
+                          file={frontFile}
+                          preview={frontPreview}
+                          inputRef={frontRef}
+                          onFileChange={makeFileHandler(setFrontFile, setFrontPreview)}
+                          onRemove={makeRemoveHandler(setFrontFile, setFrontPreview, frontRef)}
+                        />
+                      </motion.div>
+                    ) : (
+                      <motion.div key="back" initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }}>
+                        <DesignUploadBox
+                          file={backFile}
+                          preview={backPreview}
+                          inputRef={backRef}
+                          onFileChange={makeFileHandler(setBackFile, setBackPreview)}
+                          onRemove={makeRemoveHandler(setBackFile, setBackPreview, backRef)}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </>
               ) : (
-                <div className="rounded-xl overflow-hidden border border-white/12">
-                  <img src={designPreview} alt="Design" className="w-full max-h-44 object-contain bg-[#0d0d0d] p-4" />
-                  <div className="flex items-center justify-between px-4 py-3 bg-[#1a1a1a] border-t border-white/8">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 size={15} className="text-green-400" />
-                      <span className="text-green-400 text-sm font-semibold truncate max-w-[200px]">{designFile?.name}</span>
-                    </div>
-                    <button onClick={removeDesign} className="text-gray-500 hover:text-red-400 transition-colors"><X size={15} /></button>
-                  </div>
-                </div>
+                <DesignUploadBox
+                  file={frontFile}
+                  preview={frontPreview}
+                  inputRef={frontRef}
+                  onFileChange={makeFileHandler(setFrontFile, setFrontPreview)}
+                  onRemove={makeRemoveHandler(setFrontFile, setFrontPreview, frontRef)}
+                />
               )}
             </div>
 
-            {/* Upload Logo */}
+            {/* Logo */}
             <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
               <h2 className="text-white font-bold text-base mb-1 flex items-center gap-2">
-                <Step n={uploadStepStart + 1} />
-                Upload Your Logo <span className="text-gray-500 text-xs font-normal ml-1">(Optional)</span>
+                <Step n={logoStep} />
+                Upload Your Logo
+                <span className="text-gray-500 text-xs font-normal ml-1">(Optional)</span>
               </h2>
-              <p className="text-gray-500 text-xs mb-4 ml-8">If your design needs a separate logo file, upload it here.</p>
+              <p className="text-gray-500 text-xs mb-4 ml-8">If your design includes a separate logo file, upload it here.</p>
               {!logoFile ? (
-                <label className="relative flex items-center gap-3 py-4 px-5 border border-dashed border-white/12 rounded-xl cursor-pointer hover:border-primary/30 hover:bg-primary/4 transition-all duration-200">
-                  <Upload size={16} className="text-gray-500" />
+                <label className="relative flex items-center gap-3 py-4 px-5 border border-dashed border-white/12 rounded-xl cursor-pointer hover:border-primary/30 hover:bg-primary/4 transition-all">
+                  <Upload size={15} className="text-gray-500" />
                   <span className="text-gray-400 text-sm">Tap to upload logo (PNG, SVG)</span>
-                  <input ref={logoRef} type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept=".png,.jpg,.jpeg,.svg" onChange={handleLogoFile} />
+                  <input ref={logoRef} type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept=".png,.jpg,.jpeg,.svg" onChange={e => { const f = e.target.files?.[0]; if (f) setLogoFile(f); }} />
                 </label>
               ) : (
                 <div className="flex items-center justify-between px-4 py-3 bg-[#1a1a1a] border border-white/12 rounded-xl">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 size={15} className="text-green-400" />
+                    <CheckCircle2 size={14} className="text-green-400" />
                     <span className="text-green-400 text-sm font-semibold truncate max-w-[220px]">{logoFile.name}</span>
                   </div>
-                  <button onClick={removeLogo} className="text-gray-500 hover:text-red-400 transition-colors"><X size={15} /></button>
+                  <button onClick={() => { setLogoFile(null); if (logoRef.current) logoRef.current.value = ""; }} className="text-gray-500 hover:text-red-400 transition-colors"><X size={14} /></button>
                 </div>
               )}
             </div>
 
-            {/* Quantity (non-T-shirt only) */}
+            {/* Quantity (non-T-shirt) */}
             {!isTShirt && (
               <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
                 <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                  <Step n={uploadStepStart + 2} /> Select Quantity
+                  <Step n={qtyStep} /> Select Quantity
                 </h2>
                 <div className="flex items-center gap-3">
                   <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-11 h-11 rounded-xl bg-white/8 hover:bg-white/15 text-white font-bold text-xl transition-colors flex items-center justify-center">−</button>
@@ -472,35 +611,93 @@ export default function CustomizeProductPage() {
               </div>
             )}
 
-            {/* Add to Cart */}
+            {/* ── Order Summary Preview ── */}
+            {(hasPositions || isTShirt) && (
+              <div
+                className="rounded-2xl p-4 border space-y-2"
+                style={{ background: "rgba(255,255,255,0.03)", borderColor: "rgba(255,255,255,0.07)" }}
+              >
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Order Summary</p>
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Product</span>
+                    <span className="text-white font-semibold">{meta.label}</span>
+                  </div>
+                  {hasPositions && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Print Position</span>
+                      <span className="text-white font-semibold">{printPositionLabel}</span>
+                    </div>
+                  )}
+                  {isTShirt && gender && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Gender</span>
+                      <span className="text-white font-semibold">{gender}</span>
+                    </div>
+                  )}
+                  {effectiveColor && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Color</span>
+                      <span className="text-white font-semibold flex items-center gap-1.5">
+                        {effectiveColorHex && <span className="w-3 h-3 rounded-full inline-block border border-white/20" style={{ backgroundColor: effectiveColorHex }} />}
+                        {effectiveColor}
+                      </span>
+                    </div>
+                  )}
+                  {isTShirt && totalQty > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Sizes</span>
+                      <span className="text-white font-semibold">{sizeBreakdown}</span>
+                    </div>
+                  )}
+                  {isBothSides && (frontFile || backFile) && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Designs</span>
+                      <span className="text-white font-semibold text-right">
+                        {[frontFile && "Front ✓", backFile && "Back ✓"].filter(Boolean).join(", ")}
+                      </span>
+                    </div>
+                  )}
+                  {!isBothSides && frontFile && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Design File</span>
+                      <span className="text-green-400 font-semibold">Uploaded ✓</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ── Save Customization Button ── */}
             <motion.button
-              onClick={handleAddToCart}
+              onClick={handleSaveToCart}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-white text-base transition-all duration-200"
-              style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 20px rgba(229,62,62,0.35)" }}
-            >
-              {addedToCart
-                ? <><CheckCircle2 size={20} /> Added to Cart!</>
-                : <><ShoppingCart size={20} /> Add to Cart {isTShirt && totalQty > 0 ? `(${totalQty} pcs)` : ""}</>
+              className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-bold text-white text-base transition-all duration-200"
+              style={saved
+                ? { background: "linear-gradient(135deg,#38a169,#276749)", boxShadow: "0 4px 20px rgba(56,161,105,0.35)" }
+                : { background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 20px rgba(229,62,62,0.35)" }
               }
+            >
+              {saved ? (
+                <><CheckCircle2 size={20} /> Customization Saved — Opening Cart</>
+              ) : (
+                <><Sparkles size={20} /> Save Customization &amp; Add to Cart {isTShirt && totalQty > 0 ? `(${totalQty} pcs)` : ""}</>
+              )}
             </motion.button>
-            <p className="text-center text-gray-600 text-xs">After adding to cart, confirm your order via WhatsApp. No upfront payment required.</p>
+            <p className="text-center text-gray-600 text-xs">
+              No upfront payment · Confirm your customized order via WhatsApp after checkout.
+            </p>
           </motion.div>
         )}
 
         {/* ── Request Tab content ── */}
         {tab === "request" && (
-          <motion.div
-            key="request"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-4"
-          >
-            {/* Custom Text */}
+          <motion.div key="request" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+
             <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
               <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                <Step n={requestStepStart} /> Custom Text
+                <Step n={uploadStep} /> Custom Text
               </h2>
               <Input
                 value={customText}
@@ -510,23 +707,21 @@ export default function CustomizeProductPage() {
               />
             </div>
 
-            {/* Design Requirements */}
             <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
               <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                <Step n={requestStepStart + 1} /> Design Requirements
+                <Step n={uploadStep + 1} /> Design Requirements
               </h2>
               <Textarea
                 value={requirements}
                 onChange={e => setRequirements(e.target.value)}
-                placeholder="Describe what you want on the product — theme, style, colours, images, logo idea..."
+                placeholder="Describe what you want — theme, style, colours, images, logo idea..."
                 className="bg-[#1a1a1a] border-white/12 text-white placeholder-gray-600 focus:border-primary/50 rounded-xl resize-none h-28"
               />
             </div>
 
-            {/* Special Instructions */}
             <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
               <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                <Step n={requestStepStart + 2} />
+                <Step n={uploadStep + 2} />
                 Special Instructions <span className="text-gray-500 text-xs font-normal ml-1">(Optional)</span>
               </h2>
               <Textarea
@@ -537,11 +732,10 @@ export default function CustomizeProductPage() {
               />
             </div>
 
-            {/* Quantity (non-T-shirt only) */}
             {!isTShirt && (
               <div className="bg-[#111] border border-white/8 rounded-2xl p-6">
                 <h2 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-                  <Step n={requestStepStart + 3} /> Select Quantity
+                  <Step n={uploadStep + 3} /> Select Quantity
                 </h2>
                 <div className="flex items-center gap-3">
                   <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-11 h-11 rounded-xl bg-white/8 hover:bg-white/15 text-white font-bold text-xl transition-colors flex items-center justify-center">−</button>
@@ -553,7 +747,6 @@ export default function CustomizeProductPage() {
               </div>
             )}
 
-            {/* Submit */}
             <motion.button
               onClick={handleSubmitRequest}
               whileHover={{ scale: 1.02 }}
@@ -566,7 +759,9 @@ export default function CustomizeProductPage() {
                 : <><MessageCircle size={20} /> Submit Design Request via WhatsApp {isTShirt && totalQty > 0 ? `(${totalQty} pcs)` : ""}</>
               }
             </motion.button>
-            <p className="text-center text-gray-600 text-xs">Our team will review your requirements and get back to you within a few hours.</p>
+            <p className="text-center text-gray-600 text-xs">
+              Our team will review your requirements and get back to you within a few hours.
+            </p>
           </motion.div>
         )}
 
