@@ -1,0 +1,224 @@
+Redesign the entire website navigation bar to look like a premium ecommerce and custom printing brand.
+
+Current Problem:
+
+The navbar looks basic, small, and difficult to scan from a distance.
+
+Menu items are not visually prominent.
+Categories are not highlighted.
+The navbar lacks a premium branded appearance.
+
+=================================
+NAVBAR GOAL
+===========
+
+Create a modern premium ecommerce navigation similar to top brands.
+
+Examples:
+
+* Nike
+* Adidas
+* Vistaprint
+* Printrove
+* Printify
+
+The navbar must feel professional, premium, and trustworthy.
+
+=================================
+NAVBAR HEIGHT
+=============
+
+Increase navbar height.
+
+Current navbar feels compressed.
+
+Use:
+
+* More vertical padding
+* Better spacing
+* Larger click areas
+
+=================================
+LOGO AREA
+=========
+
+Make logo section more prominent.
+
+Requirements:
+
+* Larger logo
+* Better spacing
+* Strong brand visibility
+
+Logo should be the first thing users notice.
+
+=================================
+MENU ITEMS
+==========
+
+Increase menu font size.
+
+Make:
+
+Home
+Products
+Customize
+About
+Contact
+
+larger and easier to read.
+
+Use:
+
+* Semi-bold or bold font
+* Better letter spacing
+* Improved contrast
+
+=================================
+ACTIVE MENU STYLE
+=================
+
+Current page should be clearly visible.
+
+Example:
+
+HOME
+
+* Red background
+* White text
+* Rounded pill style
+
+Users should instantly know where they are.
+
+=================================
+HOVER EFFECTS
+=============
+
+Add premium hover effects:
+
+* Smooth animation
+* Color transition
+* Underline animation
+* Subtle lift effect
+
+No abrupt changes.
+
+=================================
+PRODUCTS DROPDOWN
+=================
+
+Improve Products dropdown.
+
+Requirements:
+
+Show categories clearly:
+
+* T-Shirts
+* Mugs
+* Caps
+* Pens
+* Badges
+* Photo Frames
+* Corporate Gifts
+
+Dropdown should:
+
+* Open smoothly
+* Have white background
+* Soft shadow
+* Large clickable rows
+* Category icons
+
+=================================
+SEARCH & CART
+=============
+
+Make icons larger.
+
+Improve spacing.
+
+Add hover effects.
+
+Cart should show item count with premium badge.
+
+=================================
+PRIMARY CTA BUTTON
+==================
+
+Current:
+
+Start Designing
+
+Replace with:
+
+CUSTOMIZE NOW
+
+or
+
+START CUSTOMIZING
+
+Requirements:
+
+* Larger button
+* Better padding
+* Strong visibility
+* Premium red gradient
+* Hover animation
+
+This should be the strongest visual element in the navbar.
+
+=================================
+STICKY HEADER
+=============
+
+Navbar must remain visible while scrolling.
+
+Add:
+
+* Sticky positioning
+* Slight blur effect
+* Shadow when scrolling
+
+=================================
+VISIBILITY
+==========
+
+Every menu item must be readable from a distance.
+
+Increase:
+
+* Font size
+* Weight
+* Spacing
+
+Avoid small text.
+
+=================================
+COLOR SYSTEM
+============
+
+Background:
+
+Pure White (#FFFFFF)
+
+or
+
+Very Light Gray (#F8F9FA)
+
+Text:
+
+Dark Gray / Black
+
+Primary Accent:
+
+Brand Red
+
+Avoid dark muddy gray backgrounds.
+
+=================================
+FINAL RESULT
+============
+
+The navbar should look like a professional ecommerce website and premium custom printing brand, not a default template.
+
+It should immediately build trust and make navigation easy on desktop, tablet, and mobile.
