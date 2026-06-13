@@ -1,0 +1,53 @@
+Replace ONLY the images/icons inside the "Hum Kya-Kya Print Karte Hain" category section.
+
+IMPORTANT:
+
+* Do NOT change layout, card size, spacing, typography, colors, buttons, section structure, or any other part of the website.
+* Keep the existing card design exactly the same.
+* Only upgrade the visual content inside the cards.
+
+Image Requirements:
+
+* Replace current icons with premium real product photography.
+* Images must look like genuine commercial product photos, not AI-generated artwork.
+* Use high-resolution studio-shot product images.
+* Products should have professional lighting, realistic shadows, glossy finish, and premium branding appearance.
+* Images should be visually striking and attention-grabbing at first glance.
+* Use clean white, transparent, or premium dark backgrounds depending on what looks best inside the card.
+* No clipart, illustrations, cartoons, stock watermarks, or AI-looking renders.
+
+Category Visuals:
+
+* T-Shirts → Premium branded custom printed t-shirt
+* Mugs → Premium printed coffee mug with logo
+* Caps → Stylish embroidered custom cap
+* Pens → Premium corporate branding pen
+* Badges → Professional custom badge
+* Photo Frames → Premium printed photo frame
+* Corporate Gifts → Luxury branded corporate gift set
+
+Animation Requirements:
+
+* Add subtle premium hover animations only.
+* Product image should smoothly scale 1.05x–1.1x on hover.
+* Add soft floating effect using CSS transform.
+* Add gentle glow/shadow enhancement on hover.
+* Use smooth transitions (300–500ms).
+* No bouncing, spinning, flashing, shaking, or distracting animations.
+* Mobile performance must remain smooth.
+
+Visual Goal:
+The section should instantly communicate:
+"We print and customize products for businesses and individuals."
+
+The cards should feel modern, premium, trustworthy, and conversion-focused similar to top e-commerce and printing brands.
+
+Performance:
+
+* Use optimized WebP images.
+* Lazy-load images where possible.
+* Maintain fast page speed.
+* Keep all images inside existing card boundaries without overflow.
+
+Expected Result:
+When a visitor reaches this section, the products should immediately grab attention, look premium, and clearly showcase the printing services without requiring the visitor to read the text.

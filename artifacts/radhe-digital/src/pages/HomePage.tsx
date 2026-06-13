@@ -12,75 +12,53 @@ import { useApiProducts, type ApiProductData } from "@/hooks/useApiProducts";
 import { useLanguage } from "@/context/LanguageContext";
 const logoSrc = "/radhe-logo.png";
 
-/* ─── Category SVG Thumbnails ─── */
-function CategorySVG({ slug }: { slug: string }) {
-  const map: Record<string, JSX.Element> = {
-    "t-shirts": (
-      <svg viewBox="0 0 140 140" fill="none" className="w-full h-full">
-        <rect width="140" height="140" fill="#1a1a1a"/>
-        <path d="M42 38 L26 62 L46 66 L46 110 L94 110 L94 66 L114 62 L98 38 L80 49 C75 51 65 51 60 49 Z" fill="#e53e3e" opacity="0.92"/>
-        <rect x="57" y="67" width="26" height="20" rx="4" fill="white" opacity="0.18"/>
-        <text x="70" y="80" textAnchor="middle" fill="white" fontSize="7" fontFamily="sans-serif" fontWeight="bold" opacity="0.7">PRINT</text>
-      </svg>
-    ),
-    "mugs": (
-      <svg viewBox="0 0 140 140" fill="none" className="w-full h-full">
-        <rect width="140" height="140" fill="#1a1a1a"/>
-        <rect x="36" y="44" width="62" height="70" rx="8" fill="#e53e3e" opacity="0.9"/>
-        <path d="M98 60 Q117 60 117 76 Q117 92 98 92" stroke="white" strokeWidth="7" fill="none" strokeLinecap="round" opacity="0.9"/>
-        <path d="M98 60 Q117 60 117 76 Q117 92 98 92" stroke="#e53e3e" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.9"/>
-        <rect x="44" y="68" width="38" height="12" rx="3" fill="white" opacity="0.2"/>
-      </svg>
-    ),
-    "caps": (
-      <svg viewBox="0 0 140 140" fill="none" className="w-full h-full">
-        <rect width="140" height="140" fill="#1a1a1a"/>
-        <ellipse cx="70" cy="93" rx="48" ry="8" fill="#222"/>
-        <path d="M29 84 Q29 49 70 46 Q111 49 111 84 Z" fill="#e53e3e" opacity="0.9"/>
-        <path d="M29 84 Q18 83 17 78 Q15 73 29 83" fill="#e53e3e" opacity="0.75"/>
-        <rect x="29" y="83" width="82" height="4" rx="2" fill="#ccc" opacity="0.3"/>
-      </svg>
-    ),
-    "pens": (
-      <svg viewBox="0 0 140 140" fill="none" className="w-full h-full">
-        <rect width="140" height="140" fill="#1a1a1a"/>
-        <rect x="63" y="18" width="14" height="95" rx="7" fill="#e53e3e" opacity="0.9"/>
-        <rect x="64.5" y="20" width="5" height="91" rx="2.5" fill="white" opacity="0.12"/>
-        <polygon points="63,113 77,113 70,127" fill="#aaa"/>
-        <polygon points="68,120 72,120 70,127" fill="#888"/>
-        <rect x="63" y="16" width="14" height="10" rx="5" fill="#555"/>
-      </svg>
-    ),
-    "badges": (
-      <svg viewBox="0 0 140 140" fill="none" className="w-full h-full">
-        <rect width="140" height="140" fill="#1a1a1a"/>
-        <rect x="34" y="48" width="72" height="58" rx="8" fill="#e53e3e" opacity="0.9"/>
-        <circle cx="70" cy="70" r="17" fill="white" opacity="0.12"/>
-        <text x="70" y="66" textAnchor="middle" fill="white" fontSize="6" fontFamily="sans-serif" fontWeight="bold" opacity="0.8">RADHE</text>
-        <text x="70" y="76" textAnchor="middle" fill="white" fontSize="5" fontFamily="sans-serif" opacity="0.6">DIGITAL</text>
-      </svg>
-    ),
-    "photo-frames": (
-      <svg viewBox="0 0 140 140" fill="none" className="w-full h-full">
-        <rect width="140" height="140" fill="#1a1a1a"/>
-        <rect x="28" y="28" width="84" height="84" rx="6" fill="#e53e3e" opacity="0.85"/>
-        <rect x="38" y="38" width="64" height="64" rx="3" fill="#141414"/>
-        <path d="M38 78 L54 56 L72 70 L86 52 L102 78 Z" fill="#e53e3e" opacity="0.5"/>
-        <circle cx="55" cy="52" r="8" fill="#e53e3e" opacity="0.4"/>
-      </svg>
-    ),
-    "corporate-gifts": (
-      <svg viewBox="0 0 140 140" fill="none" className="w-full h-full">
-        <rect width="140" height="140" fill="#1a1a1a"/>
-        <rect x="31" y="70" width="78" height="52" rx="6" fill="#e53e3e" opacity="0.9"/>
-        <rect x="27" y="54" width="86" height="20" rx="4" fill="#e53e3e"/>
-        <rect x="66" y="54" width="8" height="68" fill="white" opacity="0.15"/>
-        <path d="M70 54 Q55 42 50 35 Q43 28 52 26 Q60 24 70 54" fill="#e53e3e" opacity="0.8"/>
-        <path d="M70 54 Q85 42 90 35 Q97 28 88 26 Q80 24 70 54" fill="#e53e3e" opacity="0.8"/>
-      </svg>
-    ),
-  };
-  return map[slug] ?? map["t-shirts"];
+/* ─── Category Product Photography ─── */
+const CATEGORY_PHOTOS: Record<string, { src: string; alt: string }> = {
+  "t-shirts": {
+    src: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=500&h=500&q=85",
+    alt: "Custom printed t-shirt",
+  },
+  "mugs": {
+    src: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=500&h=500&q=85",
+    alt: "Premium branded coffee mug",
+  },
+  "caps": {
+    src: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=500&h=500&q=85",
+    alt: "Custom embroidered cap",
+  },
+  "pens": {
+    src: "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&w=500&h=500&q=85",
+    alt: "Premium corporate branding pen",
+  },
+  "badges": {
+    src: "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=500&h=500&q=85",
+    alt: "Professional custom badge",
+  },
+  "photo-frames": {
+    src: "https://images.unsplash.com/photo-1513031640451-77ef0e87f0a2?auto=format&fit=crop&w=500&h=500&q=85",
+    alt: "Premium printed photo frame",
+  },
+  "corporate-gifts": {
+    src: "https://images.unsplash.com/photo-1563208723-7b1f4f34b8ef?auto=format&fit=crop&w=500&h=500&q=85",
+    alt: "Luxury branded corporate gift set",
+  },
+};
+
+function CategoryImage({ slug }: { slug: string }) {
+  const data = CATEGORY_PHOTOS[slug] ?? CATEGORY_PHOTOS["t-shirts"];
+  return (
+    <>
+      <img
+        src={data.src}
+        alt={data.alt}
+        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+        loading="lazy"
+        draggable={false}
+        style={{ willChange: "transform" }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+    </>
+  );
 }
 
 const CAT_ICONS: Record<string, JSX.Element> = {
@@ -194,8 +172,8 @@ function BestSellersCarousel() {
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(196,150,42,0.18)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.3)"; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 14px rgba(0,0,0,0.07)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
                 >
-                  <div className="aspect-square bg-[#1a1a1a] relative">
-                    <CategorySVG slug={currentCategory.slug}/>
+                  <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden">
+                    <CategoryImage slug={currentCategory.slug}/>
                     {product.badge && (
                       <span className="absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary text-white">{product.badge}</span>
                     )}
@@ -576,8 +554,8 @@ export default function HomePage() {
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 32px rgba(196,150,42,0.18)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.35)"; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
                   >
-                    <div className="w-full aspect-square rounded-xl overflow-hidden mb-3 group-hover:scale-105 transition-transform duration-300">
-                      <CategorySVG slug={cat.slug}/>
+                    <div className="w-full aspect-square rounded-xl overflow-hidden relative mb-3">
+                      <CategoryImage slug={cat.slug}/>
                     </div>
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-2" style={{ background: "rgba(196,150,42,0.1)", color: "#C4962A" }}>
                       {CAT_ICONS[cat.slug]}
@@ -632,7 +610,7 @@ export default function HomePage() {
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 14px rgba(0,0,0,0.07)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
                   >
                     <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden">
-                      <CategorySVG slug={cat.slug}/>
+                      <CategoryImage slug={cat.slug}/>
                       {product?.badge && (
                         <span className="absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full bg-primary text-white">{product.badge}</span>
                       )}
