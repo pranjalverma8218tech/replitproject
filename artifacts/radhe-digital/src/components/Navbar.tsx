@@ -66,10 +66,11 @@ export function Navbar() {
     <header
       className="fixed top-0 left-0 right-0 w-full z-[9999] transition-all duration-300"
       style={{
-        background: "#ffffff",
-        borderBottom: scrolled ? "1px solid #e5e7eb" : "1px solid #f3f4f6",
-        boxShadow: scrolled ? "0 2px 20px rgba(0,0,0,0.08)" : "none",
-        backdropFilter: scrolled ? "blur(12px)" : "none",
+        background: "rgba(255,255,255,0.97)",
+        borderBottom: "1px solid rgba(0,0,0,0.06)",
+        boxShadow: scrolled ? "0 8px 30px rgba(0,0,0,0.10)" : "0 4px 20px rgba(0,0,0,0.06)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
       }}
     >
       {/* Top accent line */}
