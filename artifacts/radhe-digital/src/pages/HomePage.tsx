@@ -115,6 +115,32 @@ function BestSellersCarousel() {
     setScrollIdx(i => dir === "left" ? Math.max(0, i - 1) : Math.min(maxScroll, i + 1));
   };
 
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const dx = Math.abs(e.touches[0].clientX - touchStartX.current);
+    const dy = Math.abs(e.touches[0].clientY - touchStartY.current);
+    if (dx > dy && dx > 8) e.preventDefault();
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = Math.abs(e.changedTouches[0].clientY - (touchStartY.current ?? 0));
+    if (Math.abs(dx) > 50 && Math.abs(dx) > dy) {
+      scroll(dx < 0 ? "right" : "left");
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
   return (
     <div>
       <div className="flex flex-wrap gap-2 mb-8 justify-center">
@@ -145,7 +171,13 @@ function BestSellersCarousel() {
             <ChevronRight size={16}/>
           </button>
         )}
-        <div ref={containerRef} className="overflow-hidden">
+        <div
+          ref={containerRef}
+          className="overflow-hidden"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <motion.div
             className="flex gap-5"
             animate={{ x: scrollIdx > 0 ? `calc(-${scrollIdx} * (100% / ${VISIBLE} + 5px / ${VISIBLE}))` : 0 }}
