@@ -33,6 +33,7 @@ export function Navbar() {
   const [scrolled, setScrolled]                 = useState(false);
   const [searchOpen, setSearchOpen]             = useState(false);
   const [searchQuery, setSearchQuery]           = useState("");
+  const [lang, setLang]                         = useState<"EN" | "HI">("EN");
   const { totalItems, toggleCart }              = useCart();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef   = useRef<HTMLInputElement>(null);
@@ -248,6 +249,26 @@ export function Navbar() {
                 </span>
               )}
             </button>
+
+            {/* Language Switcher */}
+            <div
+              className="flex items-center rounded-xl overflow-hidden border"
+              style={{ borderColor: "#e5e7eb" }}
+            >
+              {(["EN", "HI"] as const).map((l) => (
+                <button
+                  key={l}
+                  onClick={() => setLang(l)}
+                  className="px-3 py-2 text-xs font-black transition-all duration-200"
+                  style={{
+                    background: lang === l ? "#DC2626" : "transparent",
+                    color: lang === l ? "#ffffff" : "#6b7280",
+                  }}
+                >
+                  {l === "HI" ? "हिं" : "EN"}
+                </button>
+              ))}
+            </div>
 
             {/* CTA */}
             <Link href="/customize">
