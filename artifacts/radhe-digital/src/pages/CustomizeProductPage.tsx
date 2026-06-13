@@ -955,13 +955,16 @@ export default function CustomizeProductPage() {
                 {saved ? (
                   <><CheckCircle2 size={20} /> ORDER SAVED — OPENING CART</>
                 ) : isValid ? (
-                  <>
-                    <Sparkles size={20} />
-                    PROCEED TO ORDER
-                    <span className="ml-auto text-sm font-bold opacity-80">
-                      {effectiveQty} pc{effectiveQty > 1 ? "s" : ""} · ₹{(product.price * effectiveQty).toLocaleString("en-IN")}
-                    </span>
-                  </>
+                  <div className="flex items-center justify-between w-full px-1">
+                    <div className="flex items-center gap-2">
+                      <Sparkles size={20} />
+                      <span>PROCEED TO ORDER</span>
+                    </div>
+                    <div className="flex flex-col items-end leading-tight">
+                      <span className="text-sm font-bold opacity-90">₹{(product.price * effectiveQty).toLocaleString("en-IN")}</span>
+                      <span className="text-xs font-medium opacity-70">{effectiveQty} pc{effectiveQty > 1 ? "s" : ""}</span>
+                    </div>
+                  </div>
                 ) : (
                   <><FileText size={18} /> PROVIDE DESIGN INFORMATION TO CONTINUE</>
                 )}
