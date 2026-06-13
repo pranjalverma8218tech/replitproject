@@ -328,8 +328,8 @@ export default function HomePage() {
 
               <motion.h1
                 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.1 }}
-                className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-black leading-[1.02] tracking-tight mb-3 text-white"
-                style={{ letterSpacing: "-0.02em" }}
+                className="text-[36px] sm:text-[46px] md:text-[52px] lg:text-[60px] font-extrabold leading-[1.12] tracking-tight mb-2 text-white"
+                style={{ letterSpacing: "-0.015em" }}
               >
                 {t.hero.line1}{" "}
                 <span style={{
@@ -339,8 +339,8 @@ export default function HomePage() {
               </motion.h1>
               <motion.h1
                 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.18 }}
-                className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-black leading-[1.02] tracking-tight mb-8 text-white"
-                style={{ letterSpacing: "-0.02em" }}
+                className="text-[36px] sm:text-[46px] md:text-[52px] lg:text-[60px] font-extrabold leading-[1.12] tracking-tight mb-6 text-white"
+                style={{ letterSpacing: "-0.015em" }}
               >
                 <span style={{
                   background: "linear-gradient(135deg, #FBBF24 0%, #F59E0B 40%, #D97706 100%)",
@@ -350,8 +350,8 @@ export default function HomePage() {
 
               <motion.p
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }}
-                className="text-lg sm:text-xl text-gray-300 font-light mb-10 max-w-xl leading-relaxed"
-                style={{ color: "rgba(210,210,220,0.85)" }}
+                className="text-base sm:text-lg text-gray-300 font-normal mb-8 max-w-lg leading-[1.7]"
+                style={{ color: "rgba(200,200,212,0.88)" }}
               >
                 {t.hero.subtitle}
               </motion.p>
