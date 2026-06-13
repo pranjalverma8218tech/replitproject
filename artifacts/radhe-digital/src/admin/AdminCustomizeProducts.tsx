@@ -8,7 +8,7 @@ import {
 import {
   getCustomizeProducts, createCustomizeProduct, updateCustomizeProduct,
   deleteCustomizeProduct, uploadImageWithProgress,
-  type CustomizeProduct,
+  type CustomizeProduct, type ColorVariant,
 } from "./api";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -38,13 +38,14 @@ interface FormState {
   sideImage: string;
   colors: string[];
   sizes: string[];
+  colorVariants: ColorVariant[];
   status: "Active" | "Inactive";
 }
 
 const EMPTY_FORM: FormState = {
   name: "", productType: "", category: "T-Shirts", basePrice: 0,
   description: "", frontImage: "", backImage: "", sideImage: "",
-  colors: [], sizes: [], status: "Active",
+  colors: [], sizes: [], colorVariants: [], status: "Active",
 };
 
 function productToForm(p: CustomizeProduct): FormState {
@@ -52,7 +53,9 @@ function productToForm(p: CustomizeProduct): FormState {
     name: p.name, productType: p.productType, category: p.category as Category,
     basePrice: Number(p.basePrice), description: p.description,
     frontImage: p.frontImage, backImage: p.backImage, sideImage: p.sideImage,
-    colors: p.colors ?? [], sizes: p.sizes ?? [], status: p.status,
+    colors: p.colors ?? [], sizes: p.sizes ?? [],
+    colorVariants: p.colorVariants ?? [],
+    status: p.status,
   };
 }
 
@@ -127,48 +130,145 @@ function ImageUploadBox({
   );
 }
 
-// ─── Color Tag Input ──────────────────────────────────────────────────────────
-function ColorTagInput({ colors, onChange }: { colors: string[]; onChange: (c: string[]) => void }) {
-  const [input, setInput] = useState("");
+// ─── Color Variant Editor ─────────────────────────────────────────────────────
+function VariantImageUpload({ value, onUploaded }: { value: string; onUploaded: (url: string) => void }) {
+  const ref = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
-  const add = () => {
-    const v = input.trim();
-    if (v && !colors.includes(v)) {
-      onChange([...colors, v]);
+  const handle = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setErr(null);
+    setUploading(true);
+    try {
+      const { url } = await uploadImageWithProgress(file, () => {});
+      onUploaded(url);
+    } catch (e) {
+      setErr((e as Error).message);
+    } finally {
+      setUploading(false);
+      if (ref.current) ref.current.value = "";
     }
-    setInput("");
+  };
+
+  return (
+    <div className="flex-shrink-0">
+      {value ? (
+        <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-white/15 bg-[#0a0a0a] group cursor-pointer">
+          <img src={value} alt="variant" className="w-full h-full object-contain p-1" />
+          <button
+            onClick={() => onUploaded("")}
+            className="absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+          >
+            <X size={11} className="text-white" />
+          </button>
+        </div>
+      ) : (
+        <label className="flex flex-col items-center justify-center w-14 h-14 rounded-xl border-2 border-dashed border-white/12 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all">
+          {uploading ? (
+            <Loader2 size={13} className="animate-spin text-primary" />
+          ) : (
+            <>
+              <Upload size={12} className="text-gray-600" />
+              <span className="text-[9px] text-gray-600 mt-0.5 font-medium">Photo</span>
+            </>
+          )}
+          <input ref={ref} type="file" accept="image/*" className="hidden" onChange={handle} />
+        </label>
+      )}
+      {err && <p className="text-red-400 text-[9px] mt-0.5 w-14 truncate">{err}</p>}
+    </div>
+  );
+}
+
+function ColorVariantEditor({
+  variants, onChange,
+}: {
+  variants: ColorVariant[];
+  onChange: (v: ColorVariant[]) => void;
+}) {
+  const [newColor, setNewColor] = useState("");
+  const [newHex, setNewHex] = useState("#DC2626");
+
+  const addVariant = () => {
+    const name = newColor.trim();
+    if (!name) return;
+    onChange([...variants, { color: name, hex: newHex, image: "" }]);
+    setNewColor("");
+    setNewHex("#DC2626");
+  };
+
+  const updateVariant = (i: number, patch: Partial<ColorVariant>) => {
+    const updated = [...variants];
+    updated[i] = { ...updated[i], ...patch };
+    onChange(updated);
+  };
+
+  const removeVariant = (i: number) => {
+    onChange(variants.filter((_, idx) => idx !== i));
   };
 
   return (
     <div className="space-y-2">
-      <div className="flex gap-2">
+      {variants.map((v, i) => (
+        <div key={i} className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#0a0a0a] border border-white/8">
+          <label className="relative flex-shrink-0 cursor-pointer" title="Click to change color">
+            <div className="w-8 h-8 rounded-full border-2 border-white/20 shadow-sm" style={{ background: v.hex }} />
+            <input type="color" value={v.hex} onChange={e => updateVariant(i, { hex: e.target.value })}
+              className="absolute inset-0 opacity-0 w-full h-full cursor-pointer" />
+          </label>
+          <input
+            value={v.color}
+            onChange={e => updateVariant(i, { color: e.target.value })}
+            placeholder="Color name"
+            className="flex-1 min-w-0 bg-transparent border border-white/10 rounded-lg px-2.5 py-1.5 text-sm text-white placeholder-gray-600 outline-none focus:border-primary/40"
+          />
+          <input
+            value={v.hex}
+            onChange={e => updateVariant(i, { hex: e.target.value })}
+            placeholder="#000000"
+            className="w-[88px] bg-transparent border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-gray-400 outline-none focus:border-primary/40 font-mono"
+          />
+          <VariantImageUpload value={v.image} onUploaded={url => updateVariant(i, { image: url })} />
+          <button
+            onClick={() => removeVariant(i)}
+            className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors flex-shrink-0"
+          >
+            <Trash2 size={12} />
+          </button>
+        </div>
+      ))}
+
+      {/* Add new variant row */}
+      <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#0a0a0a] border border-dashed border-white/10">
+        <label className="relative flex-shrink-0 cursor-pointer" title="Pick color">
+          <div className="w-8 h-8 rounded-full border-2 border-white/20" style={{ background: newHex }} />
+          <input type="color" value={newHex} onChange={e => setNewHex(e.target.value)}
+            className="absolute inset-0 opacity-0 w-full h-full cursor-pointer" />
+        </label>
         <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); add(); } }}
-          placeholder="e.g. White, Black, Red…"
-          className="flex-1 bg-[#111] border border-white/12 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-600 outline-none focus:border-primary/40"
+          value={newColor}
+          onChange={e => setNewColor(e.target.value)}
+          onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addVariant(); } }}
+          placeholder="Color name (e.g. Royal Blue)"
+          className="flex-1 min-w-0 bg-transparent border border-white/10 rounded-lg px-2.5 py-1.5 text-sm text-white placeholder-gray-600 outline-none focus:border-primary/40"
         />
+        <input
+          value={newHex}
+          onChange={e => setNewHex(e.target.value)}
+          placeholder="#000000"
+          className="w-[88px] bg-transparent border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-gray-400 outline-none focus:border-primary/40 font-mono"
+        />
+        <div className="w-14 flex-shrink-0" />
         <button
-          type="button"
-          onClick={add}
-          className="px-4 py-2 bg-primary/15 border border-primary/30 text-primary text-sm font-bold rounded-xl hover:bg-primary/25 transition-all"
+          onClick={addVariant}
+          disabled={!newColor.trim()}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/15 border border-primary/30 text-primary text-xs font-bold rounded-lg hover:bg-primary/25 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
         >
-          Add
+          <Plus size={12} /> Add
         </button>
       </div>
-      {colors.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {colors.map(c => (
-            <span key={c} className="flex items-center gap-1.5 px-3 py-1 bg-white/6 border border-white/12 rounded-full text-sm text-white font-medium">
-              {c}
-              <button onClick={() => onChange(colors.filter(x => x !== c))} className="text-gray-500 hover:text-red-400 transition-colors">
-                <X size={12} />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
@@ -268,13 +368,20 @@ function ProductCard({
           </span>
           <span className="text-primary font-black text-sm">₹{Number(product.basePrice).toLocaleString("en-IN")}</span>
         </div>
-        {(product.colors?.length > 0 || product.sizes?.length > 0) && (
-          <div className="flex flex-wrap gap-1 pt-1 border-t border-white/6">
+        {(product.colorVariants?.length > 0 || product.sizes?.length > 0) && (
+          <div className="flex items-center gap-1 pt-1 border-t border-white/6">
             {product.sizes?.length > 0 && (
               <span className="text-xs text-gray-600">{product.sizes.join(", ")}</span>
             )}
-            {product.colors?.length > 0 && (
-              <span className="text-xs text-gray-600 ml-auto">{product.colors.length} color{product.colors.length > 1 ? "s" : ""}</span>
+            {product.colorVariants?.length > 0 && (
+              <div className="ml-auto flex items-center gap-1">
+                {product.colorVariants.slice(0, 5).map((v, i) => (
+                  <div key={i} className="w-3.5 h-3.5 rounded-full border border-white/15 shadow-sm" style={{ background: v.hex }} />
+                ))}
+                {product.colorVariants.length > 5 && (
+                  <span className="text-[10px] text-gray-600 ml-0.5">+{product.colorVariants.length - 5}</span>
+                )}
+              </div>
             )}
           </div>
         )}
@@ -358,8 +465,9 @@ export default function AdminCustomizeProducts() {
         frontImage: form.frontImage,
         backImage: form.backImage,
         sideImage: form.sideImage,
-        colors: form.colors,
+        colors: form.colorVariants.map(v => v.color),
         sizes: form.sizes,
+        colorVariants: form.colorVariants,
         status: form.status,
       };
 
@@ -690,12 +798,16 @@ export default function AdminCustomizeProducts() {
                     </div>
                   </div>
 
-                  {/* Available Colors */}
+                  {/* Color Variants */}
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                      <Palette size={12} /> Available Colors <span className="font-normal text-gray-600 normal-case">(optional)</span>
+                      <Palette size={12} /> Color Variants
+                      <span className="font-normal text-gray-600 normal-case">(optional — pick color, upload photo per variant)</span>
                     </label>
-                    <ColorTagInput colors={form.colors} onChange={c => setField("colors", c)} />
+                    <ColorVariantEditor
+                      variants={form.colorVariants}
+                      onChange={v => setField("colorVariants", v)}
+                    />
                   </div>
 
                   {/* Available Sizes */}

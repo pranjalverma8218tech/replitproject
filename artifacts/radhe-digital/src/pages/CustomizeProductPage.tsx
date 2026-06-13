@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/context/CartContext";
-import { useCustomizeProduct } from "@/hooks/useCustomizeApi";
+import { useCustomizeProduct, type ColorVariant } from "@/hooks/useCustomizeApi";
 
 /* ─── Print Position Card ─── */
 function PositionCard({
@@ -307,6 +307,19 @@ export default function CustomizeProductPage() {
     }
   }, [product?.id]);
 
+  /* ── Color variant selection ── */
+  const [selectedVariant, setSelectedVariant] = useState<ColorVariant | null>(null);
+
+  useEffect(() => {
+    if (product?.colorVariants?.length) {
+      setSelectedVariant(product.colorVariants[0]);
+    } else {
+      setSelectedVariant(null);
+    }
+  }, [product?.id]);
+
+  const displayImage = selectedVariant?.image || product?.image || "";
+
   /* ── File states ── */
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -399,6 +412,7 @@ export default function CustomizeProductPage() {
       image: product?.image,
       customization: {
         printPosition: printPositionLabel,
+        color: selectedVariant?.color,
         uploadedFileName: designNote,
         logoFileName: logoFile?.name,
         designInstructions: designInstructions.trim() || undefined,
@@ -418,6 +432,7 @@ export default function CustomizeProductPage() {
       `Hello Radhe Digital! I'd like to customize a product.`,
       ``,
       `*Product:* ${product?.name ?? category}`,
+      selectedVariant ? `*Color:* ${selectedVariant.color}` : "",
       `*Print Position:* ${printPositionLabel}`,
       isTShirt && sizeBreakdown
         ? `*Sizes & Quantity:* ${sizeBreakdown} (Total: ${totalSizeQty} pcs)`
@@ -511,7 +526,7 @@ export default function CustomizeProductPage() {
             >
               <div className="relative aspect-square">
                 <img
-                  src={product.image}
+                  src={displayImage}
                   alt={product.name}
                   className="w-full h-full object-cover"
                 />
@@ -524,7 +539,51 @@ export default function CustomizeProductPage() {
                     <Award size={11} /> {printPositionLabel}
                   </span>
                 </div>
+                {/* Selected color badge */}
+                {selectedVariant && (
+                  <div className="absolute top-3 right-3">
+                    <span
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-bold text-white shadow-md"
+                      style={{ background: selectedVariant.hex }}
+                    >
+                      {selectedVariant.color}
+                    </span>
+                  </div>
+                )}
               </div>
+
+              {/* Color Variants Selector */}
+              {(product.colorVariants?.length ?? 0) > 0 && (
+                <div className="px-5 pb-5 pt-4 border-t border-gray-100">
+                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Select Color</p>
+                  <div className="flex flex-wrap gap-2.5">
+                    {product.colorVariants.map((v, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setSelectedVariant(v)}
+                        title={v.color}
+                        className="relative w-10 h-10 rounded-full transition-all duration-150 flex-shrink-0 focus:outline-none"
+                        style={{
+                          background: v.hex,
+                          boxShadow: selectedVariant?.color === v.color
+                            ? "0 0 0 2.5px #fff, 0 0 0 4.5px #DC2626"
+                            : "0 1px 4px rgba(0,0,0,0.3)",
+                          transform: selectedVariant?.color === v.color ? "scale(1.14)" : "scale(1)",
+                        }}
+                      />
+                    ))}
+                  </div>
+                  {selectedVariant && (
+                    <p className="text-sm font-black mt-3 flex items-center gap-1.5" style={{ color: "#374151" }}>
+                      <span
+                        className="inline-block w-3 h-3 rounded-full border border-gray-300"
+                        style={{ background: selectedVariant.hex }}
+                      />
+                      <span style={{ color: "#DC2626" }}>{selectedVariant.color}</span>
+                    </p>
+                  )}
+                </div>
+              )}
 
               {/* Product info inside the card */}
               <div className="p-5 border-t border-gray-100">
@@ -561,6 +620,9 @@ export default function CustomizeProductPage() {
               </p>
               <div className="space-y-2.5">
                 <SummaryRow label="Product" value={product.name} />
+                {selectedVariant && (
+                  <SummaryRow label="Color" value={selectedVariant.color} valueColor={selectedVariant.hex} />
+                )}
                 <SummaryRow label="Print Position" value={printPositionLabel} valueColor="#DC2626" />
                 {isTShirt ? (
                   <>

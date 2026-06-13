@@ -1,0 +1,147 @@
+Add Color Variants support to the Admin Panel Customization Products system.
+
+Current Problem:
+
+Customization Products only support a single product image.
+
+The admin cannot upload different images for different colors.
+
+=================================
+REQUIRED FEATURE
+================
+
+For every Customization Product, add:
+
+Color Variants
+
+Example:
+
+Plain Round Neck T-Shirt
+
+Colors:
+
+* Red
+* Black
+* White
+* Royal Blue
+* Navy Blue
+* Yellow
+* Green
+
+=================================
+ADMIN PANEL
+===========
+
+Inside:
+
+Admin Panel
+→ Customization Products
+→ Add/Edit Product
+
+Add a new section:
+
+COLOR VARIANTS
+
+Each variant must contain:
+
+* Color Name
+* Color Hex
+* Product Image
+
+Example:
+
+Variant 1
+
+Color: Red
+Hex: #EF4444
+Image: red-tshirt.png
+
+Variant 2
+
+Color: Royal Blue
+Hex: #2563EB
+Image: blue-tshirt.png
+
+Variant 3
+
+Color: Black
+Hex: #111111
+Image: black-tshirt.png
+
+=================================
+OWNER CONTROLS
+==============
+
+Admin can:
+
+* Add Color Variant
+* Edit Color Variant
+* Delete Color Variant
+* Upload Image For Each Color
+
+=================================
+CUSTOMIZATION PAGE
+==================
+
+When customer selects a color:
+
+* Product image changes instantly
+* Selected color is highlighted
+* Only admin-created colors are shown
+
+No hardcoded colors.
+
+=================================
+DATABASE
+========
+
+Save color variants with the customization product.
+
+Example:
+
+{
+"id": "cust-ts-001",
+"name": "Plain Round Neck T-Shirt",
+"colorVariants": [
+{
+"color": "Red",
+"hex": "#EF4444",
+"image": "/uploads/red-shirt.png"
+},
+{
+"color": "Royal Blue",
+"hex": "#2563EB",
+"image": "/uploads/blue-shirt.png"
+}
+]
+}
+
+=================================
+CUSTOMIZATION FLOW
+==================
+
+Customer selects:
+
+1. Product
+2. Color
+3. Size
+4. Quantity
+5. Upload Logo / Design
+
+The selected color image should remain visible throughout the customization process.
+
+=================================
+IMPORTANT
+=========
+
+Remove any static color lists.
+
+Show only colors added from the Admin Panel.
+
+If a color is deleted by the admin, it must automatically disappear from the customization page.
+
+=================================
+GOAL
+====
+
+The owner should be able to upload a different T-shirt image for every available color, and customers should see the exact color they are customizing.

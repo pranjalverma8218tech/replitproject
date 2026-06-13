@@ -42,6 +42,13 @@ export const CATEGORY_DESCRIPTIONS: Record<string, string> = {
   "corporate-gifts": "Branded corporate gifting products for businesses",
 };
 
+// ─── Color Variant ────────────────────────────────────────────────────────────
+export interface ColorVariant {
+  color: string;
+  hex: string;
+  image: string;
+}
+
 // ─── Shared product shape used across all pages ───────────────────────────────
 export interface CatalogProduct {
   id: string;
@@ -55,6 +62,7 @@ export interface CatalogProduct {
   categorySlug: string;
   colors: string[];
   sizes: string[];
+  colorVariants: ColorVariant[];
   printPositions: { id: string; label: string; desc: string }[];
   status: string;
 }
@@ -69,12 +77,15 @@ export interface CatalogCategory {
 
 // ─── Transform API response → CatalogProduct ─────────────────────────────────
 function transform(p: Record<string, unknown>): CatalogProduct {
-  const basePrice = Number(p.basePrice ?? p.base_price ?? 0);
-  const catSlug   = String(p.categorySlug ?? p.category_slug ?? "");
-  const image     = String(p.frontImage ?? p.front_image ?? p.sideImage ?? p.side_image ?? p.backImage ?? p.back_image ?? "");
+  const basePrice     = Number(p.basePrice ?? p.base_price ?? 0);
+  const catSlug       = String(p.categorySlug ?? p.category_slug ?? "");
+  const colorVariants = Array.isArray(p.colorVariants) ? p.colorVariants as ColorVariant[] : [];
+  // Primary display image: first color variant image (if any), else frontImage
+  const image = colorVariants[0]?.image
+    || String(p.frontImage ?? p.front_image ?? p.sideImage ?? p.side_image ?? p.backImage ?? p.back_image ?? "");
   return {
     id:             String(p.id),
-    slug:           String(p.id),           // product ID is used as URL slug
+    slug:           String(p.id),
     name:           String(p.name ?? ""),
     price:          basePrice,
     priceLabel:     `₹${basePrice.toLocaleString("en-IN")}`,
@@ -84,6 +95,7 @@ function transform(p: Record<string, unknown>): CatalogProduct {
     categorySlug:   catSlug,
     colors:         Array.isArray(p.colors) ? p.colors as string[] : [],
     sizes:          Array.isArray(p.sizes)  ? p.sizes  as string[] : [],
+    colorVariants,
     printPositions: PRINT_POSITIONS[catSlug] ?? DEFAULT_POSITIONS,
     status:         String(p.status ?? "Active"),
   };

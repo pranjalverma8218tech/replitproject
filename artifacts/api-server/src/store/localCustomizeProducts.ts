@@ -7,6 +7,12 @@ const DATA_FILE = path.resolve(__dirname, "../data/customize-products-local.json
 
 fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
 
+export interface ColorVariant {
+  color: string;
+  hex: string;
+  image: string;
+}
+
 export interface LocalCustomizeProduct {
   id: string;
   name: string;
@@ -20,6 +26,7 @@ export interface LocalCustomizeProduct {
   sideImage: string;
   colors: string[];
   sizes: string[];
+  colorVariants: ColorVariant[];
   status: "Active" | "Inactive";
   createdAt: string;
   updatedAt: string;

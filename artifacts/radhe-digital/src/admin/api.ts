@@ -233,6 +233,12 @@ export const deleteProduct = (id: string) =>
   apiFetch<{ deleted: string }>(`/products/${id}`, { method: "DELETE" });
 
 // ─── Customization Products ───────────────────────────────────────────────────
+export interface ColorVariant {
+  color: string;
+  hex: string;
+  image: string;
+}
+
 export interface CustomizeProduct {
   id: string;
   name: string;
@@ -246,6 +252,7 @@ export interface CustomizeProduct {
   sideImage: string;
   colors: string[];
   sizes: string[];
+  colorVariants: ColorVariant[];
   status: "Active" | "Inactive";
   createdAt?: string;
   updatedAt?: string;
