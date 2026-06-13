@@ -97,7 +97,7 @@ export function Navbar() {
           </Link>
 
           {/* ── Desktop Navigation ── */}
-          <nav className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
+          <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
             {NAV_LINKS.map((link) =>
               link.hasDropdown ? (
                 <div key={link.name} className="relative" ref={dropdownRef}>
@@ -192,24 +192,27 @@ export function Navbar() {
           </nav>
 
           {/* ── Right Side Actions ── */}
-          <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
+          <div className="hidden lg:flex items-center gap-2.5 flex-shrink-0">
 
-            {/* Search */}
-            <SearchBar className="w-56 xl:w-64" />
+            {/* Search — slim, visible but not dominant */}
+            <SearchBar className="w-40 xl:w-48" />
+
+            {/* Subtle divider */}
+            <div className="h-6 w-px bg-gray-200 flex-shrink-0" />
 
             {/* Cart */}
             <button
               onClick={toggleCart}
-              className="relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200"
+              className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200"
               style={{ color: "#6b7280", background: "transparent" }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#f3f4f6"; (e.currentTarget as HTMLElement).style.color = "#DC2626"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#6b7280"; }}
               title="Cart"
             >
-              <ShoppingCart size={20} />
+              <ShoppingCart size={19} />
               {totalItems > 0 && (
                 <span
-                  className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-white text-[10px] font-black flex items-center justify-center"
+                  className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-white text-[9px] font-black flex items-center justify-center"
                   style={{ background: "#DC2626", boxShadow: "0 2px 8px rgba(220,38,38,0.5)" }}
                 >
                   {totalItems > 9 ? "9+" : totalItems}
@@ -217,31 +220,31 @@ export function Navbar() {
               )}
             </button>
 
-            {/* Language Switcher — enlarged & prominent */}
+            {/* Language Switcher */}
             <div
-              className="flex items-center rounded-xl overflow-hidden"
-              style={{
-                border: "2px solid #e5e7eb",
-                background: "#f9fafb",
-              }}
+              className="flex items-center rounded-lg overflow-hidden"
+              style={{ border: "1.5px solid #e5e7eb", background: "#f9fafb" }}
             >
               {(["en", "hi"] as const).map((l) => (
                 <button
                   key={l}
                   onClick={() => setLang(l)}
-                  className="px-4 py-2 text-sm font-black transition-all duration-200 whitespace-nowrap"
+                  className="px-3 py-1.5 text-xs font-black transition-all duration-200 whitespace-nowrap"
                   style={{
                     background: lang === l ? "#DC2626" : "transparent",
                     color: lang === l ? "#ffffff" : "#6b7280",
-                    minWidth: "44px",
+                    minWidth: "36px",
                   }}
-                  onMouseEnter={e => { if (lang !== l) (e.currentTarget as HTMLElement).style.background = "#f3f4f6"; (e.currentTarget as HTMLElement).style.color = lang !== l ? "#DC2626" : "#ffffff"; }}
-                  onMouseLeave={e => { if (lang !== l) (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = lang !== l ? "#6b7280" : "#ffffff"; }}
+                  onMouseEnter={e => { if (lang !== l) { (e.currentTarget as HTMLElement).style.background = "#f3f4f6"; (e.currentTarget as HTMLElement).style.color = "#DC2626"; } }}
+                  onMouseLeave={e => { if (lang !== l) { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#6b7280"; } }}
                 >
                   {l === "hi" ? "हिं" : "EN"}
                 </button>
               ))}
             </div>
+
+            {/* Subtle divider */}
+            <div className="h-6 w-px bg-gray-200 flex-shrink-0" />
 
             {/* CTA */}
             <Link href="/customize">
@@ -253,10 +256,10 @@ export function Navbar() {
                   background: "linear-gradient(135deg,#DC2626 0%,#b91c1c 100%)",
                   boxShadow: "0 4px 18px rgba(220,38,38,0.4)",
                   letterSpacing: "0.03em",
-                  padding: isHindi ? "10px 14px" : "10px 20px",
+                  padding: isHindi ? "9px 14px" : "9px 18px",
                 }}
               >
-                <Sparkles size={16} />
+                <Sparkles size={15} />
                 {t.nav.customizeNow}
               </motion.button>
             </Link>

@@ -1,0 +1,79 @@
+efine Navigation Bar Layout Without Changing Existing Design
+
+Carefully improve the navigation bar layout and spacing while preserving the current design, colors, branding, buttons, and structure.
+
+Important Requirement
+
+Do NOT redesign the header.
+Do NOT change the logo, menu structure, buttons, colors, or overall layout.
+
+The goal is only to improve spacing, alignment, visual balance, and professionalism.
+
+Current Issues
+After adding the search bar, the navigation feels crowded.
+Menu items are too close together.
+Search bar is consuming excessive visual attention.
+The header no longer looks balanced.
+Elements appear compressed instead of evenly distributed.
+Overall header looks less premium than before.
+Required Improvements
+Navigation Spacing
+Increase spacing between navigation menu items.
+Maintain consistent gaps across all menu links.
+Improve visual breathing room.
+Ensure perfect vertical alignment of all header elements.
+Search Bar Optimization
+Slightly reduce search bar width.
+Keep it clearly visible.
+Add a subtle professional border.
+Add a soft shadow or highlight so it doesn't blend into the white background.
+Maintain a clean premium appearance.
+Do not make the search bar dominant.
+Header Balance
+
+Create a balanced visual hierarchy:
+
+Logo → Navigation → Search → Cart → Language Switcher → CTA Button
+
+Each section should have proper spacing.
+
+No element should feel cramped.
+
+Alignment
+
+Ensure:
+
+Search bar aligns perfectly with navigation items.
+CTA button aligns perfectly with the header height.
+Language switcher aligns with surrounding controls.
+Cart icon remains centered.
+Professional Polish
+Improve padding inside the header.
+Improve spacing between search bar and language switcher.
+Improve spacing between language switcher and CTA button.
+Maintain a clean enterprise-level appearance.
+Responsive Behaviour
+
+Verify layout on:
+
+Desktop
+Laptop
+Tablet
+Mobile
+
+The header should remain organized and visually balanced at all screen sizes.
+
+Design Preservation Rules
+Keep the current Radhe Digital header design.
+Keep the current logo size.
+Keep the current CTA button style.
+Keep the current navigation style.
+Keep the current branding.
+Do not introduce new colors.
+Do not redesign any component.
+
+Only refine spacing, sizing, alignment, and visual hierarchy to make the header look more premium and professional.
+
+Final Goal
+
+The navigation bar should look like a polished professional e-commerce website header where the search bar is visible and functional but does not overpower the navigation or make the layout feel crowded.
