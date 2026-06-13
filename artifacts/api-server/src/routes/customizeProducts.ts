@@ -26,8 +26,9 @@ function toJson(val: unknown): string | null {
 function hydrate(row: Record<string, unknown>) {
   return {
     ...row,
-    colors: parseJson(row.colors),
-    sizes:  parseJson(row.sizes),
+    colors:        parseJson(row.colors),
+    sizes:         parseJson(row.sizes),
+    colorVariants: parseJson(row.color_variants ?? row.colorVariants) ?? [],
   };
 }
 
@@ -87,7 +88,7 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const {
     name, productType, category, basePrice, description,
-    frontImage, backImage, sideImage, colors, sizes, status,
+    frontImage, backImage, sideImage, colors, sizes, colorVariants, status,
   } = req.body as Record<string, any>;
 
   if (!name || !category || basePrice === undefined) {
@@ -110,6 +111,7 @@ router.post("/", async (req, res) => {
       sideImage: sideImage ?? "",
       colors: Array.isArray(colors) ? colors : [],
       sizes: Array.isArray(sizes) ? sizes : [],
+      colorVariants: Array.isArray(colorVariants) ? colorVariants : [],
       status: status ?? "Active",
     });
     res.status(201).json(item);
@@ -120,18 +122,21 @@ router.post("/", async (req, res) => {
     await execute(
       `INSERT INTO customize_products
         (id, name, product_type, category, category_slug, base_price, description,
-         front_image, back_image, side_image, colors, sizes, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         front_image, back_image, side_image, colors, sizes, color_variants, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
         name=VALUES(name), product_type=VALUES(product_type), category=VALUES(category),
         category_slug=VALUES(category_slug), base_price=VALUES(base_price),
         description=VALUES(description), front_image=VALUES(front_image),
         back_image=VALUES(back_image), side_image=VALUES(side_image),
-        colors=VALUES(colors), sizes=VALUES(sizes), status=VALUES(status)`,
+        colors=VALUES(colors), sizes=VALUES(sizes),
+        color_variants=VALUES(color_variants), status=VALUES(status)`,
       [
         id, name, productType ?? "", category, categorySlug, Number(basePrice),
         description ?? "", frontImage ?? "", backImage ?? "", sideImage ?? "",
-        toJson(colors ?? []), toJson(sizes ?? []), status ?? "Active",
+        toJson(colors ?? []), toJson(sizes ?? []),
+        toJson(Array.isArray(colorVariants) ? colorVariants : []),
+        status ?? "Active",
       ]
     );
     const created = await queryOne<Record<string, unknown>>(
@@ -147,7 +152,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   const {
     name, productType, category, basePrice, description,
-    frontImage, backImage, sideImage, colors, sizes, status,
+    frontImage, backImage, sideImage, colors, sizes, colorVariants, status,
   } = req.body as Record<string, any>;
 
   const categorySlug = deriveSlug(category ?? "");
@@ -163,6 +168,7 @@ router.put("/:id", async (req, res) => {
       sideImage: sideImage ?? "",
       colors: Array.isArray(colors) ? colors : [],
       sizes: Array.isArray(sizes) ? sizes : [],
+      colorVariants: Array.isArray(colorVariants) ? colorVariants : [],
       status: status ?? "Active",
     });
     if (!updated) { res.status(404).json({ error: "NOT_FOUND" }); return; }
@@ -175,12 +181,14 @@ router.put("/:id", async (req, res) => {
       `UPDATE customize_products SET
         name=?, product_type=?, category=?, category_slug=?, base_price=?,
         description=?, front_image=?, back_image=?, side_image=?,
-        colors=?, sizes=?, status=?
+        colors=?, sizes=?, color_variants=?, status=?
        WHERE id=?`,
       [
         name, productType ?? "", category, categorySlug, Number(basePrice),
         description ?? "", frontImage ?? "", backImage ?? "", sideImage ?? "",
-        toJson(colors ?? []), toJson(sizes ?? []), status ?? "Active",
+        toJson(colors ?? []), toJson(sizes ?? []),
+        toJson(Array.isArray(colorVariants) ? colorVariants : []),
+        status ?? "Active",
         req.params.id,
       ]
     );

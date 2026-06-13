@@ -1,77 +1,5 @@
 [
   {
-    "id": "plain-round-neck",
-    "name": "Plain Round Neck T-Shirt",
-    "productType": "Round Neck",
-    "category": "T-Shirts",
-    "categorySlug": "t-shirts",
-    "basePrice": 199,
-    "description": "Classic round neck plain t-shirt. Comfortable 180 GSM cotton.",
-    "frontImage": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80",
-    "backImage": "",
-    "sideImage": "",
-    "colors": [],
-    "sizes": ["S", "M", "L", "XL", "XXL", "3XL"],
-    "colorVariants": [],
-    "status": "Active",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "updatedAt": "2024-01-01T00:00:00.000Z"
-  },
-  {
-    "id": "plain-polo",
-    "name": "Plain Polo T-Shirt",
-    "productType": "Polo",
-    "category": "T-Shirts",
-    "categorySlug": "t-shirts",
-    "basePrice": 249,
-    "description": "Premium polo t-shirt with collar. 200 GSM pique cotton.",
-    "frontImage": "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=600&q=80",
-    "backImage": "",
-    "sideImage": "",
-    "colors": [],
-    "sizes": ["S", "M", "L", "XL", "XXL", "3XL"],
-    "colorVariants": [],
-    "status": "Active",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "updatedAt": "2024-01-01T00:00:00.000Z"
-  },
-  {
-    "id": "plain-oversized",
-    "name": "Plain Oversized T-Shirt",
-    "productType": "Oversized",
-    "category": "T-Shirts",
-    "categorySlug": "t-shirts",
-    "basePrice": 279,
-    "description": "Trendy oversized drop-shoulder t-shirt. 220 GSM boxy fit.",
-    "frontImage": "https://images.unsplash.com/photo-1503341733017-1901578f9f1e?w=600&q=80",
-    "backImage": "",
-    "sideImage": "",
-    "colors": [],
-    "sizes": ["S", "M", "L", "XL", "XXL", "3XL"],
-    "colorVariants": [],
-    "status": "Active",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "updatedAt": "2024-01-01T00:00:00.000Z"
-  },
-  {
-    "id": "plain-v-neck",
-    "name": "Plain V-Neck T-Shirt",
-    "productType": "V-Neck",
-    "category": "T-Shirts",
-    "categorySlug": "t-shirts",
-    "basePrice": 219,
-    "description": "Slim-fit v-neck t-shirt. 180 GSM combed cotton.",
-    "frontImage": "https://images.unsplash.com/photo-1622470953794-aa9c70b0fb9d?w=600&q=80",
-    "backImage": "",
-    "sideImage": "",
-    "colors": [],
-    "sizes": ["S", "M", "L", "XL", "XXL", "3XL"],
-    "colorVariants": [],
-    "status": "Active",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "updatedAt": "2024-01-01T00:00:00.000Z"
-  },
-  {
     "id": "CUS-1781328811802",
     "name": "Plain Polo Neck T-Shirt (Admin Added)",
     "productType": "Polo Neck",
@@ -82,14 +10,27 @@
     "frontImage": "/api/uploads/1781328792706-32b4p8h45op.jpg",
     "backImage": "/api/uploads/1781328795221-911e5p3wjd9.jpg",
     "sideImage": "",
-    "colors": ["Royal Blue"],
-    "sizes": ["S", "M", "L", "XL", "XXL"],
+    "colors": [
+      "Royal Blue",
+      "red"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
     "colorVariants": [
-      { "color": "Royal Blue", "hex": "#2563EB", "image": "/api/uploads/1781328792706-32b4p8h45op.jpg" }
+      {
+        "color": "Royal Blue",
+        "hex": "#2563EB",
+        "image": "/api/uploads/1781328792706-32b4p8h45op.jpg"
+      }
     ],
     "status": "Active",
     "createdAt": "2026-06-13T05:33:31.803Z",
-    "updatedAt": "2026-06-13T05:33:31.803Z"
+    "updatedAt": "2026-06-13T05:58:54.213Z"
   },
   {
     "id": "plain-ceramic-mug",
@@ -247,7 +188,14 @@
     "backImage": "",
     "sideImage": "",
     "colors": [],
-    "sizes": ["S", "M", "L", "XL", "XXL", "3XL"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL",
+      "3XL"
+    ],
     "colorVariants": [],
     "status": "Active",
     "createdAt": "2024-01-01T00:00:00.000Z",
@@ -265,7 +213,14 @@
     "backImage": "",
     "sideImage": "",
     "colors": [],
-    "sizes": ["S", "M", "L", "XL", "XXL", "3XL"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL",
+      "3XL"
+    ],
     "colorVariants": [],
     "status": "Active",
     "createdAt": "2024-01-01T00:00:00.000Z",
@@ -283,7 +238,14 @@
     "backImage": "",
     "sideImage": "",
     "colors": [],
-    "sizes": ["S", "M", "L", "XL", "XXL", "3XL"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL",
+      "3XL"
+    ],
     "colorVariants": [],
     "status": "Active",
     "createdAt": "2024-01-01T00:00:00.000Z",
@@ -360,5 +322,41 @@
     "status": "Active",
     "createdAt": "2024-01-01T00:00:00.000Z",
     "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "CUS-1781330484939",
+    "name": "Test Color Variant Product",
+    "productType": "Round Neck",
+    "category": "T-Shirts",
+    "categorySlug": "t-shirts",
+    "basePrice": 199,
+    "description": "Test product",
+    "frontImage": "",
+    "backImage": "",
+    "sideImage": "",
+    "colors": [
+      "Red",
+      "Royal Blue"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "colorVariants": [
+      {
+        "color": "Red",
+        "hex": "#EF4444",
+        "image": "/api/uploads/red-test.jpg"
+      },
+      {
+        "color": "Royal Blue",
+        "hex": "#2563EB",
+        "image": "/api/uploads/blue-test.jpg"
+      }
+    ],
+    "status": "Active",
+    "createdAt": "2026-06-13T06:01:24.940Z",
+    "updatedAt": "2026-06-13T06:01:24.940Z"
   }
 ]
