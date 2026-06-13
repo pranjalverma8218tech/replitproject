@@ -2,29 +2,17 @@ import React from "react";
 import { Link } from "wouter";
 import { Upload, Shirt, Phone, Package, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function AboutPage() {
-  const steps = [
-    {
-      icon: <Upload size={32} />,
-      title: "Upload Design",
-      desc: "Share your artwork, logo, or just an idea. Our team accepts all formats and can help refine your concept."
-    },
-    {
-      icon: <Shirt size={32} />,
-      title: "Choose T-Shirt",
-      desc: "Pick from our premium range of Round Necks, Polos, or Special Event fabrics in various sizes and colors."
-    },
-    {
-      icon: <Phone size={32} />,
-      title: "Confirm Order",
-      desc: "Finalize details and pricing directly over WhatsApp with our friendly support team."
-    },
-    {
-      icon: <Package size={32} />,
-      title: "Receive Delivery",
-      desc: "Sit back while we print and ship your custom apparel quickly and safely across India."
-    }
+  const { t } = useLanguage();
+  const a = t.about;
+
+  const stepIcons = [
+    <Upload size={32} />,
+    <Shirt size={32} />,
+    <Phone size={32} />,
+    <Package size={32} />,
   ];
 
   return (
@@ -32,10 +20,8 @@ export default function AboutPage() {
       {/* Intro Header */}
       <div className="text-white py-12 lg:py-32" style={{ background: "linear-gradient(135deg, #0a0a0a 0%, #1a1010 100%)" }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl md:text-6xl font-bold mb-6">About Radhe Digital</h1>
-          <p className="text-xl text-gray-300 leading-relaxed font-light">
-            We are India's fast-growing custom apparel print shop. By combining traditional printing expertise with modern digital convenience, we make premium custom T-shirts accessible to everyone.
-          </p>
+          <h1 className="text-3xl md:text-6xl font-bold mb-6">{a.title}</h1>
+          <p className="text-xl text-gray-300 leading-relaxed font-light">{a.subtitle}</p>
         </div>
       </div>
 
@@ -44,19 +30,18 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 md:mb-16">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
-              Simple Process
+              {a.processBadge}
             </span>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 mt-2">How It Works</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-lg">Four simple steps from your imagination to a tangible, high-quality T-shirt.</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 mt-2">{a.processTitle}</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-lg">{a.processSubtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
             <div className="hidden lg:block absolute top-1/2 left-0 w-full h-0.5 -z-10 -translate-y-1/2" style={{ background: "linear-gradient(90deg, transparent, rgba(196,150,42,0.3), transparent)" }} />
-            
-            {steps.map((step, idx) => (
+            {a.steps.map((step, idx) => (
               <div key={idx} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center relative z-10">
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-white" style={{ background: "linear-gradient(135deg, #C4962A, #A07820)", boxShadow: "0 4px 20px rgba(196,150,42,0.3)" }}>
-                  {step.icon}
+                  {stepIcons[idx]}
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{idx + 1}. {step.title}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed">{step.desc}</p>
@@ -89,15 +74,20 @@ export default function AboutPage() {
                   With years of experience in the garment and printing industry, our technicians understand the nuance of fabrics, inks, and curing processes. Whether it is DTG, Screen Printing, or Sublimation, we ensure the print outlasts the fabric.
                 </p>
               </div>
-              <div className="mt-8">
+              <div className="mt-8 flex gap-3">
                 <Link href="/categories">
                   <Button size="lg" className="bg-primary hover:bg-red-700 text-white">
-                    Explore Our Products <ArrowRight className="ml-2" size={20} />
+                    {a.startCustomizing} <ArrowRight className="ml-2" size={20} />
+                  </Button>
+                </Link>
+                <Link href="/contact">
+                  <Button size="lg" variant="outline">
+                    {a.contactUs}
                   </Button>
                 </Link>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <img src="/images/gallery-3.png" alt="Team at work" className="w-full h-full object-cover rounded-2xl shadow-lg col-span-2 aspect-video" />
               <div className="rounded-2xl p-6 flex flex-col justify-center text-center" style={{ background: "rgba(196,150,42,0.08)", border: "1px solid rgba(196,150,42,0.2)" }}>

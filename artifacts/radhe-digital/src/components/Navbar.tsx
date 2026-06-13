@@ -6,37 +6,38 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 const PRODUCTS = [
-  { icon: Shirt,  label: "T-Shirts",       href: "/categories/t-shirts",       desc: "Custom printed tees" },
-  { icon: Coffee, label: "Mugs",            href: "/categories/mugs",            desc: "Photo & logo mugs" },
-  { icon: HardHat,label: "Caps",            href: "/categories/caps",            desc: "Embroidered & printed" },
-  { icon: Pen,    label: "Pens",            href: "/categories/pens",            desc: "Branded writing pens" },
-  { icon: Award,  label: "Badges",          href: "/categories/badges",          desc: "Custom metal & acrylic" },
-  { icon: Image,  label: "Photo Frames",    href: "/categories/photo-frames",    desc: "Personalised frames" },
-  { icon: Gift,   label: "Corporate Gifts", href: "/categories/corporate-gifts", desc: "Bulk gift solutions" },
-];
-
-const NAV_LINKS = [
-  { name: "Home",      href: "/" },
-  { name: "Products",  href: "/categories", hasDropdown: true },
-  { name: "Customize", href: "/customize" },
-  { name: "About",     href: "/about" },
-  { name: "Contact",   href: "/contact" },
+  { icon: Shirt,   label: "T-Shirts",       href: "/categories/t-shirts",       desc: "Custom printed tees" },
+  { icon: Coffee,  label: "Mugs",            href: "/categories/mugs",            desc: "Photo & logo mugs" },
+  { icon: HardHat, label: "Caps",            href: "/categories/caps",            desc: "Embroidered & printed" },
+  { icon: Pen,     label: "Pens",            href: "/categories/pens",            desc: "Branded writing pens" },
+  { icon: Award,   label: "Badges",          href: "/categories/badges",          desc: "Custom metal & acrylic" },
+  { icon: Image,   label: "Photo Frames",    href: "/categories/photo-frames",    desc: "Personalised frames" },
+  { icon: Gift,    label: "Corporate Gifts", href: "/categories/corporate-gifts", desc: "Bulk gift solutions" },
 ];
 
 export function Navbar() {
   const [location] = useLocation();
-  const [mobileOpen, setMobileOpen]             = useState(false);
-  const [servicesOpen, setServicesOpen]         = useState(false);
+  const [mobileOpen, setMobileOpen]                 = useState(false);
+  const [servicesOpen, setServicesOpen]             = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
-  const [scrolled, setScrolled]                 = useState(false);
-  const [searchOpen, setSearchOpen]             = useState(false);
-  const [searchQuery, setSearchQuery]           = useState("");
-  const [lang, setLang]                         = useState<"EN" | "HI">("EN");
-  const { totalItems, toggleCart }              = useCart();
+  const [scrolled, setScrolled]                     = useState(false);
+  const [searchOpen, setSearchOpen]                 = useState(false);
+  const [searchQuery, setSearchQuery]               = useState("");
+  const { totalItems, toggleCart }                  = useCart();
+  const { lang, setLang, t }                        = useLanguage();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef   = useRef<HTMLInputElement>(null);
+
+  const NAV_LINKS = [
+    { name: t.nav.home,      href: "/" },
+    { name: t.nav.products,  href: "/categories", hasDropdown: true },
+    { name: t.nav.customize, href: "/customize" },
+    { name: t.nav.about,     href: "/about" },
+    { name: t.nav.contact,   href: "/contact" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -131,7 +132,7 @@ export function Navbar() {
                         }}
                       >
                         <div className="px-3 pt-3 pb-2">
-                          <p className="text-[10px] font-bold tracking-widest text-gray-400 uppercase px-2 mb-2">Browse Categories</p>
+                          <p className="text-[10px] font-bold tracking-widest text-gray-400 uppercase px-2 mb-2">{t.nav.browseCategories}</p>
                           {PRODUCTS.map((s) => {
                             const Icon = s.icon;
                             return (
@@ -164,7 +165,7 @@ export function Navbar() {
                             onClick={() => setServicesOpen(false)}
                             className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-red-600 border-2 border-red-100 hover:bg-red-50 transition-all duration-150"
                           >
-                            View All Products →
+                            {t.nav.viewAllProducts}
                           </Link>
                         </div>
                       </motion.div>
@@ -210,7 +211,7 @@ export function Navbar() {
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
                       onKeyDown={e => e.key === "Escape" && setSearchOpen(false)}
-                      placeholder="Search products..."
+                      placeholder={t.nav.searchPlaceholder}
                       className="w-full h-10 rounded-xl px-4 text-sm text-gray-800 placeholder-gray-400 outline-none transition-colors"
                       style={{ background: "#f3f4f6", border: "1.5px solid #e5e7eb" }}
                       onFocus={e => { (e.currentTarget as HTMLElement).style.borderColor = "#DC2626"; }}
@@ -256,7 +257,7 @@ export function Navbar() {
               className="flex items-center rounded-xl overflow-hidden border"
               style={{ borderColor: "#e5e7eb" }}
             >
-              {(["EN", "HI"] as const).map((l) => (
+              {(["en", "hi"] as const).map((l) => (
                 <button
                   key={l}
                   onClick={() => setLang(l)}
@@ -266,7 +267,7 @@ export function Navbar() {
                     color: lang === l ? "#ffffff" : "#6b7280",
                   }}
                 >
-                  {l === "HI" ? "हिं" : "EN"}
+                  {l === "hi" ? "हिं" : "EN"}
                 </button>
               ))}
             </div>
@@ -284,7 +285,7 @@ export function Navbar() {
                 }}
               >
                 <Sparkles size={16} />
-                CUSTOMIZE NOW
+                {t.nav.customizeNow}
               </motion.button>
             </Link>
           </div>
@@ -334,7 +335,7 @@ export function Navbar() {
                 <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search products..."
+                  placeholder={t.nav.searchPlaceholder}
                   className="w-full h-11 rounded-xl pl-10 pr-4 text-sm text-gray-800 placeholder-gray-400 outline-none"
                   style={{ background: "#f3f4f6", border: "1.5px solid #e5e7eb" }}
                 />
@@ -395,6 +396,26 @@ export function Navbar() {
                 )
               )}
 
+              {/* Mobile Language switcher */}
+              <div className="flex items-center gap-2 px-4 pt-2">
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Language:</span>
+                <div className="flex items-center rounded-xl overflow-hidden border border-gray-200">
+                  {(["en", "hi"] as const).map((l) => (
+                    <button
+                      key={l}
+                      onClick={() => setLang(l)}
+                      className="px-3 py-1.5 text-xs font-black transition-all duration-200"
+                      style={{
+                        background: lang === l ? "#DC2626" : "transparent",
+                        color: lang === l ? "#ffffff" : "#6b7280",
+                      }}
+                    >
+                      {l === "hi" ? "हिं" : "EN"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Mobile CTA */}
               <div className="pt-3 border-t border-gray-100">
                 <Link href="/customize" onClick={() => setMobileOpen(false)}>
@@ -403,7 +424,7 @@ export function Navbar() {
                     style={{ background: "linear-gradient(135deg,#DC2626,#b91c1c)", boxShadow: "0 4px 18px rgba(220,38,38,0.35)" }}
                   >
                     <Sparkles size={16} />
-                    CUSTOMIZE NOW
+                    {t.nav.customizeNow}
                   </button>
                 </Link>
               </div>

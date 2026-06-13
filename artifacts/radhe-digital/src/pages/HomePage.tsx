@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { CATEGORIES } from "@/data/products";
 import { useApiProducts, type ApiProductData } from "@/hooks/useApiProducts";
+import { useLanguage } from "@/context/LanguageContext";
 const logoSrc = "/radhe-logo.png";
 
 /* ─── Category SVG Thumbnails ─── */
@@ -240,6 +241,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 
 /* ─── HomePage ─── */
 export default function HomePage() {
+  const { t } = useLanguage();
   const apiProducts = useApiProducts();
   const featuredBySlug: Record<string, ApiProductData> = {};
   Object.values(apiProducts).forEach(p => {
@@ -248,28 +250,14 @@ export default function HomePage() {
     }
   });
 
-  const trustItems = [
-    "✦ 10,000+ Happy Customers", "✦ Same-Day Printing Available", "✦ Pan India Delivery",
-    "✦ Bulk Order Discounts", "✦ No Minimum Order", "✦ 100% Quality Guarantee",
-    "✦ Custom Designs Welcome", "✦ WhatsApp Support 24/7", "✦ Eco-Friendly Inks",
-    "✦ Trusted by 500+ Businesses",
-  ];
+  const trustItems = t.trust;
 
-  const whyChooseUs = [
-    { icon: <Zap size={22}/>, title: "Lightning Fast", desc: "Same-day printing for urgent orders. Get your custom T-shirts printed and ready within hours." },
-    { icon: <Shield size={22}/>, title: "Quality Assured", desc: "Every order undergoes strict QC. Bold colors, sharp prints, and fabrics that last years." },
-    { icon: <Truck size={22}/>, title: "Pan India Delivery", desc: "We ship to every corner of India. Tracked delivery so you always know where your order is." },
-    { icon: <Package size={22}/>, title: "No Minimum Order", desc: "Order as little as one piece. Perfect for personal gifts, samples, or small events." },
-    { icon: <Palette size={22}/>, title: "Free Design Help", desc: "Our in-house designers help you perfect your artwork at no extra cost." },
-    { icon: <Users size={22}/>, title: "Bulk Discounts", desc: "Save up to 40% on orders of 50+ pieces. Ideal for corporates, colleges, and events." },
-  ];
+  const whyIcons = [<Zap size={22}/>, <Shield size={22}/>, <Truck size={22}/>, <Package size={22}/>, <Palette size={22}/>, <Users size={22}/>];
+  const whyChooseUs = t.why.items.map((item, i) => ({ ...item, icon: whyIcons[i] }));
 
-  const steps = [
-    { icon: <Sparkles size={24}/>, step: "01", title: "Choose a Product", desc: "Browse our full catalog — T-shirts, mugs, caps, pens, badges, and more." },
-    { icon: <Palette size={24}/>, step: "02", title: "Share Your Design", desc: "Upload your artwork or describe your idea — we handle the rest." },
-    { icon: <Clock size={24}/>, step: "03", title: "We Print It", desc: "Our expert team prints your order with premium inks and materials." },
-    { icon: <CheckCircle size={24}/>, step: "04", title: "Delivered Fast", desc: "Receive your custom prints right at your doorstep anywhere in India." },
-  ];
+  const stepIcons = [<Sparkles size={24}/>, <Palette size={24}/>, <Clock size={24}/>, <CheckCircle size={24}/>];
+  const stepNums = ["01", "02", "03", "04"];
+  const steps = t.howItWorks.steps.map((s, i) => ({ ...s, icon: stepIcons[i], step: stepNums[i] }));
 
   const testimonials = [
     { name: "Rahul Sharma", location: "Delhi", initials: "RS", rating: 5, text: "Ordered 200 T-shirts for our college fest. The quality was outstanding and delivery was on time. Everyone loved them! Will definitely order again." },
@@ -277,14 +265,7 @@ export default function HomePage() {
     { name: "Amit Verma", location: "Bangalore", initials: "AV", rating: 5, text: "Super fast turnaround. Got 50 caps printed with our company logo in 2 days. Perfect stitching and printing. The team was very helpful throughout." },
   ];
 
-  const faqs = [
-    { q: "What is the minimum order quantity?", a: "There is no minimum order quantity! You can order as little as 1 piece. However, bulk orders of 50+ pieces get significant discounts." },
-    { q: "How long does printing take?", a: "Standard orders take 2–3 business days. Same-day printing is available for orders placed before 12 PM. Bulk orders (500+) may take 5–7 days." },
-    { q: "Can I provide my own design?", a: "Absolutely! You can upload your design in any format (PNG, JPG, PDF, AI, PSD). Our team will review and optimize it for printing at no extra charge." },
-    { q: "What printing methods do you use?", a: "We use DTG (Direct-to-Garment), Screen Printing, Sublimation, and Embroidery — depending on the product and quantity. We recommend the best method for your specific requirements." },
-    { q: "Do you offer shipping outside India?", a: "Currently, we only ship within India. We offer tracking for all orders and use reliable courier partners for safe delivery." },
-    { q: "What if I'm not satisfied with the quality?", a: "We offer a 100% satisfaction guarantee. If there's a defect or print error on our end, we'll reprint or refund your order — no questions asked." },
-  ];
+  const faqs = t.faq.items;
 
   return (
     <div className="bg-white">
@@ -342,7 +323,7 @@ export default function HomePage() {
                   boxShadow: "0 0 20px rgba(196,150,42,0.12), inset 0 1px 0 rgba(255,255,255,0.06)",
                 }}
               >
-                <Zap size={14} className="fill-current"/> Mathura's #1 Custom Printing Studio
+                <Zap size={14} className="fill-current"/> {t.hero.tag}
               </motion.div>
 
               <motion.h1
@@ -350,11 +331,11 @@ export default function HomePage() {
                 className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-black leading-[1.02] tracking-tight mb-3 text-white"
                 style={{ letterSpacing: "-0.02em" }}
               >
-                Print Your{" "}
+                {t.hero.line1}{" "}
                 <span style={{
                   background: "linear-gradient(135deg, #FBBF24 0%, #F59E0B 40%, #D97706 100%)",
                   WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                }}>Brand</span>
+                }}>{t.hero.brand}</span>
               </motion.h1>
               <motion.h1
                 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.18 }}
@@ -364,7 +345,7 @@ export default function HomePage() {
                 <span style={{
                   background: "linear-gradient(135deg, #FBBF24 0%, #F59E0B 40%, #D97706 100%)",
                   WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                }}>On Anything</span>
+                }}>{t.hero.line2}</span>
               </motion.h1>
 
               <motion.p
@@ -372,7 +353,7 @@ export default function HomePage() {
                 className="text-lg sm:text-xl text-gray-300 font-light mb-10 max-w-xl leading-relaxed"
                 style={{ color: "rgba(210,210,220,0.85)" }}
               >
-                Custom T-shirts, mugs, caps, pens and more — printed with your logo or design in hours. Bulk-friendly, no minimums.
+                {t.hero.subtitle}
               </motion.p>
 
               <motion.div
@@ -388,7 +369,7 @@ export default function HomePage() {
                       boxShadow: "0 8px 32px rgba(220,38,38,0.5), 0 2px 8px rgba(220,38,38,0.3), inset 0 1px 0 rgba(255,255,255,0.15)",
                     }}
                   >
-                    <Sparkles size={20}/> Start Designing <ArrowRight size={20}/>
+                    <Sparkles size={20}/> {t.hero.startDesigning} <ArrowRight size={20}/>
                   </motion.button>
                 </Link>
                 <Link href="/categories">
@@ -402,7 +383,7 @@ export default function HomePage() {
                       boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
                     }}
                   >
-                    Browse Products <ChevronRight size={18}/>
+                    {t.hero.browseProducts} <ChevronRight size={18}/>
                   </motion.button>
                 </Link>
               </motion.div>
@@ -413,9 +394,9 @@ export default function HomePage() {
                 className="flex flex-wrap items-center gap-3"
               >
                 {[
-                  { icon: <Users size={15}/>, label: "10,000+ Customers" },
-                  { icon: <Star size={15} className="fill-yellow-400 text-yellow-400"/>, label: "4.8 / 5 Rating" },
-                  { icon: <Truck size={15}/>, label: "Pan India Delivery" },
+                  { icon: <Users size={15}/>, label: t.hero.customers },
+                  { icon: <Star size={15} className="fill-yellow-400 text-yellow-400"/>, label: t.hero.rating },
+                  { icon: <Truck size={15}/>, label: t.hero.delivery },
                 ].map(item => (
                   <div
                     key={item.label}
@@ -533,12 +514,12 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
-              Our Products
+              {t.categories.badge}
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900">
-              Everything We Can Print
+              {t.categories.title}
             </h2>
-            <p className="text-gray-500 text-base max-w-xl mx-auto">From a single personalised mug to corporate bulk orders — we print on it all.</p>
+            <p className="text-gray-500 text-base max-w-xl mx-auto">{t.categories.subtitle}</p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
@@ -574,7 +555,7 @@ export default function HomePage() {
           <div className="text-center mt-10">
             <Link href="/categories">
               <button className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold border text-sm transition-all duration-200 hover:bg-gray-50" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.35)" }}>
-                Browse All Products <ArrowRight size={15}/>
+                {t.categories.browseAll} <ArrowRight size={15}/>
               </button>
             </Link>
           </div>
@@ -586,12 +567,12 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
-              Featured
+              {t.featured.badge}
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900">
-              Most Popular Picks
+              {t.featured.title}
             </h2>
-            <p className="text-gray-500 text-base max-w-xl mx-auto">Our top-selling products — loved by individuals and businesses alike.</p>
+            <p className="text-gray-500 text-base max-w-xl mx-auto">{t.featured.subtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -631,7 +612,7 @@ export default function HomePage() {
                           onClick={e => { e.stopPropagation(); window.location.href = `/customize/${cat.slug}`; }}
                           className="flex items-center gap-1 text-xs font-bold px-3 py-2 rounded-xl text-white bg-primary hover:bg-red-700 transition-colors"
                         >
-                          <Palette size={11}/> Customize
+                          <Palette size={11}/> {t.nav.customize}
                         </button>
                       </div>
                     </div>
@@ -644,7 +625,7 @@ export default function HomePage() {
           <div className="text-center mt-10">
             <Link href="/categories">
               <button className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold border text-sm transition-all duration-200 hover:bg-white" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.35)" }}>
-                View All Products <ArrowRight size={15}/>
+                {t.featured.viewAll} <ArrowRight size={15}/>
               </button>
             </Link>
           </div>
@@ -656,12 +637,12 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
-              Best Sellers
+              {t.bestSellers.badge}
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900">
-              Top Products by Category
+              {t.bestSellers.title}
             </h2>
-            <p className="text-gray-500 text-base max-w-xl mx-auto">Browse our bestselling items across every category, all in one place.</p>
+            <p className="text-gray-500 text-base max-w-xl mx-auto">{t.bestSellers.subtitle}</p>
           </div>
           <BestSellersCarousel/>
         </div>
@@ -672,12 +653,12 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
-              Why Us
+              {t.why.badge}
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-white">
-              The Radhe Digital <span style={{ color: "#C4962A" }}>Advantage</span>
+              {t.why.title} <span style={{ color: "#C4962A" }}>{t.why.highlight}</span>
             </h2>
-            <p className="text-gray-400 text-base max-w-xl mx-auto">Six reasons why 10,000+ customers come back to us every time.</p>
+            <p className="text-gray-400 text-base max-w-xl mx-auto">{t.why.subtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -711,12 +692,12 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
-              Simple Process
+              {t.howItWorks.badge}
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900">
-              From Idea to <span style={{ color: "#C4962A" }}>Delivery in 4 Steps</span>
+              {t.howItWorks.title} <span style={{ color: "#C4962A" }}>{t.howItWorks.highlight}</span>
             </h2>
-            <p className="text-gray-500 text-base max-w-xl mx-auto">Getting custom prints has never been easier. Here's how it works.</p>
+            <p className="text-gray-500 text-base max-w-xl mx-auto">{t.howItWorks.subtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
@@ -751,7 +732,7 @@ export default function HomePage() {
                 className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-base text-white"
                 style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 20px rgba(229,62,62,0.35)" }}
               >
-                Start Your Order Now <ArrowRight size={18}/>
+                {t.howItWorks.startNow} <ArrowRight size={18}/>
               </motion.button>
             </Link>
           </div>
@@ -763,14 +744,14 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
-              Reviews
+              {t.testimonials.badge}
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900">
-              What Our Customers Say
+              {t.testimonials.title}
             </h2>
             <div className="flex items-center justify-center gap-2">
               {[...Array(5)].map((_, i) => <Star key={i} size={18} className="text-yellow-400 fill-yellow-400"/>)}
-              <span className="text-gray-500 text-sm ml-2">4.8 / 5 from 200+ reviews</span>
+              <span className="text-gray-500 text-sm ml-2">{t.testimonials.rating}</span>
             </div>
           </div>
 
@@ -815,12 +796,12 @@ export default function HomePage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
-              FAQ
+              {t.faq.badge}
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900">
-              Frequently Asked Questions
+              {t.faq.title}
             </h2>
-            <p className="text-gray-500 text-base">Everything you need to know before placing your order.</p>
+            <p className="text-gray-500 text-base">{t.faq.subtitle}</p>
           </div>
 
           <div className="space-y-3">
@@ -847,14 +828,14 @@ export default function HomePage() {
         </div>
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-5 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
-            Get Started Today
+            {t.cta.badge}
           </span>
           <h2 className="text-3xl sm:text-5xl font-extrabold mb-5 text-white leading-tight">
-            Ready to Bring Your{" "}
-            <span style={{ color: "#C4962A" }}>Ideas to Life?</span>
+            {t.cta.title}{" "}
+            <span style={{ color: "#C4962A" }}>{t.cta.highlight}</span>
           </h2>
           <p className="text-gray-300 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-            Join 10,000+ happy customers who trust Radhe Digital for all their custom printing needs.
+            {t.cta.subtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/customize">
@@ -863,7 +844,7 @@ export default function HomePage() {
                 className="flex items-center gap-3 px-8 py-4 rounded-2xl font-extrabold text-lg text-white"
                 style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 6px 28px rgba(229,62,62,0.4)" }}
               >
-                Start Designing Now <ArrowRight size={20}/>
+                {t.cta.startNow} <ArrowRight size={20}/>
               </motion.button>
             </Link>
             <a href="https://wa.me/919319903380" target="_blank" rel="noopener noreferrer">
@@ -872,12 +853,12 @@ export default function HomePage() {
                 className="flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-base border text-white hover:bg-white/5 transition-all"
                 style={{ borderColor: "rgba(255,255,255,0.2)" }}
               >
-                Chat on WhatsApp
+                {t.cta.whatsapp}
               </motion.button>
             </a>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 mt-12">
-            {["No credit card needed", "Free design assistance", "100% satisfaction guaranteed"].map(item => (
+            {t.cta.points.map(item => (
               <div key={item} className="flex items-center gap-2 text-sm text-gray-400">
                 <CheckCircle size={14} style={{ color: "#C4962A" }}/> {item}
               </div>

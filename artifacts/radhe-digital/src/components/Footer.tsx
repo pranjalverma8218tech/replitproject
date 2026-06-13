@@ -2,8 +2,12 @@ import React from "react";
 import { Link } from "wouter";
 import { Shirt, MapPin, Phone, Mail, Instagram, Facebook } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
+import { useLanguage } from "@/context/LanguageContext";
 
 export function Footer() {
+  const { t } = useLanguage();
+  const f = t.footer;
+
   return (
     <footer className="pt-16 pb-8 border-t-4 border-primary" style={{ background: "#0f0f0f", color: "#fff" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,9 +21,7 @@ export function Footer() {
                 Radhe Digital
               </span>
             </Link>
-            <p className="text-gray-400 mb-6 max-w-sm">
-              Premium custom T-shirt printing for businesses, events, and individuals. Bold prints, fast delivery, zero hassle.
-            </p>
+            <p className="text-gray-400 mb-6 max-w-sm">{f.tagline}</p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-[#C4962A] transition-colors">
                 <Instagram size={24} />
@@ -34,27 +36,24 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-lg font-bold mb-6 uppercase tracking-wider" style={{ color: "#C4962A" }}>Quick Links</h3>
+            <h3 className="text-lg font-bold mb-6 uppercase tracking-wider" style={{ color: "#C4962A" }}>{f.quickLinks}</h3>
             <ul className="space-y-4 text-gray-400">
-              <li><Link href="/" className="hover:text-[#C4962A] transition-colors">Home</Link></li>
-              <li><Link href="/categories" className="hover:text-[#C4962A] transition-colors">T-Shirt Categories</Link></li>
-              <li><Link href="/customize" className="hover:text-[#C4962A] transition-colors">Start Customizing</Link></li>
-              <li><Link href="/about" className="hover:text-[#C4962A] transition-colors">About Us</Link></li>
+              <li><Link href="/" className="hover:text-[#C4962A] transition-colors">{f.home}</Link></li>
+              <li><Link href="/categories" className="hover:text-[#C4962A] transition-colors">{f.categories}</Link></li>
+              <li><Link href="/customize" className="hover:text-[#C4962A] transition-colors">{f.startCustomizing}</Link></li>
+              <li><Link href="/about" className="hover:text-[#C4962A] transition-colors">{f.aboutUs}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-lg font-bold mb-6 uppercase tracking-wider" style={{ color: "#C4962A" }}>Services</h3>
+            <h3 className="text-lg font-bold mb-6 uppercase tracking-wider" style={{ color: "#C4962A" }}>{f.services}</h3>
             <ul className="space-y-4 text-gray-400">
-              <li>Collar T-Shirts</li>
-              <li>Round Neck T-Shirts</li>
-              <li>Bulk Corporate Orders</li>
-              <li>Event Custom Printing</li>
+              {f.services_list.map((s, i) => <li key={i}>{s}</li>)}
             </ul>
           </div>
 
           <div>
-            <h3 className="text-lg font-bold mb-6 uppercase tracking-wider" style={{ color: "#C4962A" }}>Contact Us</h3>
+            <h3 className="text-lg font-bold mb-6 uppercase tracking-wider" style={{ color: "#C4962A" }}>{f.contactUs}</h3>
             <ul className="space-y-4 text-gray-400">
               <li className="flex items-start gap-3">
                 <MapPin className="shrink-0 mt-1" size={20} style={{ color: "#C4962A" }} />
@@ -71,12 +70,12 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-          <p>&copy; {new Date().getFullYear()} Radhe Digital T-Shirt Printing. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {f.copyright}</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-white transition-colors">{f.privacyPolicy}</a>
+            <a href="#" className="hover:text-white transition-colors">{f.termsOfService}</a>
           </div>
         </div>
       </div>

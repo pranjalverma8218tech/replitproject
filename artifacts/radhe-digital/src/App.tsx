@@ -9,6 +9,7 @@ import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { CartDrawer } from "@/components/CartDrawer";
 import { CartProvider } from "@/context/CartContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 import HomePage from "@/pages/HomePage";
 import CategoriesPage from "@/pages/CategoriesPage";
@@ -133,6 +134,7 @@ function AppContent() {
   }
 
   return (
+    <LanguageProvider>
     <CartProvider>
       <div className="min-h-screen flex flex-col bg-background font-sans overflow-x-hidden w-full">
         <Navbar />
@@ -144,6 +146,7 @@ function AppContent() {
       </div>
       <CartDrawer />
     </CartProvider>
+    </LanguageProvider>
   );
 }
 

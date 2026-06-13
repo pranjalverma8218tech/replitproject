@@ -1,0 +1,68 @@
+Implement a complete EN ↔ हिन्दी language switcher using a centralized translation system.
+
+Requirements:
+
+1. Do NOT hardcode translations inside components.
+2. Create centralized translation dictionaries (en.json and hi.json).
+3. All user-facing text must be translatable.
+4. Store selected language in localStorage.
+5. Apply translations across the entire website:
+
+   * Navbar
+   * Homepage
+   * Products
+   * Categories
+   * Product Detail Pages
+   * Cart
+   * Buy Now
+   * Customize Pages
+   * Contact Page
+   * About Page
+   * Footer
+   * All public-facing buttons, labels and messages
+
+IMPORTANT HINDI TRANSLATION RULES:
+
+* Do NOT use machine-translated or overly formal Hindi.
+* Use simple, natural, easy-to-understand Hindi.
+* The language should be understandable even for people with basic education.
+* Avoid difficult Sanskrit words.
+* Use commonly spoken Indian Hindi.
+* Keep translations short, clear and user-friendly.
+
+Examples:
+
+Home → होम
+Products → उत्पाद
+Categories → श्रेणियाँ
+Add To Cart → कार्ट में जोड़ें
+Buy Now → अभी ऑर्डर करें
+Customize → अपनी पसंद से बनवाएँ
+Available Colours → उपलब्ध रंग
+Select Size → साइज़ चुनें
+Quantity → मात्रा
+Contact Us → संपर्क करें
+Order via WhatsApp → व्हाट्सऐप पर ऑर्डर करें
+Proceed → आगे बढ़ें
+Upload Design → डिज़ाइन अपलोड करें
+Upload Logo → लोगो अपलोड करें
+Design Instructions → डिज़ाइन की जानकारी
+Customer Name → ग्राहक का नाम
+Mobile Number → मोबाइल नंबर
+
+DO NOT translate brand names, product IDs, category slugs, URLs or technical identifiers.
+
+UI Requirements:
+
+* Language switcher must update text instantly without page refresh.
+* Switching language must not break layouts.
+* Hindi text should remain properly aligned on mobile and desktop.
+* Use a font that renders Hindi clearly and professionally.
+* Ensure buttons, headings and labels remain readable after translation.
+
+Verification:
+
+* Check every page manually.
+* No mixed language text should remain.
+* No untranslated English strings should appear when Hindi is selected.
+* Hindi should read naturally and professionally, not like literal Google Translate.

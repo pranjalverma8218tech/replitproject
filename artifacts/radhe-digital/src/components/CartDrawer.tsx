@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   X, Trash2, Plus, Minus, ShoppingCart, ShoppingBag,
   MessageCircle, ArrowRight, ArrowLeft, User, Phone, MapPin,
@@ -48,6 +49,8 @@ function ProductImage({ src, alt, colorHex }: { src?: string; alt: string; color
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, updateQty, totalItems, totalPrice, clearCart } = useCart();
+  const { t } = useLanguage();
+  const ct = t.cart;
 
   const [step, setStep] = useState<Step>("cart");
   const [info, setInfo] = useState<CustomerInfo>(EMPTY);
@@ -61,10 +64,10 @@ export function CartDrawer() {
 
   const validate = (data: CustomerInfo) => {
     const e: Partial<CustomerInfo> = {};
-    if (!data.name.trim()) e.name = "Full name is required";
-    if (!data.phone.trim()) e.phone = "Phone number is required";
-    else if (!/^[6-9]\d{9}$/.test(data.phone.replace(/\s/g, ""))) e.phone = "Enter a valid 10-digit Indian mobile number";
-    if (!data.address.trim()) e.address = "Shipping address is required";
+    if (!data.name.trim()) e.name = ct.nameRequired;
+    if (!data.phone.trim()) e.phone = ct.phoneRequired;
+    else if (!/^[6-9]\d{9}$/.test(data.phone.replace(/\s/g, ""))) e.phone = ct.phoneInvalid;
+    if (!data.address.trim()) e.address = ct.addressRequired;
     return e;
   };
 
@@ -198,9 +201,9 @@ export function CartDrawer() {
                         <ShoppingCart size={17} className="text-primary" />
                       </div>
                       <div>
-                        <h2 className="text-white font-bold text-base leading-none">Shopping Cart</h2>
+                        <h2 className="text-white font-bold text-base leading-none">{ct.title}</h2>
                         <p className="text-gray-500 text-xs mt-0.5">
-                          {totalItems === 0 ? "No items yet" : `${totalItems} item${totalItems !== 1 ? "s" : ""} added`}
+                          {totalItems === 0 ? "—" : `${totalItems} ${ct.items}`}
                         </p>
                       </div>
                       {totalItems > 0 && (
@@ -218,7 +221,7 @@ export function CartDrawer() {
                           onClick={clearCart}
                           className="text-[11px] text-gray-600 hover:text-red-400 transition-colors font-semibold px-2 py-1 rounded-lg hover:bg-red-500/10"
                         >
-                          Clear all
+                          {ct.remove}
                         </button>
                       )}
                       <button
@@ -242,16 +245,16 @@ export function CartDrawer() {
                         >
                           <ShoppingBag size={36} style={{ color: "rgba(229,62,62,0.5)" }} />
                         </div>
-                        <p className="text-white font-bold text-lg mb-2">Your cart is empty</p>
+                        <p className="text-white font-bold text-lg mb-2">{ct.empty}</p>
                         <p className="text-gray-500 text-sm mb-8 max-w-[240px] leading-relaxed">
-                          Browse our products and add items to get started.
+                          {ct.emptyDesc}
                         </p>
                         <button
                           onClick={handleClose}
                           className="px-6 py-3 rounded-xl text-sm font-bold text-white transition-all hover:scale-105"
                           style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 18px rgba(229,62,62,0.3)" }}
                         >
-                          Continue Shopping
+                          {ct.startShopping}
                         </button>
                       </div>
                     ) : (
@@ -453,22 +456,18 @@ export function CartDrawer() {
                         style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
                       >
                         <div className="flex justify-between text-sm text-gray-500">
-                          <span>Total Items</span>
+                          <span>{ct.items}</span>
                           <span className="text-gray-300 font-semibold">{totalItems}</span>
                         </div>
                         <div className="flex justify-between text-sm text-gray-500">
-                          <span>Subtotal</span>
+                          <span>{ct.subtotal}</span>
                           <span className="text-gray-300 font-semibold">₹{totalPrice.toLocaleString("en-IN")}</span>
-                        </div>
-                        <div className="flex justify-between text-sm text-gray-500">
-                          <span>Shipping</span>
-                          <span className="text-green-400 font-semibold text-xs">Calculated at checkout</span>
                         </div>
                         <div
                           className="flex justify-between font-black text-base pt-2"
                           style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
                         >
-                          <span className="text-white">Grand Total</span>
+                          <span className="text-white">{ct.total}</span>
                           <span style={{ color: "#C4962A" }}>₹{totalPrice.toLocaleString("en-IN")}</span>
                         </div>
                       </div>
@@ -484,7 +483,7 @@ export function CartDrawer() {
                           boxShadow: "0 6px 24px rgba(229,62,62,0.35)",
                         }}
                       >
-                        Proceed to Checkout <ArrowRight size={16} />
+                        {ct.proceedToCheckout} <ArrowRight size={16} />
                       </motion.button>
                       <p className="text-center text-[11px] text-gray-600">
                         No payment required now · Finalize via WhatsApp
@@ -518,8 +517,8 @@ export function CartDrawer() {
                         <ArrowLeft size={16} />
                       </button>
                       <div>
-                        <h2 className="text-white font-bold text-base leading-none">Delivery Details</h2>
-                        <p className="text-gray-500 text-xs mt-0.5">Step 2 of 2</p>
+                        <h2 className="text-white font-bold text-base leading-none">{ct.customerDetails}</h2>
+                        <p className="text-gray-500 text-xs mt-0.5">{ct.checkout}</p>
                       </div>
                     </div>
                     <button
@@ -549,14 +548,14 @@ export function CartDrawer() {
                     {/* Full Name */}
                     <div>
                       <label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
-                        <User size={11} /> Full Name <span className="text-primary">*</span>
+                        <User size={11} /> {ct.customerName} <span className="text-primary">*</span>
                       </label>
                       <input
                         type="text"
                         value={info.name}
                         onChange={e => handleChange("name", e.target.value)}
                         onBlur={() => handleBlur("name")}
-                        placeholder="e.g. Rahul Sharma"
+                        placeholder={ct.namePlaceholder}
                         className={fieldClass("name")}
                         autoComplete="name"
                       />
@@ -570,14 +569,14 @@ export function CartDrawer() {
                     {/* Phone */}
                     <div>
                       <label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
-                        <Phone size={11} /> Phone Number <span className="text-primary">*</span>
+                        <Phone size={11} /> {ct.mobileNumber} <span className="text-primary">*</span>
                       </label>
                       <input
                         type="tel"
                         value={info.phone}
                         onChange={e => handleChange("phone", e.target.value)}
                         onBlur={() => handleBlur("phone")}
-                        placeholder="e.g. 9876543210"
+                        placeholder={ct.phonePlaceholder}
                         className={fieldClass("phone")}
                         autoComplete="tel"
                         inputMode="numeric"
@@ -593,13 +592,13 @@ export function CartDrawer() {
                     {/* Shipping Address */}
                     <div>
                       <label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
-                        <MapPin size={11} /> Shipping Address <span className="text-primary">*</span>
+                        <MapPin size={11} /> {ct.shippingAddress} <span className="text-primary">*</span>
                       </label>
                       <textarea
                         value={info.address}
                         onChange={e => handleChange("address", e.target.value)}
                         onBlur={() => handleBlur("address")}
-                        placeholder="House/Flat No., Street, City, State, PIN code"
+                        placeholder={ct.addressPlaceholder}
                         rows={3}
                         className={`w-full bg-[#1a1a1a] border rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 outline-none transition-colors resize-none ${
                           touched.address && errors.address
@@ -618,13 +617,13 @@ export function CartDrawer() {
                     {/* Email (optional) */}
                     <div>
                       <label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
-                        <Mail size={11} /> Email <span className="text-gray-600 font-normal normal-case tracking-normal">(optional)</span>
+                        <Mail size={11} /> {ct.email}
                       </label>
                       <input
                         type="email"
                         value={info.email}
                         onChange={e => handleChange("email", e.target.value)}
-                        placeholder="e.g. rahul@email.com"
+                        placeholder={ct.emailPlaceholder}
                         className={fieldClass("email")}
                         autoComplete="email"
                       />
@@ -632,7 +631,7 @@ export function CartDrawer() {
 
                     {/* Items recap */}
                     <div className="space-y-2">
-                      <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Your Order</p>
+                      <p className="text-xs font-bold uppercase tracking-wider text-gray-500">{ct.orderSummary}</p>
                       {items.map(item => (
                         <div
                           key={item.cartId}
@@ -665,7 +664,7 @@ export function CartDrawer() {
                     <div
                       className="flex justify-between font-black text-base px-1"
                     >
-                      <span className="text-gray-400">Total</span>
+                      <span className="text-gray-400">{ct.total}</span>
                       <span style={{ color: "#C4962A" }}>₹{totalPrice.toLocaleString("en-IN")}</span>
                     </div>
                     <motion.a
@@ -704,7 +703,7 @@ export function CartDrawer() {
                       }}
                     >
                       <MessageCircle size={18} />
-                      Confirm Order on WhatsApp
+                      {ct.orderViaWhatsApp}
                     </motion.a>
                     <p className="text-center text-[11px] text-gray-600">
                       You'll be redirected to WhatsApp to finalize your order
