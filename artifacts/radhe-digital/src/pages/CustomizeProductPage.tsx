@@ -34,10 +34,10 @@ function PositionCard({
       >
         {active && <span className="w-2.5 h-2.5 rounded-full" style={{ background: "#DC2626" }} />}
       </span>
-      <span className="text-sm font-bold" style={{ color: active ? "#DC2626" : "#374151" }}>
+      <span className="text-base font-black" style={{ color: active ? "#DC2626" : "#374151" }}>
         {pos.label}
       </span>
-      <p className="text-xs leading-snug" style={{ color: "#9ca3af" }}>{pos.desc}</p>
+      <p className="text-sm leading-snug" style={{ color: "#9ca3af" }}>{pos.desc}</p>
     </button>
   );
 }
@@ -100,11 +100,11 @@ function UploadBox({
         <IconComp size={22} style={{ color: "#DC2626" }} />
       </div>
       <div className="text-center">
-        <p className="text-gray-800 font-bold text-sm">{label}</p>
-        {sublabel && <p className="text-gray-400 text-xs mt-0.5">{sublabel}</p>}
+        <p className="text-gray-800 font-bold text-base">{label}</p>
+        {sublabel && <p className="text-gray-400 text-sm mt-0.5">{sublabel}</p>}
       </div>
       <span
-        className="text-xs font-bold px-3 py-1.5 rounded-full transition-colors"
+        className="text-sm font-bold px-4 py-2 rounded-full transition-colors"
         style={{ background: "#DC2626", color: "#ffffff" }}
       >
         BROWSE FILE
@@ -143,14 +143,14 @@ function SectionCard({
       >
         <div className="flex items-center gap-3">
           <span
-            className="w-7 h-7 rounded-full text-sm font-black flex items-center justify-center flex-shrink-0 text-white"
+            className="w-9 h-9 rounded-full text-base font-black flex items-center justify-center flex-shrink-0 text-white"
             style={{ background: "#DC2626" }}
           >
             {step}
           </span>
-          <h2 className="text-gray-900 font-extrabold text-base tracking-tight">{title}</h2>
+          <h2 className="text-gray-900 font-black text-xl tracking-tight">{title}</h2>
           {required && (
-            <span className="text-xs font-bold text-red-500">*required</span>
+            <span className="text-sm font-bold text-red-500">*required</span>
           )}
         </div>
         {badge && (
@@ -251,8 +251,8 @@ function QuantitySelector({
         </button>
 
         <div className="ml-1">
-          <p className="text-gray-900 font-bold text-sm">{value} piece{value !== 1 ? "s" : ""}</p>
-          <p className="text-gray-400 text-xs">Minimum order: 1</p>
+          <p className="text-gray-900 font-bold text-base">{value} piece{value !== 1 ? "s" : ""}</p>
+          <p className="text-gray-400 text-sm">Minimum order: 1</p>
         </div>
       </div>
 
@@ -511,19 +511,19 @@ export default function CustomizeProductPage() {
 
               {/* Product info inside the card */}
               <div className="p-5 border-t border-gray-100">
-                <h1 className="text-xl font-extrabold text-gray-900 leading-tight mb-1">
+                <h1 className="text-2xl font-black text-gray-900 leading-tight mb-1">
                   {product.name}
                 </h1>
-                <p className="text-gray-500 text-sm leading-relaxed mb-4">
+                <p className="text-gray-500 text-base leading-relaxed mb-4">
                   {product.description}
                 </p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Tag size={15} style={{ color: "#DC2626" }} />
-                    <span className="text-2xl font-black" style={{ color: "#DC2626" }}>
+                    <Tag size={18} style={{ color: "#DC2626" }} />
+                    <span className="text-3xl font-black" style={{ color: "#DC2626" }}>
                       {product.priceLabel}
                     </span>
-                    <span className="text-gray-400 text-xs font-medium">/ piece</span>
+                    <span className="text-gray-400 text-sm font-medium">/ piece</span>
                   </div>
                   {quantity >= 10 && (
                     <span className="text-xs font-bold px-2 py-1 rounded-full bg-yellow-50 text-yellow-700 border border-yellow-200">
@@ -539,7 +539,7 @@ export default function CustomizeProductPage() {
               className="rounded-2xl bg-white border border-gray-200 p-5"
               style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.06)" }}
             >
-              <p className="text-xs font-extrabold text-gray-400 uppercase tracking-widest mb-4">
+              <p className="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">
                 Order Summary
               </p>
               <div className="space-y-2.5">
@@ -590,8 +590,8 @@ export default function CustomizeProductPage() {
 
             {/* Page Title */}
             <div className="mb-2">
-              <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Customize Your Product</h2>
-              <p className="text-gray-500 text-sm mt-1">
+              <h2 className="text-4xl font-black text-gray-900 tracking-tight leading-tight">Customize Your Product</h2>
+              <p className="text-gray-500 text-base mt-2">
                 Fill in your design details below. At least one of logo, design, or instructions is required.
               </p>
             </div>
@@ -605,14 +605,14 @@ export default function CustomizeProductPage() {
                 badgeGreen={totalSizeQty > 0}
               >
                 <div className="space-y-4">
-                  <p className="text-gray-500 text-sm">Enter how many pieces you need per size. Leave blank if not required.</p>
+                  <p className="text-gray-500 text-base">Enter how many pieces you need per size. Leave blank if not required.</p>
 
                   {/* Size grid */}
                   <div className="space-y-2">
                     {/* Header row */}
                     <div className="grid grid-cols-[80px_1fr_auto] gap-3 px-1">
-                      <span className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Size</span>
-                      <span className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Quantity (pieces)</span>
+                      <span className="text-sm font-extrabold text-gray-400 uppercase tracking-wider">Size</span>
+                      <span className="text-sm font-extrabold text-gray-400 uppercase tracking-wider">Quantity (pieces)</span>
                       <span className="w-20" />
                     </div>
 
@@ -628,7 +628,7 @@ export default function CustomizeProductPage() {
                       >
                         {/* Size badge */}
                         <span
-                          className="w-12 h-10 rounded-lg flex items-center justify-center text-sm font-black border-2"
+                          className="w-12 h-10 rounded-lg flex items-center justify-center text-base font-black border-2"
                           style={
                             sizeQty[size] > 0
                               ? { background: "#DC2626", color: "#fff", borderColor: "#DC2626" }
@@ -645,7 +645,7 @@ export default function CustomizeProductPage() {
                           value={sizeQty[size] === 0 ? "" : sizeQty[size]}
                           onChange={e => setSizeAmount(size, e.target.value)}
                           placeholder="0"
-                          className="w-full h-10 rounded-xl border-2 px-3 text-sm font-bold text-gray-900 outline-none transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          className="w-full h-10 rounded-xl border-2 px-3 text-base font-bold text-gray-900 outline-none transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           style={{
                             borderColor: sizeQty[size] > 0 ? "#DC2626" : "#e5e7eb",
                             background: "#fff",
@@ -682,10 +682,10 @@ export default function CustomizeProductPage() {
                         : { borderColor: "#e5e7eb", background: "#f9fafb" }
                     }
                   >
-                    <span className="text-sm font-bold text-gray-700">Total T-Shirts</span>
+                    <span className="text-base font-bold text-gray-700">Total T-Shirts</span>
                     <div className="flex items-center gap-2">
                       {sizeBreakdown && (
-                        <span className="text-xs text-gray-400 font-medium">{sizeBreakdown}</span>
+                        <span className="text-sm text-gray-400 font-medium">{sizeBreakdown}</span>
                       )}
                       <span
                         className="text-2xl font-black"
@@ -814,22 +814,22 @@ export default function CustomizeProductPage() {
               required={!isValid && showError}
             >
               <div className="space-y-3">
-                <p className="text-gray-500 text-sm leading-relaxed">
+                <p className="text-gray-500 text-base leading-relaxed">
                   Describe exactly what you want — text, colors, placement, fonts, or any other details. Our design team will follow your instructions precisely.
                 </p>
                 <Textarea
                   value={designInstructions}
                   onChange={e => { setDesignInstructions(e.target.value); setShowError(false); }}
                   placeholder={`Example: "Print our company logo on the front in white. Add 'Est. 2020' text below. Use bold Montserrat font."`}
-                  className="border-gray-200 text-gray-900 placeholder-gray-400 focus:border-red-400 rounded-xl resize-none h-28 text-sm"
+                  className="border-gray-200 text-gray-900 placeholder-gray-400 focus:border-red-400 rounded-xl resize-none h-32 text-base"
                   style={{ background: "#fafafa" }}
                 />
                 <div
-                  className="flex items-start gap-2 px-3 py-2.5 rounded-xl text-sm"
+                  className="flex items-start gap-2 px-4 py-3 rounded-xl"
                   style={{ background: "rgba(220,38,38,0.04)", border: "1px solid rgba(220,38,38,0.15)" }}
                 >
-                  <FileText size={14} className="text-red-400 flex-shrink-0 mt-0.5" />
-                  <p className="text-gray-600 text-xs leading-relaxed">
+                  <FileText size={16} className="text-red-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-gray-600 text-sm leading-relaxed">
                     <strong className="text-gray-800">No design file?</strong> Just describe your idea here — our team will create it for you at no extra charge.
                   </p>
                 </div>
@@ -846,10 +846,10 @@ export default function CustomizeProductPage() {
                   className="flex items-start gap-3 rounded-2xl px-4 py-4 border"
                   style={{ background: "rgba(220,38,38,0.05)", borderColor: "rgba(220,38,38,0.3)" }}
                 >
-                  <AlertTriangle size={18} className="text-red-500 flex-shrink-0 mt-0.5" />
+                  <AlertTriangle size={20} className="text-red-500 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-red-700 font-bold text-sm">Design information required</p>
-                    <p className="text-red-600 text-xs mt-0.5 leading-snug">
+                    <p className="text-red-700 font-bold text-base">Design information required</p>
+                    <p className="text-red-600 text-sm mt-0.5 leading-snug">
                       Please provide at least one of: Upload Logo, Upload Design, or Design Instructions before proceeding.
                     </p>
                   </div>
@@ -864,7 +864,7 @@ export default function CustomizeProductPage() {
                 onClick={handleSaveToCart}
                 whileHover={isValid ? { scale: 1.01, y: -1 } : {}}
                 whileTap={isValid ? { scale: 0.99 } : {}}
-                className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-extrabold text-white text-base transition-all duration-200"
+                className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl font-black text-white text-lg transition-all duration-200"
                 style={
                   saved
                     ? { background: "linear-gradient(135deg,#16a34a,#15803d)", boxShadow: "0 6px 24px rgba(22,163,74,0.35)" }
@@ -893,15 +893,15 @@ export default function CustomizeProductPage() {
                 onClick={handleWhatsApp}
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
-                className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 border-2"
+                className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-base transition-all duration-200 border-2"
                 style={{ borderColor: "#25d366", color: "#16a34a", background: "rgba(37,211,102,0.05)" }}
               >
-                <MessageCircle size={18} style={{ color: "#25d366" }} />
+                <MessageCircle size={20} style={{ color: "#25d366" }} />
                 SUBMIT REQUEST VIA WHATSAPP
               </motion.button>
             </div>
 
-            <p className="text-center text-gray-400 text-xs pb-4">
+            <p className="text-center text-gray-400 text-sm pb-4">
               No upfront payment · Our team will confirm your order via WhatsApp before printing starts.
             </p>
           </div>
@@ -923,9 +923,9 @@ function SummaryRow({
 }) {
   return (
     <div className="flex items-start justify-between gap-2">
-      <span className={`text-gray-500 ${large ? "text-sm font-semibold" : "text-xs"}`}>{label}</span>
+      <span className={`text-gray-500 ${large ? "text-base font-semibold" : "text-sm"}`}>{label}</span>
       <span
-        className={`text-right ${large ? "text-lg" : "text-sm"} ${bold ? "font-extrabold" : "font-semibold"}`}
+        className={`text-right ${large ? "text-xl" : "text-base"} ${bold ? "font-extrabold" : "font-semibold"}`}
         style={{ color: valueColor ?? "#111827" }}
       >
         {value}
