@@ -115,13 +115,13 @@ export function SearchBar({ className = "", mobileVariant = false, onClose }: Pr
       <div
         className="flex items-center rounded-xl transition-all duration-200"
         style={{
-          background: mobileVariant ? "#f3f4f6" : "#f8f8f8",
+          background: mobileVariant ? "#f3f4f6" : "#f4f4f5",
           border: open
             ? "2px solid #DC2626"
-            : "2px solid #e0e0e0",
+            : "2px solid #d1d5db",
           boxShadow: open
             ? "0 0 0 3px rgba(220,38,38,0.12)"
-            : "0 1px 4px rgba(0,0,0,0.07)",
+            : "0 2px 8px rgba(0,0,0,0.10)",
         }}
       >
         <Search
