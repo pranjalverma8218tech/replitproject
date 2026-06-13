@@ -1,59 +1,60 @@
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Shirt, Coffee, HardHat, Gift, ArrowRight, Sparkles, Check } from "lucide-react";
+import { Shirt, Coffee, HardHat, Gift, ArrowRight, Sparkles, Check, Loader2, AlertCircle } from "lucide-react";
+import { useCustomizeCategories } from "@/hooks/useCustomizeApi";
 
-const CATEGORIES = [
-  {
-    slug: "t-shirts",
-    label: "T-Shirts",
-    desc: "Round neck, polo, oversized & more",
+// ─── Category UI config (icon, color) — display only, not stored in DB ────────
+const CAT_META: Record<string, {
+  icon: React.ElementType;
+  color: string;
+  bg: string;
+  border: string;
+  desc: string;
+}> = {
+  "t-shirts": {
     icon: Shirt,
     color: "#DC2626",
     bg: "rgba(220,38,38,0.08)",
     border: "rgba(220,38,38,0.2)",
-    products: "4 products",
+    desc: "Round neck, polo, oversized & more",
   },
-  {
-    slug: "mugs",
-    label: "Mugs",
-    desc: "Ceramic, magic, travel mugs",
+  "mugs": {
     icon: Coffee,
     color: "#d97706",
     bg: "rgba(217,119,6,0.08)",
     border: "rgba(217,119,6,0.2)",
-    products: "4 products",
+    desc: "Ceramic, magic, travel mugs",
   },
-  {
-    slug: "caps",
-    label: "Caps",
-    desc: "Baseball, snapback, dad caps",
+  "caps": {
     icon: HardHat,
     color: "#2563eb",
     bg: "rgba(37,99,235,0.08)",
     border: "rgba(37,99,235,0.2)",
-    products: "4 products",
+    desc: "Baseball, snapback, dad caps",
   },
-  {
-    slug: "hoodies",
-    label: "Hoodies",
-    desc: "Pullover, zip-up, fleece hoodies",
+  "hoodies": {
     icon: Shirt,
     color: "#7c3aed",
     bg: "rgba(124,58,237,0.08)",
     border: "rgba(124,58,237,0.2)",
-    products: "3 products",
+    desc: "Pullover, zip-up, fleece hoodies",
   },
-  {
-    slug: "corporate-gifts",
-    label: "Corporate Gifts",
-    desc: "Notebooks, pen sets, combos",
+  "corporate-gifts": {
     icon: Gift,
     color: "#DC2626",
     bg: "rgba(220,38,38,0.08)",
     border: "rgba(220,38,38,0.2)",
-    products: "4 products",
+    desc: "Notebooks, pen sets, combos",
   },
-];
+};
+
+const DEFAULT_META = {
+  icon: Gift,
+  color: "#DC2626",
+  bg: "rgba(220,38,38,0.08)",
+  border: "rgba(220,38,38,0.2)",
+  desc: "",
+};
 
 const STEPS = [
   { n: "1", title: "Choose Category", desc: "Pick from T-Shirts, Mugs, Caps, Hoodies, or Corporate Gifts." },
@@ -70,6 +71,7 @@ const FEATURES = [
 
 export default function CustomizePage() {
   const [, setLocation] = useLocation();
+  const { categories, loading, error } = useCustomizeCategories();
 
   return (
     <div className="min-h-screen" style={{ background: "#F8F9FA" }}>
@@ -119,60 +121,81 @@ export default function CustomizePage() {
           }}
         >
           <div className="flex items-center gap-3 mb-5">
-            <span
-              className="w-2 h-6 rounded-full"
-              style={{ background: "#DC2626" }}
-            />
+            <span className="w-2 h-6 rounded-full" style={{ background: "#DC2626" }} />
             <p className="text-sm font-extrabold uppercase tracking-widest" style={{ color: "#DC2626" }}>
               Select a Category
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {CATEGORIES.map((cat, i) => {
-              const Icon = cat.icon;
-              return (
-                <motion.button
-                  key={cat.slug}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.07, duration: 0.35 }}
-                  onClick={() => setLocation(`/customize/${cat.slug}`)}
-                  className="group relative flex items-center gap-4 p-5 rounded-2xl border bg-white text-left transition-all duration-200"
-                  style={{
-                    borderColor: "#e5e7eb",
-                    boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
-                  }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLElement).style.borderColor = cat.color;
-                    (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 28px ${cat.bg.replace("0.08", "0.25")}`;
-                    (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLElement).style.borderColor = "#e5e7eb";
-                    (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(0,0,0,0.05)";
-                    (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
-                  }}
-                >
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110"
-                    style={{ background: cat.bg, border: `1px solid ${cat.border}` }}
+
+          {/* Loading */}
+          {loading && (
+            <div className="flex items-center justify-center py-10 gap-3">
+              <Loader2 size={20} className="animate-spin text-red-600" />
+              <span className="text-gray-400 text-sm">Loading categories…</span>
+            </div>
+          )}
+
+          {/* Error */}
+          {error && !loading && (
+            <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-50 border border-red-200">
+              <AlertCircle size={16} className="text-red-500 flex-shrink-0" />
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          )}
+
+          {/* Category cards — dynamic from API */}
+          {!loading && !error && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {categories.map((cat, i) => {
+                const meta = CAT_META[cat.slug] ?? DEFAULT_META;
+                const Icon = meta.icon;
+                const desc = meta.desc || cat.description;
+                return (
+                  <motion.button
+                    key={cat.slug}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.07, duration: 0.35 }}
+                    onClick={() => setLocation(`/customize/${cat.slug}`)}
+                    className="group relative flex items-center gap-4 p-5 rounded-2xl border bg-white text-left transition-all duration-200"
+                    style={{
+                      borderColor: "#e5e7eb",
+                      boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
+                    }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.borderColor = meta.color;
+                      (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 28px ${meta.bg.replace("0.08", "0.25")}`;
+                      (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.borderColor = "#e5e7eb";
+                      (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(0,0,0,0.05)";
+                      (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                    }}
                   >
-                    <Icon size={22} style={{ color: cat.color }} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-gray-900 font-extrabold text-base leading-snug">{cat.label}</p>
-                    <p className="text-gray-400 text-xs mt-0.5 truncate">{cat.desc}</p>
-                    <p className="text-xs mt-1.5 font-bold" style={{ color: cat.color }}>{cat.products}</p>
-                  </div>
-                  <ArrowRight
-                    size={16}
-                    className="flex-shrink-0 transition-all duration-200 group-hover:translate-x-1"
-                    style={{ color: cat.color }}
-                  />
-                </motion.button>
-              );
-            })}
-          </div>
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110"
+                      style={{ background: meta.bg, border: `1px solid ${meta.border}` }}
+                    >
+                      <Icon size={22} style={{ color: meta.color }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-gray-900 font-extrabold text-base leading-snug">{cat.label}</p>
+                      <p className="text-gray-400 text-xs mt-0.5 truncate">{desc}</p>
+                      <p className="text-xs mt-1.5 font-bold" style={{ color: meta.color }}>
+                        {cat.productCount} product{cat.productCount !== 1 ? "s" : ""}
+                      </p>
+                    </div>
+                    <ArrowRight
+                      size={16}
+                      className="flex-shrink-0 transition-all duration-200 group-hover:translate-x-1"
+                      style={{ color: meta.color }}
+                    />
+                  </motion.button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* How it works */}

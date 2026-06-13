@@ -1,14 +1,14 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, CheckCircle2, X, ArrowLeft, AlertTriangle,
   Sparkles, ChevronRight, Tag, FileText, MessageCircle,
-  Minus, Plus, Image as ImageIcon, Award
+  Minus, Plus, Image as ImageIcon, Award, Loader2
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/context/CartContext";
-import { getProductBySlug } from "@/data/customizeProducts";
+import { useCustomizeProduct } from "@/hooks/useCustomizeApi";
 
 /* ─── Print Position Card ─── */
 function PositionCard({
@@ -294,12 +294,18 @@ export default function CustomizeProductPage() {
   const { category, productSlug } = useParams<{ category: string; productSlug: string }>();
   const [, setLocation] = useLocation();
 
-  const product = getProductBySlug(category ?? "", productSlug ?? "");
+  const { product, loading, error } = useCustomizeProduct(category ?? "", productSlug ?? "");
   const { addItem, openCart } = useCart();
 
   /* ── Print position ── */
   const positions = product?.printPositions ?? [];
-  const [printPosition, setPrintPosition] = useState<string>(positions[0]?.id ?? "front");
+  const [printPosition, setPrintPosition] = useState<string>("front");
+
+  useEffect(() => {
+    if (product?.printPositions?.[0]?.id) {
+      setPrintPosition(product.printPositions[0].id);
+    }
+  }, [product?.id]);
 
   /* ── File states ── */
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -425,11 +431,22 @@ export default function CustomizeProductPage() {
     window.open(`https://wa.me/919319903380?text=${encodeURIComponent(lines)}`, "_blank");
   };
 
-  if (!product) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-500 text-lg mb-4">Product not found.</p>
+          <Loader2 size={28} className="animate-spin text-red-600 mx-auto mb-3" />
+          <p className="text-gray-400 text-sm">Loading product…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-500 text-lg mb-4">{error ?? "Product not found."}</p>
           <button onClick={() => setLocation("/customize")} className="text-red-600 underline text-sm font-semibold">
             Back to Customize
           </button>
