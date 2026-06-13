@@ -26,6 +26,7 @@ import AdminLogin from "@/admin/AdminLogin";
 import AdminLayout from "@/admin/AdminLayout";
 import AdminDashboard from "@/admin/AdminDashboard";
 import AdminProducts from "@/admin/AdminProducts";
+import AdminCustomizeProducts from "@/admin/AdminCustomizeProducts";
 import AdminOrders from "@/admin/AdminOrders";
 import AdminCustomers from "@/admin/AdminCustomers";
 import AdminWhatsApp from "@/admin/AdminWhatsApp";
@@ -74,6 +75,11 @@ function AdminRouter() {
       <Route path="/admin/products">
         <AdminProtectedRoute>
           <AdminLayout><AdminProducts /></AdminLayout>
+        </AdminProtectedRoute>
+      </Route>
+      <Route path="/admin/customize-products">
+        <AdminProtectedRoute>
+          <AdminLayout><AdminCustomizeProducts /></AdminLayout>
         </AdminProtectedRoute>
       </Route>
       <Route path="/admin/orders">

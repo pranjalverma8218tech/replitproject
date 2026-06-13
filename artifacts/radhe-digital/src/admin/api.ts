@@ -232,6 +232,43 @@ export const updateProduct = (id: string, data: Partial<Omit<Product, "id">>) =>
 export const deleteProduct = (id: string) =>
   apiFetch<{ deleted: string }>(`/products/${id}`, { method: "DELETE" });
 
+// ─── Customization Products ───────────────────────────────────────────────────
+export interface CustomizeProduct {
+  id: string;
+  name: string;
+  productType: string;
+  category: string;
+  categorySlug: string;
+  basePrice: number;
+  description: string;
+  frontImage: string;
+  backImage: string;
+  sideImage: string;
+  colors: string[];
+  sizes: string[];
+  status: "Active" | "Inactive";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export const getCustomizeProducts = (params?: { status?: string; search?: string; category?: string }) => {
+  const qs = new URLSearchParams();
+  if (params?.status)   qs.set("status",   params.status);
+  if (params?.search)   qs.set("search",   params.search);
+  if (params?.category) qs.set("category", params.category);
+  const q = qs.toString();
+  return apiFetch<CustomizeProduct[]>(`/customize-products${q ? `?${q}` : ""}`);
+};
+
+export const createCustomizeProduct = (data: Omit<CustomizeProduct, "id" | "createdAt" | "updatedAt">) =>
+  apiFetch<CustomizeProduct>("/customize-products", { method: "POST", body: JSON.stringify(data) });
+
+export const updateCustomizeProduct = (id: string, data: Partial<Omit<CustomizeProduct, "id" | "createdAt" | "updatedAt">>) =>
+  apiFetch<CustomizeProduct>(`/customize-products/${id}`, { method: "PUT", body: JSON.stringify(data) });
+
+export const deleteCustomizeProduct = (id: string) =>
+  apiFetch<{ deleted: string }>(`/customize-products/${id}`, { method: "DELETE" });
+
 // ─── Customers ───────────────────────────────────────────────────────────────
 export const getCustomers = (params?: { search?: string }) => {
   const qs = params?.search ? `?search=${encodeURIComponent(params.search)}` : "";

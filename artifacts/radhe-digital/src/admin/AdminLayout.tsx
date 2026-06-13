@@ -3,17 +3,18 @@ import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Package, ShoppingCart, Users, MessageCircle,
-  Settings, LogOut, Menu, X, ChevronRight, Bell
+  Settings, LogOut, Menu, X, ChevronRight, Bell, Paintbrush
 } from "lucide-react";
 import { useAdmin } from "./AdminContext";
 
 const NAV_ITEMS = [
-  { label: "Dashboard",       path: "/admin/dashboard",        icon: LayoutDashboard },
-  { label: "Products",        path: "/admin/products",         icon: Package },
-  { label: "Orders",          path: "/admin/orders",           icon: ShoppingCart },
-  { label: "Customers",       path: "/admin/customers",        icon: Users },
-  { label: "WhatsApp Orders", path: "/admin/whatsapp-orders",  icon: MessageCircle },
-  { label: "Settings",        path: "/admin/settings",         icon: Settings },
+  { label: "Dashboard",              path: "/admin/dashboard",          icon: LayoutDashboard },
+  { label: "Products",               path: "/admin/products",           icon: Package },
+  { label: "Customization Products", path: "/admin/customize-products", icon: Paintbrush },
+  { label: "Orders",                 path: "/admin/orders",             icon: ShoppingCart },
+  { label: "Customers",              path: "/admin/customers",          icon: Users },
+  { label: "WhatsApp Orders",        path: "/admin/whatsapp-orders",    icon: MessageCircle },
+  { label: "Settings",               path: "/admin/settings",           icon: Settings },
 ];
 
 function NavItem({ item, active, onClick }: { item: typeof NAV_ITEMS[0]; active: boolean; onClick?: () => void }) {
