@@ -91,6 +91,7 @@ const CAT_ICONS: Record<string, JSX.Element> = {
 
 /* ─── BestSellersCarousel ─── */
 function BestSellersCarousel() {
+  const { t } = useLanguage();
   const tabs = CATEGORIES.map(c => c.label);
   const [active, setActive] = useState(0);
   const [scrollIdx, setScrollIdx] = useState(0);
@@ -168,7 +169,7 @@ function BestSellersCarousel() {
                         onClick={e => { e.stopPropagation(); window.location.href = `/customize/${currentCategory.slug}`; }}
                         className="text-[10px] font-bold px-3 py-1.5 rounded-lg text-white bg-primary hover:bg-red-700 transition-colors"
                       >
-                        Customize
+                        {t.bestSellers.customize}
                       </button>
                     </div>
                   </div>
@@ -259,11 +260,7 @@ export default function HomePage() {
   const stepNums = ["01", "02", "03", "04"];
   const steps = t.howItWorks.steps.map((s, i) => ({ ...s, icon: stepIcons[i], step: stepNums[i] }));
 
-  const testimonials = [
-    { name: "Rahul Sharma", location: "Delhi", initials: "RS", rating: 5, text: "Ordered 200 T-shirts for our college fest. The quality was outstanding and delivery was on time. Everyone loved them! Will definitely order again." },
-    { name: "Priya Gupta", location: "Mumbai", initials: "PG", rating: 5, text: "Amazing print quality! I got custom mugs made for my corporate team and the colors were vibrant and exactly as I designed. Highly recommend!" },
-    { name: "Amit Verma", location: "Bangalore", initials: "AV", rating: 5, text: "Super fast turnaround. Got 50 caps printed with our company logo in 2 days. Perfect stitching and printing. The team was very helpful throughout." },
-  ];
+  const testimonials = t.testimonials.items;
 
   const faqs = t.faq.items;
 
@@ -606,7 +603,7 @@ export default function HomePage() {
                       <p className="text-gray-500 text-xs mb-3 line-clamp-2">{product?.description ?? cat.description}</p>
                       <div className="flex items-center justify-between">
                         <span className="text-primary font-extrabold text-lg">
-                          {product ? (product.priceLabel ?? `₹${product.price}`) : "View Products"}
+                          {product ? (product.priceLabel ?? `₹${product.price}`) : t.categoriesPage.view}
                         </span>
                         <button
                           onClick={e => { e.stopPropagation(); window.location.href = `/customize/${cat.slug}`; }}

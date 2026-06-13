@@ -57,21 +57,21 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             <div>
               <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
-                Our Story
+                {a.ourStory}
               </span>
-              <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6 mt-2">Our Mission & Vision</h2>
+              <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6 mt-2">{a.missionVisionTitle}</h2>
               <div className="space-y-6 text-base sm:text-lg text-gray-600 leading-relaxed">
                 <p>
-                  <strong className="text-gray-900 block mb-1">The Mission</strong>
-                  To empower individuals, businesses, and communities to express their identity through high-quality, customized apparel without the hassle of traditional printing constraints.
+                  <strong className="text-gray-900 block mb-1">{a.mission}</strong>
+                  {a.missionText}
                 </p>
                 <p>
-                  <strong className="text-gray-900 block mb-1">The Vision</strong>
-                  To become the most trusted and efficient digital printing partner in India, known for flawless execution, unmatched customer support, and bridging the gap between digital design and physical print.
+                  <strong className="text-gray-900 block mb-1">{a.vision}</strong>
+                  {a.visionText}
                 </p>
                 <p>
-                  <strong className="text-gray-900 block mb-1">Experience & Expertise</strong>
-                  With years of experience in the garment and printing industry, our technicians understand the nuance of fabrics, inks, and curing processes. Whether it is DTG, Screen Printing, or Sublimation, we ensure the print outlasts the fabric.
+                  <strong className="text-gray-900 block mb-1">{a.experience}</strong>
+                  {a.experienceText}
                 </p>
               </div>
               <div className="mt-8 flex gap-3">
@@ -92,11 +92,11 @@ export default function AboutPage() {
               <img src="/images/gallery-3.png" alt="Team at work" className="w-full h-full object-cover rounded-2xl shadow-lg col-span-2 aspect-video" />
               <div className="rounded-2xl p-6 flex flex-col justify-center text-center" style={{ background: "rgba(196,150,42,0.08)", border: "1px solid rgba(196,150,42,0.2)" }}>
                 <span className="text-4xl font-black block mb-2" style={{ color: "#C4962A" }}>10k+</span>
-                <span className="text-gray-700 font-medium">Orders Delivered</span>
+                <span className="text-gray-700 font-medium">{a.ordersDelivered}</span>
               </div>
               <div className="bg-gray-900 rounded-2xl p-6 flex flex-col justify-center text-center">
                 <span className="text-4xl font-black text-white block mb-2">99%</span>
-                <span className="text-gray-400 font-medium">Happy Customers</span>
+                <span className="text-gray-400 font-medium">{a.happyCustomers}</span>
               </div>
             </div>
           </div>

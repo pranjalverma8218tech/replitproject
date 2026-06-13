@@ -1,0 +1,143 @@
+Haan bhai, screenshot dekhkar lag raha hai ki language switching sirf partially implement hui hai. Kuch text Hindi mein convert ho raha hai aur kuch hardcoded English mein hi reh ja raha hai.
+
+Isko fix karne ke liye ye prompt use karo:
+
+---
+
+### Fix Incomplete Hindi Translation Across Entire Website
+
+Carefully audit the complete website translation system and fix all localization issues.
+
+### Current Problem
+
+When the user switches from English to Hindi:
+
+* Some content gets translated correctly.
+* Many sections remain in English.
+* Mixed-language pages appear (Hindi + English together).
+* This looks unprofessional and creates a poor user experience.
+
+For example:
+
+* Navigation items are translated.
+* Buttons are translated.
+* But headings, descriptions, section content, cards, statistics labels, image alt text, and other UI elements remain in English.
+
+### Required Fix
+
+#### 1. Full Website Translation Coverage
+
+Ensure ALL user-facing text supports localization:
+
+* Navigation Menu
+* Hero Sections
+* Buttons
+* Product Names
+* Product Categories
+* Product Descriptions
+* About Page Content
+* Mission & Vision Sections
+* Service Cards
+* Feature Cards
+* Testimonials
+* Statistics Labels
+* Forms
+* Placeholders
+* Search Bar Text
+* Footer Content
+* Contact Information Labels
+* FAQ Sections
+* Error Messages
+* Success Messages
+* Empty States
+* Loading States
+* Modal Content
+* WhatsApp Order Flow
+* Checkout Flow
+
+No visible English text should remain when Hindi is selected unless intentionally kept for branding purposes.
+
+### 2. Remove Hardcoded Strings
+
+Search the entire codebase for hardcoded text.
+
+Replace all hardcoded strings with translation keys.
+
+Example:
+
+Instead of:
+
+```jsx
+<h2>Our Mission & Vision</h2>
+```
+
+Use:
+
+```jsx
+<h2>{t('about.missionVision')}</h2>
+```
+
+All text must come from the translation files.
+
+### 3. Translation File Audit
+
+Verify that every key exists in:
+
+* English translation file
+* Hindi translation file
+
+No missing keys should be allowed.
+
+Implement fallback handling so missing translations never display raw key names.
+
+### 4. Consistent Language Switching
+
+When user selects Hindi:
+
+* Entire page should instantly switch to Hindi.
+* No page refresh should be required.
+* All components should re-render correctly.
+
+When user switches back to English:
+
+* Entire website should return to English.
+
+### 5. Fix Dynamic Content Translation
+
+Ensure translation also works for:
+
+* Product cards
+* Service cards
+* Category labels
+* Modal windows
+* Search placeholders
+* CTA buttons
+* Form labels
+* Validation messages
+
+### 6. Quality Review
+
+Manually test every page:
+
+* Home
+* About
+* Products
+* Customize
+* Contact
+* Cart
+* Checkout
+* WhatsApp Order Flow
+
+Verify there is no mixed-language content anywhere.
+
+### Final Goal
+
+When Hindi is selected, the website should feel like a completely native Hindi website with 100% translation coverage, consistent terminology, proper spacing, and no English text remaining except the Radhe Digital brand name where required.
+
+---
+
+Aur ek extra line add kar dena:
+
+**"After implementation, generate a report listing all untranslated strings that were found and fixed."**
+
+Isse AI poori website scan karke jo hardcoded English text bacha hoga usse bhi detect karke fix karega.

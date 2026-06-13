@@ -60,6 +60,7 @@ const translations = {
       badge: "Best Sellers",
       title: "Top Products by Category",
       subtitle: "Browse our bestselling items across every category, all in one place.",
+      customize: "Customize",
     },
     why: {
       badge: "Why Us",
@@ -92,6 +93,11 @@ const translations = {
       badge: "Reviews",
       title: "What Our Customers Say",
       rating: "4.8 / 5 from 200+ reviews",
+      items: [
+        { name: "Rahul Sharma", location: "Delhi", initials: "RS", rating: 5, text: "Ordered 200 T-shirts for our college fest. The quality was outstanding and delivery was on time. Everyone loved them! Will definitely order again." },
+        { name: "Priya Gupta", location: "Mumbai", initials: "PG", rating: 5, text: "Amazing print quality! I got custom mugs made for my corporate team and the colors were vibrant and exactly as I designed. Highly recommend!" },
+        { name: "Amit Verma", location: "Bangalore", initials: "AV", rating: 5, text: "Super fast turnaround. Got 50 caps printed with our company logo in 2 days. Perfect stitching and printing. The team was very helpful throughout." },
+      ],
     },
     faq: {
       badge: "FAQ",
@@ -367,6 +373,16 @@ const translations = {
       ],
       startCustomizing: "Start Customizing",
       contactUs: "Contact Us",
+      ourStory: "Our Story",
+      missionVisionTitle: "Our Mission & Vision",
+      mission: "The Mission",
+      missionText: "To empower individuals, businesses, and communities to express their identity through high-quality, customized apparel without the hassle of traditional printing constraints.",
+      vision: "The Vision",
+      visionText: "To become the most trusted and efficient digital printing partner in India, known for flawless execution, unmatched customer support, and bridging the gap between digital design and physical print.",
+      experience: "Experience & Expertise",
+      experienceText: "With years of experience in the garment and printing industry, our technicians understand the nuance of fabrics, inks, and curing processes. Whether it is DTG, Screen Printing, or Sublimation, we ensure the print outlasts the fabric.",
+      ordersDelivered: "Orders Delivered",
+      happyCustomers: "Happy Customers",
     },
     contact: {
       title: "Get In Touch",
@@ -379,6 +395,7 @@ const translations = {
       hoursValue: "Mon–Sat: 9:00 AM – 7:00 PM",
       orderWhatsApp: "Order via WhatsApp",
       callNow: "Call Now",
+      getDirections: "Get Directions",
     },
     footer: {
       tagline: "Premium custom T-shirt printing for businesses, events, and individuals. Bold prints, fast delivery, zero hassle.",
@@ -455,6 +472,7 @@ const translations = {
       badge: "बेस्ट सेलर",
       title: "श्रेणी के हिसाब से टॉप उत्पाद",
       subtitle: "हर श्रेणी के सबसे अच्छे उत्पाद एक जगह देखें।",
+      customize: "कस्टमाइज़ करें",
     },
     why: {
       badge: "हमें क्यों चुनें",
@@ -487,6 +505,11 @@ const translations = {
       badge: "ग्राहकों की राय",
       title: "हमारे ग्राहक क्या कहते हैं",
       rating: "200+ समीक्षाओं में से 4.8 / 5",
+      items: [
+        { name: "राहुल शर्मा", location: "दिल्ली", initials: "रा.श.", rating: 5, text: "कॉलेज फेस्ट के लिए 200 टी-शर्ट ऑर्डर की। क्वालिटी जबरदस्त थी और डिलीवरी समय पर। सभी को बहुत पसंद आई! ज़रूर दोबारा ऑर्डर करेंगे।" },
+        { name: "प्रिया गुप्ता", location: "मुंबई", initials: "प्र.गु.", rating: 5, text: "प्रिंट क्वालिटी बेमिसाल! कॉर्पोरेट टीम के लिए कस्टम मग बनवाए — रंग एकदम वैसे ही आए जैसे डिज़ाइन किए थे। ज़रूर सुझाएंगे!" },
+        { name: "अमित वर्मा", location: "बेंगलुरु", initials: "अ.व.", rating: 5, text: "बहुत तेज़ सर्विस। कंपनी लोगो के साथ 50 कैप 2 दिन में तैयार। सिलाई और प्रिंट एकदम परफेक्ट। टीम बहुत मददगार रही।" },
+      ],
     },
     faq: {
       badge: "सामान्य सवाल",
@@ -762,6 +785,16 @@ const translations = {
       ],
       startCustomizing: "कस्टमाइज़ करें",
       contactUs: "संपर्क करें",
+      ourStory: "हमारी कहानी",
+      missionVisionTitle: "हमारा मिशन और विज़न",
+      mission: "मिशन",
+      missionText: "व्यक्तियों, व्यवसायों और समुदायों को उच्च गुणवत्ता वाले कस्टम परिधान के माध्यम से अपनी पहचान व्यक्त करने में सक्षम बनाना — बिना पारंपरिक प्रिंटिंग की परेशानियों के।",
+      vision: "विज़न",
+      visionText: "भारत का सबसे भरोसेमंद और कुशल डिजिटल प्रिंटिंग पार्टनर बनना — बेदाग काम, बेजोड़ ग्राहक सेवा और डिजिटल डिज़ाइन को भौतिक प्रिंट से जोड़ने के लिए जाना जाए।",
+      experience: "अनुभव और विशेषज्ञता",
+      experienceText: "गारमेंट और प्रिंटिंग उद्योग में वर्षों के अनुभव के साथ, हमारे तकनीशियन कपड़े, इंक और प्रक्रियाओं की बारीकियों को समझते हैं। DTG, स्क्रीन प्रिंटिंग या सब्लिमेशन — हम सुनिश्चित करते हैं कि प्रिंट कपड़े से भी ज़्यादा टिकाऊ हो।",
+      ordersDelivered: "ऑर्डर डिलीवर किए",
+      happyCustomers: "खुश ग्राहक",
     },
     contact: {
       title: "संपर्क करें",
@@ -774,6 +807,7 @@ const translations = {
       hoursValue: "सोम–शनि: सुबह 9 बजे – शाम 7 बजे",
       orderWhatsApp: "व्हाट्सऐप पर ऑर्डर करें",
       callNow: "अभी कॉल करें",
+      getDirections: "रास्ता देखें",
     },
     footer: {
       tagline: "व्यवसायों, आयोजनों और व्यक्तियों के लिए प्रीमियम कस्टम प्रिंटिंग। शानदार प्रिंट, तेज़ डिलीवरी, कोई झंझट नहीं।",

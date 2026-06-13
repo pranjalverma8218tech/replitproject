@@ -92,7 +92,7 @@ export default function ContactPage() {
                 <div className="bg-white py-3 px-6 rounded-xl shadow-lg border border-gray-100 text-center">
                   <h3 className="font-bold text-gray-900 text-lg">Radhe Digital</h3>
                   <p className="text-gray-600 text-sm">DD Plaza, Sonkh Adda, Near Petrol Pump, Mathura, U.P - 281001</p>
-                  <Button variant="outline" size="sm" className="mt-3 w-full">Get Directions</Button>
+                  <Button variant="outline" size="sm" className="mt-3 w-full">{c.getDirections}</Button>
                 </div>
               </div>
             </div>
