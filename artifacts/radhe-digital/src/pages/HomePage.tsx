@@ -98,7 +98,15 @@ function BestSellersCarousel() {
   const containerRef = useRef<HTMLDivElement>(null);
   const currentCategory = CATEGORIES[active];
   const products = currentCategory?.products ?? [];
-  const VISIBLE = 3;
+  const [VISIBLE, setVISIBLE] = useState(() =>
+    typeof window !== "undefined" ? (window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3) : 3
+  );
+  useEffect(() => {
+    const update = () =>
+      setVISIBLE(window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3);
+    window.addEventListener("resize", update, { passive: true });
+    return () => window.removeEventListener("resize", update);
+  }, []);
   const maxScroll = Math.max(0, products.length - VISIBLE);
 
   useEffect(() => { setScrollIdx(0); }, [active]);
@@ -128,12 +136,12 @@ function BestSellersCarousel() {
 
       <div className="relative">
         {scrollIdx > 0 && (
-          <button onClick={() => scroll("left")} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-[#C4962A] hover:border-[#C4962A] transition-all shadow-md">
+          <button onClick={() => scroll("left")} className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 rounded-full bg-white border border-gray-200 items-center justify-center text-gray-600 hover:text-[#C4962A] hover:border-[#C4962A] transition-all shadow-md">
             <ChevronLeft size={16}/>
           </button>
         )}
         {scrollIdx < maxScroll && (
-          <button onClick={() => scroll("right")} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-[#C4962A] hover:border-[#C4962A] transition-all shadow-md">
+          <button onClick={() => scroll("right")} className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 rounded-full bg-white border border-gray-200 items-center justify-center text-gray-600 hover:text-[#C4962A] hover:border-[#C4962A] transition-all shadow-md">
             <ChevronRight size={16}/>
           </button>
         )}
@@ -269,7 +277,7 @@ export default function HomePage() {
 
       {/* ── HERO ── */}
       <section
-        className="relative overflow-hidden min-h-[92vh] flex items-center"
+        className="relative overflow-hidden sm:min-h-[92vh] flex items-center"
         style={{
           background: "linear-gradient(145deg, #0e0e0e 0%, #161010 25%, #1f0a0a 50%, #2a0d0d 70%, #1a1010 85%, #111111 100%)",
         }}
@@ -304,7 +312,7 @@ export default function HomePage() {
           <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(196,150,42,0.25), transparent)" }}/>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
 
             {/* ── Left: Text Content ── */}

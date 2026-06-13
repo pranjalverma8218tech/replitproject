@@ -138,7 +138,7 @@ function AppContent() {
     <CartProvider>
       <div className="min-h-screen flex flex-col bg-background font-sans overflow-x-hidden w-full">
         <Navbar />
-        <main className="flex-1 w-full pt-[82px]">
+        <main className="flex-1 w-full pt-[58px] sm:pt-[82px]">
           <PublicRouter />
         </main>
         <Footer />

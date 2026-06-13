@@ -77,22 +77,22 @@ export function Navbar() {
       {/* Top accent line */}
       <div className="h-0.5 w-full" style={{ background: "linear-gradient(90deg,#DC2626,#b91c1c,#DC2626)" }} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-2">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 sm:h-20 gap-1 sm:gap-2">
 
           {/* ── Logo ── */}
-          <Link href="/" className="flex items-center gap-3 flex-shrink-0 group">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0 group min-w-0">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-105"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-105"
               style={{ background: "linear-gradient(135deg,#DC2626,#b91c1c)", boxShadow: "0 4px 12px rgba(220,38,38,0.35)" }}
             >
-              <span className="text-white font-black text-sm leading-none">RD</span>
+              <span className="text-white font-black text-xs sm:text-sm leading-none">RD</span>
             </div>
-            <div className="flex flex-col leading-tight">
-              <span className="font-black text-xl tracking-tight text-gray-900 whitespace-nowrap">
+            <div className="flex flex-col leading-tight min-w-0">
+              <span className="font-black text-sm sm:text-xl tracking-tight text-gray-900 whitespace-nowrap">
                 Radhe <span className="text-red-600">Digital</span>
               </span>
-              <span className="text-[10px] font-semibold text-gray-400 tracking-widest uppercase whitespace-nowrap">Custom Printing Studio</span>
+              <span className="hidden sm:block text-[10px] font-semibold text-gray-400 tracking-widest uppercase whitespace-nowrap">Custom Printing Studio</span>
             </div>
           </Link>
 
@@ -266,21 +266,21 @@ export function Navbar() {
           </div>
 
           {/* ── Mobile: lang switcher + cart + hamburger ── */}
-          <div className="flex lg:hidden items-center gap-2">
+          <div className="flex lg:hidden items-center gap-1.5 flex-shrink-0">
             {/* Mobile inline language switcher */}
             <div
               className="flex items-center rounded-lg overflow-hidden"
-              style={{ border: "2px solid #e5e7eb", background: "#f9fafb" }}
+              style={{ border: "1.5px solid #e5e7eb", background: "#f9fafb" }}
             >
               {(["en", "hi"] as const).map((l) => (
                 <button
                   key={l}
                   onClick={() => setLang(l)}
-                  className="px-3 py-1.5 text-xs font-black transition-all duration-200"
+                  className="px-2 py-1.5 text-[11px] font-black transition-all duration-200"
                   style={{
                     background: lang === l ? "#DC2626" : "transparent",
                     color: lang === l ? "#ffffff" : "#6b7280",
-                    minWidth: "36px",
+                    minWidth: "30px",
                   }}
                 >
                   {l === "hi" ? "हिं" : "EN"}
@@ -290,12 +290,12 @@ export function Navbar() {
 
             <button
               onClick={toggleCart}
-              className="relative w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors"
+              className="relative w-9 h-9 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors"
             >
-              <ShoppingCart size={20} />
+              <ShoppingCart size={18} />
               {totalItems > 0 && (
                 <span
-                  className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-white text-[10px] font-black flex items-center justify-center"
+                  className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-white text-[9px] font-black flex items-center justify-center"
                   style={{ background: "#DC2626" }}
                 >
                   {totalItems > 9 ? "9+" : totalItems}
@@ -304,9 +304,9 @@ export function Navbar() {
             </button>
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-gray-700 hover:bg-gray-100 transition-colors"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-gray-700 hover:bg-gray-100 transition-colors"
             >
-              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
 

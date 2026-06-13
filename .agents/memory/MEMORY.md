@@ -1,3 +1,4 @@
 - [MySQL backend architecture](mysql-backend.md) — api-server uses mysql2/promise directly (not @workspace/db which is pg). All routes under /api with graceful 503 when DB env vars not set.
 - [Vite proxy setup](vite-proxy.md) — dev proxy: /api/* → http://localhost:${API_PORT|8080}. Frontend api.ts uses VITE_API_URL||'' as base. No VITE_API_URL in dev = same-origin proxy.
 - [i18n translation architecture](i18n-architecture.md) — All translations in src/i18n/translations.ts (as const). useLanguage() hook from LanguageContext. category section has `products` (breadcrumb) AND `productsLabel` (count suffix) — keep distinct to avoid duplicate-key Vite warning.
+- [Mobile responsiveness patterns](mobile-responsiveness.md) — Key overflow sources fixed: html/body overflow-x:hidden, carousel arrows hidden on mobile, responsive VISIBLE count, compact navbar on sm screens.
