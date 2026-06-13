@@ -1,0 +1,181 @@
+Redesign the Homepage Hero Section with a premium ecommerce appearance.
+
+Current Problem:
+
+The homepage uses a flat black background that feels dull and unfinished.
+
+It looks more like a dark admin panel than a premium ecommerce brand.
+
+Do NOT switch to a white theme.
+
+Keep the site dark, but make it luxurious, modern, and visually rich.
+
+=================================
+NEW PREMIUM THEME
+=================
+
+Replace the flat black background with a layered luxury gradient.
+
+Background Style:
+
+Deep Charcoal
+Dark Graphite
+Dark Burgundy
+Dark Red Glow
+
+Example direction:
+
+#111111
+#1A1A1A
+#2A0F0F
+#3B1010
+
+Blend them smoothly.
+
+=================================
+HERO BACKGROUND
+===============
+
+Create depth.
+
+Use:
+
+* Soft red glow behind product/logo
+* Subtle radial gradients
+* Light reflections
+* Premium lighting effect
+
+Avoid a plain black rectangle.
+
+=================================
+PREMIUM ECOMMERCE FEEL
+======================
+
+Reference style:
+
+* Apple
+* Nike
+* Tesla
+* Nothing
+* Premium Shopify stores
+
+The hero section should feel expensive and modern.
+
+=================================
+SECTION SEPARATION
+==================
+
+Create visual separation between:
+
+* Navbar
+* Hero Section
+* Next Section
+
+Use:
+
+* Soft shadows
+* Gradient transitions
+* Subtle dividers
+
+Currently everything blends together.
+
+=================================
+CTA BUTTONS
+===========
+
+Primary Button:
+
+Red gradient
+
+Example:
+
+#EF4444 → #DC2626
+
+Add:
+
+* Glow effect
+* Hover lift animation
+* Premium shadow
+
+Secondary Button:
+
+Dark glass effect
+
+Not plain black.
+
+=================================
+LOGO AREA
+=========
+
+Place a subtle premium spotlight behind the logo image.
+
+Create a luxury showcase effect.
+
+The logo should feel featured.
+
+=================================
+TYPOGRAPHY
+==========
+
+Keep text white.
+
+But improve hierarchy:
+
+Heading:
+Very large
+Bold
+Premium spacing
+
+Highlight words:
+
+"Brand"
+"Anything"
+
+with premium gold gradient.
+
+Example:
+
+#FBBF24 → #D97706
+
+=================================
+GLASSMORPHISM
+=============
+
+Use glass effects for:
+
+* Stats section
+* Badges
+* Small information cards
+
+Add:
+
+backdrop blur
+soft transparency
+thin borders
+
+=================================
+BOTTOM STRIP
+============
+
+Redesign the scrolling feature strip.
+
+Current strip feels outdated.
+
+Use:
+
+* Premium dark background
+* Better spacing
+* Modern icons
+* Smooth scrolling
+
+=================================
+GOAL
+====
+
+The homepage should look like a premium ecommerce brand worth lakhs of rupees, not a basic black template.
+
+Keep it dark.
+
+Do not use white backgrounds.
+
+Create a luxurious, shiny, modern, high-end appearance with depth, gradients, lighting, and premium visual hierarchy.

@@ -290,11 +290,42 @@ export default function HomePage() {
     <div className="bg-white">
 
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden min-h-[88vh] flex items-center" style={{ background: "linear-gradient(160deg, #080808 0%, #0f0a00 50%, #0a0a0a 100%)" }}>
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full opacity-10 blur-3xl" style={{ background: "radial-gradient(circle,#C4962A 0%,transparent 70%)" }}/>
-          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full opacity-8 blur-3xl" style={{ background: "radial-gradient(circle,#e53e3e 0%,transparent 70%)" }}/>
+      <section
+        className="relative overflow-hidden min-h-[92vh] flex items-center"
+        style={{
+          background: "linear-gradient(145deg, #0e0e0e 0%, #161010 25%, #1f0a0a 50%, #2a0d0d 70%, #1a1010 85%, #111111 100%)",
+        }}
+      >
+        {/* Background depth layers */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {/* Large red atmosphere */}
+          <div className="absolute" style={{
+            top: "-10%", right: "-5%", width: "65%", height: "90%",
+            background: "radial-gradient(ellipse at center, rgba(180,20,20,0.22) 0%, rgba(120,10,10,0.12) 40%, transparent 70%)",
+            filter: "blur(60px)",
+          }}/>
+          {/* Gold accent top-left */}
+          <div className="absolute" style={{
+            top: "-5%", left: "0%", width: "45%", height: "60%",
+            background: "radial-gradient(ellipse at center, rgba(196,150,42,0.1) 0%, transparent 65%)",
+            filter: "blur(50px)",
+          }}/>
+          {/* Bottom deep red */}
+          <div className="absolute" style={{
+            bottom: "-10%", left: "30%", width: "50%", height: "60%",
+            background: "radial-gradient(ellipse at center, rgba(150,10,10,0.18) 0%, transparent 65%)",
+            filter: "blur(70px)",
+          }}/>
+          {/* Subtle grain texture overlay */}
+          <div className="absolute inset-0 opacity-[0.025]" style={{
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E\")",
+            backgroundRepeat: "repeat",
+            backgroundSize: "128px",
+          }}/>
+          {/* Subtle horizontal light line */}
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(196,150,42,0.25), transparent)" }}/>
         </div>
+
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
 
@@ -302,116 +333,161 @@ export default function HomePage() {
             <div className="flex-1 min-w-0 order-2 lg:order-1">
               <motion.div
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-                className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold"
-                style={{ borderColor: "rgba(196,150,42,0.35)", background: "rgba(196,150,42,0.1)", color: "#C4962A" }}
+                className="mb-7 inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-sm font-bold"
+                style={{
+                  border: "1px solid rgba(196,150,42,0.4)",
+                  background: "rgba(196,150,42,0.08)",
+                  color: "#D4A730",
+                  backdropFilter: "blur(12px)",
+                  boxShadow: "0 0 20px rgba(196,150,42,0.12), inset 0 1px 0 rgba(255,255,255,0.06)",
+                }}
               >
-                <Zap size={14}/> Mathura's #1 Custom Printing Studio
+                <Zap size={14} className="fill-current"/> Mathura's #1 Custom Printing Studio
               </motion.div>
 
               <motion.h1
-                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tight mb-8 text-white"
+                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.1 }}
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-black leading-[1.02] tracking-tight mb-3 text-white"
+                style={{ letterSpacing: "-0.02em" }}
               >
-                Print Your Brand{" "}
-                <span style={{ color: "#C4962A" }}>On Anything</span>
+                Print Your{" "}
+                <span style={{
+                  background: "linear-gradient(135deg, #FBBF24 0%, #F59E0B 40%, #D97706 100%)",
+                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                }}>Brand</span>
+              </motion.h1>
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.18 }}
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-black leading-[1.02] tracking-tight mb-8 text-white"
+                style={{ letterSpacing: "-0.02em" }}
+              >
+                <span style={{
+                  background: "linear-gradient(135deg, #FBBF24 0%, #F59E0B 40%, #D97706 100%)",
+                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                }}>On Anything</span>
               </motion.h1>
 
               <motion.p
-                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-lg sm:text-xl md:text-2xl text-gray-300 font-light mb-10 max-w-2xl leading-relaxed"
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }}
+                className="text-lg sm:text-xl text-gray-300 font-light mb-10 max-w-xl leading-relaxed"
+                style={{ color: "rgba(210,210,220,0.85)" }}
               >
                 Custom T-shirts, mugs, caps, pens and more — printed with your logo or design in hours. Bulk-friendly, no minimums.
               </motion.p>
 
               <motion.div
-                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex flex-col sm:flex-row gap-4 mb-14"
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.32 }}
+                className="flex flex-col sm:flex-row gap-4 mb-12"
               >
                 <Link href="/customize">
                   <motion.button
-                    whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                    className="flex items-center gap-3 px-8 py-4 rounded-2xl font-extrabold text-lg text-white"
-                    style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 6px 28px rgba(229,62,62,0.4)" }}
+                    whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}
+                    className="flex items-center gap-3 px-9 py-4 rounded-2xl font-extrabold text-lg text-white"
+                    style={{
+                      background: "linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #B91C1C 100%)",
+                      boxShadow: "0 8px 32px rgba(220,38,38,0.5), 0 2px 8px rgba(220,38,38,0.3), inset 0 1px 0 rgba(255,255,255,0.15)",
+                    }}
                   >
-                    Start Designing <ArrowRight size={20}/>
+                    <Sparkles size={20}/> Start Designing <ArrowRight size={20}/>
                   </motion.button>
                 </Link>
                 <Link href="/categories">
                   <motion.button
-                    whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                    className="flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-base border text-white hover:bg-white/5 transition-all"
-                    style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                    whileHover={{ scale: 1.04, y: -1 }} whileTap={{ scale: 0.97 }}
+                    className="flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-base text-white transition-all"
+                    style={{
+                      background: "rgba(255,255,255,0.06)",
+                      border: "1px solid rgba(255,255,255,0.15)",
+                      backdropFilter: "blur(12px)",
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
+                    }}
                   >
                     Browse Products <ChevronRight size={18}/>
                   </motion.button>
                 </Link>
               </motion.div>
 
+              {/* Glass stat pills */}
               <motion.div
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.5 }}
-                className="flex flex-wrap items-center gap-x-8 gap-y-3"
+                className="flex flex-wrap items-center gap-3"
               >
                 {[
-                  { icon: <Users size={16}/>, label: "10,000+ Customers" },
-                  { icon: <Star size={16} className="fill-yellow-400 text-yellow-400"/>, label: "4.8 / 5 Rating" },
-                  { icon: <Truck size={16}/>, label: "Pan India Delivery" },
+                  { icon: <Users size={15}/>, label: "10,000+ Customers" },
+                  { icon: <Star size={15} className="fill-yellow-400 text-yellow-400"/>, label: "4.8 / 5 Rating" },
+                  { icon: <Truck size={15}/>, label: "Pan India Delivery" },
                 ].map(item => (
-                  <div key={item.label} className="flex items-center gap-2 text-gray-400 text-sm">
-                    <span style={{ color: "#C4962A" }}>{item.icon}</span>
+                  <div
+                    key={item.label}
+                    className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold"
+                    style={{
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      backdropFilter: "blur(10px)",
+                      color: "rgba(220,220,230,0.9)",
+                    }}
+                  >
+                    <span style={{ color: "#D4A730" }}>{item.icon}</span>
                     {item.label}
                   </div>
                 ))}
               </motion.div>
             </div>
 
-            {/* ── Right: Circular Brand Logo ── */}
+            {/* ── Right: Circular Brand Logo with spotlight ── */}
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.35, ease: "easeOut" }}
+              transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
               className="flex-shrink-0 flex items-center justify-center w-full lg:w-auto order-1 lg:order-2"
-              style={{ maxWidth: "360px" }}
+              style={{ maxWidth: "400px" }}
             >
-              {/* Slow floating wrapper */}
               <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                 className="relative flex items-center justify-center"
               >
-                {/* Layered glow rings — gold outer, red inner */}
+                {/* Outer atmospheric glow */}
                 <div className="absolute pointer-events-none" style={{
-                  inset: "-20%",
+                  inset: "-40%",
                   borderRadius: "50%",
-                  background: "radial-gradient(circle, rgba(196,150,42,0.35) 0%, rgba(229,62,62,0.18) 40%, transparent 68%)",
-                  filter: "blur(28px)",
-                }} />
+                  background: "radial-gradient(circle, rgba(220,38,38,0.3) 0%, rgba(196,150,42,0.12) 35%, transparent 65%)",
+                  filter: "blur(40px)",
+                }}/>
+                {/* Mid spotlight ring */}
                 <div className="absolute pointer-events-none" style={{
-                  inset: "-8%",
+                  inset: "-18%",
                   borderRadius: "50%",
-                  background: "radial-gradient(circle, rgba(196,150,42,0.2) 0%, transparent 60%)",
-                  filter: "blur(14px)",
-                }} />
-
-                {/* Circular clip container — removes only the square PNG corners,
-                    the full white circular ring border and all design details are preserved */}
-                <div
-                  className="relative z-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-72 lg:h-72"
+                  background: "radial-gradient(circle, rgba(220,38,38,0.2) 0%, rgba(196,150,42,0.08) 50%, transparent 70%)",
+                  filter: "blur(20px)",
+                }}/>
+                {/* Rotating accent ring */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="absolute pointer-events-none"
                   style={{
+                    inset: "-6%",
+                    borderRadius: "50%",
+                    border: "1px solid transparent",
+                    background: "linear-gradient(#1a1a1a, #1a1a1a) padding-box, linear-gradient(135deg, rgba(196,150,42,0.6), transparent, rgba(220,38,38,0.4), transparent) border-box",
+                  }}
+                />
+                {/* Logo image */}
+                <div
+                  className="relative z-10 w-52 h-52 sm:w-68 sm:h-68 lg:w-80 lg:h-80"
+                  style={{
+                    width: "clamp(200px, 28vw, 320px)",
+                    height: "clamp(200px, 28vw, 320px)",
                     borderRadius: "50%",
                     overflow: "hidden",
-                    boxShadow: "0 8px 40px rgba(0,0,0,0.65), 0 0 30px rgba(196,150,42,0.22), 0 0 60px rgba(196,150,42,0.1)",
+                    boxShadow: "0 12px 60px rgba(0,0,0,0.8), 0 0 40px rgba(220,38,38,0.25), 0 0 80px rgba(196,150,42,0.1)",
                   }}
                 >
                   <img
                     src={logoSrc}
                     alt="Radhe Digital"
-                    style={{
-                      display: "block",
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      objectPosition: "center",
-                    }}
+                    style={{ display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
                   />
                 </div>
               </motion.div>
@@ -419,17 +495,33 @@ export default function HomePage() {
 
           </div>
         </div>
+
+        {/* Bottom fade into trust bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none" style={{
+          background: "linear-gradient(to bottom, transparent, rgba(10,5,5,0.6))",
+        }}/>
       </section>
 
       {/* ── TRUST BAR ── */}
-      <section className="py-3.5 overflow-hidden" style={{ background: "#111111", borderTop: "1px solid rgba(196,150,42,0.2)", borderBottom: "1px solid rgba(196,150,42,0.2)" }}>
+      <section
+        className="py-4 overflow-hidden relative"
+        style={{
+          background: "linear-gradient(90deg, #0d0505 0%, #160808 50%, #0d0505 100%)",
+          borderTop: "1px solid rgba(220,38,38,0.25)",
+          borderBottom: "1px solid rgba(220,38,38,0.2)",
+        }}
+      >
         <motion.div
           className="flex whitespace-nowrap"
           animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
         >
           {[...trustItems, ...trustItems].map((item, i) => (
-            <div key={i} className="flex items-center px-6 text-sm font-semibold whitespace-nowrap" style={{ color: "#C4962A" }}>
+            <div
+              key={i}
+              className="flex items-center px-8 text-sm font-bold whitespace-nowrap tracking-wide"
+              style={{ color: "#D4A730" }}
+            >
               {item}
             </div>
           ))}
