@@ -1,0 +1,46 @@
+Fix Navigation Bar Layout Issues After Language Switch (English ↔ Hindi)
+
+Carefully analyze and fix the navigation/header component across all screen sizes.
+
+Issue 1: Navigation Bar Breaks When Switching to Hindi
+
+Currently, when the language is changed from English to Hindi, the navigation menu becomes unorganized:
+
+Some menu items overlap each other.
+Spacing between menu items becomes inconsistent.
+Text wrapping causes layout shifts.
+Header alignment changes unexpectedly.
+Navigation looks crowded and unprofessional.
+Required Fixes
+Make the navigation layout fully responsive for both English and Hindi text lengths.
+Ensure equal and consistent spacing between all navigation items.
+Prevent text overlap, clipping, and wrapping issues.
+Use Flexbox/Grid properly so longer Hindi labels do not break the layout.
+Maintain perfect vertical and horizontal alignment.
+Navigation should look clean and professional in:
+Desktop
+Tablet
+Mobile
+Test every navigation item in both languages and ensure the header remains visually balanced.
+If required, automatically reduce font size slightly for longer translated text while preserving readability.
+Prevent any layout shift when changing language.
+Issue 2: Language Switcher Is Too Small
+
+The language switcher button/dropdown is currently difficult to notice and use.
+
+Required Improvements
+Increase the size of the language switcher.
+Improve visibility and prominence without making it intrusive.
+Add proper padding and spacing around the control.
+Ensure the text/icon is clearly readable.
+Make it consistent with the overall website design.
+Improve hover, focus, and active states.
+Make it fully touch-friendly on mobile devices.
+Ensure it remains visible and accessible on all screen sizes.
+Position it neatly within the header without affecting navigation alignment.
+Quality Requirements
+Maintain the existing website design language.
+Do not change branding, colors, or overall header structure unnecessarily.
+Focus only on improving responsiveness, spacing, alignment, usability, and visual polish.
+Verify the final result in both English and Hindi before completing.
+Ensure there are no regressions on desktop, tablet, or mobile devices.

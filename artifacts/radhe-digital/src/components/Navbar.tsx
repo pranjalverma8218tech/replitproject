@@ -31,6 +31,8 @@ export function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef   = useRef<HTMLInputElement>(null);
 
+  const isHindi = lang === "hi";
+
   const NAV_LINKS = [
     { name: t.nav.home,      href: "/" },
     { name: t.nav.products,  href: "/categories", hasDropdown: true },
@@ -63,6 +65,10 @@ export function Navbar() {
 
   const isActive = (href: string) => location === href;
 
+  const navItemStyle = isHindi
+    ? "px-2.5 py-2 text-[13px]"
+    : "px-4 py-2.5 text-[15px]";
+
   return (
     <header
       className="fixed top-0 left-0 right-0 w-full z-[9999] transition-all duration-300"
@@ -78,7 +84,7 @@ export function Navbar() {
       <div className="h-0.5 w-full" style={{ background: "linear-gradient(90deg,#DC2626,#b91c1c,#DC2626)" }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-20 gap-2">
 
           {/* ── Logo ── */}
           <Link href="/" className="flex items-center gap-3 flex-shrink-0 group">
@@ -89,21 +95,21 @@ export function Navbar() {
               <span className="text-white font-black text-sm leading-none">RD</span>
             </div>
             <div className="flex flex-col leading-tight">
-              <span className="font-black text-xl tracking-tight text-gray-900">
+              <span className="font-black text-xl tracking-tight text-gray-900 whitespace-nowrap">
                 Radhe <span className="text-red-600">Digital</span>
               </span>
-              <span className="text-[10px] font-semibold text-gray-400 tracking-widest uppercase">Custom Printing Studio</span>
+              <span className="text-[10px] font-semibold text-gray-400 tracking-widest uppercase whitespace-nowrap">Custom Printing Studio</span>
             </div>
           </Link>
 
           {/* ── Desktop Navigation ── */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
             {NAV_LINKS.map((link) =>
               link.hasDropdown ? (
                 <div key={link.name} className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setServicesOpen(!servicesOpen)}
-                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[15px] font-bold transition-all duration-200"
+                    className={`flex items-center gap-1 ${navItemStyle} rounded-xl font-bold transition-all duration-200 whitespace-nowrap`}
                     style={{
                       color: servicesOpen ? "#DC2626" : "#374151",
                       background: servicesOpen ? "rgba(220,38,38,0.06)" : "transparent",
@@ -113,7 +119,7 @@ export function Navbar() {
                   >
                     {link.name}
                     <motion.span animate={{ rotate: servicesOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                      <ChevronDown size={15} />
+                      <ChevronDown size={14} />
                     </motion.span>
                   </button>
 
@@ -176,7 +182,7 @@ export function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="px-4 py-2.5 rounded-xl text-[15px] font-bold transition-all duration-200"
+                  className={`${navItemStyle} rounded-xl font-bold transition-all duration-200 whitespace-nowrap`}
                   style={{
                     color: isActive(link.href) ? "#ffffff" : "#374151",
                     background: isActive(link.href) ? "#DC2626" : "transparent",
@@ -192,7 +198,7 @@ export function Navbar() {
           </nav>
 
           {/* ── Right Side Actions ── */}
-          <div className="hidden lg:flex items-center gap-2">
+          <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
 
             {/* Search */}
             <div className="relative flex items-center">
@@ -200,7 +206,7 @@ export function Navbar() {
                 {searchOpen && (
                   <motion.div
                     initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: 220, opacity: 1 }}
+                    animate={{ width: 180, opacity: 1 }}
                     exit={{ width: 0, opacity: 0 }}
                     transition={{ duration: 0.25 }}
                     className="overflow-hidden mr-1"
@@ -252,20 +258,26 @@ export function Navbar() {
               )}
             </button>
 
-            {/* Language Switcher */}
+            {/* Language Switcher — enlarged & prominent */}
             <div
-              className="flex items-center rounded-xl overflow-hidden border"
-              style={{ borderColor: "#e5e7eb" }}
+              className="flex items-center rounded-xl overflow-hidden"
+              style={{
+                border: "2px solid #e5e7eb",
+                background: "#f9fafb",
+              }}
             >
               {(["en", "hi"] as const).map((l) => (
                 <button
                   key={l}
                   onClick={() => setLang(l)}
-                  className="px-3 py-2 text-xs font-black transition-all duration-200"
+                  className="px-4 py-2 text-sm font-black transition-all duration-200 whitespace-nowrap"
                   style={{
                     background: lang === l ? "#DC2626" : "transparent",
                     color: lang === l ? "#ffffff" : "#6b7280",
+                    minWidth: "44px",
                   }}
+                  onMouseEnter={e => { if (lang !== l) (e.currentTarget as HTMLElement).style.background = "#f3f4f6"; (e.currentTarget as HTMLElement).style.color = lang !== l ? "#DC2626" : "#ffffff"; }}
+                  onMouseLeave={e => { if (lang !== l) (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = lang !== l ? "#6b7280" : "#ffffff"; }}
                 >
                   {l === "hi" ? "हिं" : "EN"}
                 </button>
@@ -277,11 +289,12 @@ export function Navbar() {
               <motion.button
                 whileHover={{ scale: 1.04, y: -1 }}
                 whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black text-white transition-all duration-200"
+                className="flex items-center gap-2 rounded-xl text-sm font-black text-white transition-all duration-200 whitespace-nowrap"
                 style={{
                   background: "linear-gradient(135deg,#DC2626 0%,#b91c1c 100%)",
                   boxShadow: "0 4px 18px rgba(220,38,38,0.4)",
                   letterSpacing: "0.03em",
+                  padding: isHindi ? "10px 14px" : "10px 20px",
                 }}
               >
                 <Sparkles size={16} />
@@ -290,8 +303,29 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* ── Mobile: cart + hamburger ── */}
+          {/* ── Mobile: lang switcher + cart + hamburger ── */}
           <div className="flex lg:hidden items-center gap-2">
+            {/* Mobile inline language switcher */}
+            <div
+              className="flex items-center rounded-lg overflow-hidden"
+              style={{ border: "2px solid #e5e7eb", background: "#f9fafb" }}
+            >
+              {(["en", "hi"] as const).map((l) => (
+                <button
+                  key={l}
+                  onClick={() => setLang(l)}
+                  className="px-3 py-1.5 text-xs font-black transition-all duration-200"
+                  style={{
+                    background: lang === l ? "#DC2626" : "transparent",
+                    color: lang === l ? "#ffffff" : "#6b7280",
+                    minWidth: "36px",
+                  }}
+                >
+                  {l === "hi" ? "हिं" : "EN"}
+                </button>
+              ))}
+            </div>
+
             <button
               onClick={toggleCart}
               className="relative w-10 h-10 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors"
@@ -395,26 +429,6 @@ export function Navbar() {
                   </Link>
                 )
               )}
-
-              {/* Mobile Language switcher */}
-              <div className="flex items-center gap-2 px-4 pt-2">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Language:</span>
-                <div className="flex items-center rounded-xl overflow-hidden border border-gray-200">
-                  {(["en", "hi"] as const).map((l) => (
-                    <button
-                      key={l}
-                      onClick={() => setLang(l)}
-                      className="px-3 py-1.5 text-xs font-black transition-all duration-200"
-                      style={{
-                        background: lang === l ? "#DC2626" : "transparent",
-                        color: lang === l ? "#ffffff" : "#6b7280",
-                      }}
-                    >
-                      {l === "hi" ? "हिं" : "EN"}
-                    </button>
-                  ))}
-                </div>
-              </div>
 
               {/* Mobile CTA */}
               <div className="pt-3 border-t border-gray-100">
