@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import {
-  Menu, X, Search, ShoppingCart, ChevronDown,
+  Menu, X, ShoppingCart, ChevronDown,
   Shirt, Coffee, HardHat, Pen, Award, Gift, Image, Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { SearchBar } from "@/components/SearchBar";
 
 const PRODUCTS = [
   { icon: Shirt,   label: "T-Shirts",       href: "/categories/t-shirts",       desc: "Custom printed tees" },
@@ -24,12 +25,9 @@ export function Navbar() {
   const [servicesOpen, setServicesOpen]             = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [scrolled, setScrolled]                     = useState(false);
-  const [searchOpen, setSearchOpen]                 = useState(false);
-  const [searchQuery, setSearchQuery]               = useState("");
   const { totalItems, toggleCart }                  = useCart();
   const { lang, setLang, t }                        = useLanguage();
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const searchRef   = useRef<HTMLInputElement>(null);
 
   const isHindi = lang === "hi";
 
@@ -46,10 +44,6 @@ export function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  useEffect(() => {
-    if (searchOpen && searchRef.current) searchRef.current.focus();
-  }, [searchOpen]);
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -201,42 +195,7 @@ export function Navbar() {
           <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
 
             {/* Search */}
-            <div className="relative flex items-center">
-              <AnimatePresence>
-                {searchOpen && (
-                  <motion.div
-                    initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: 180, opacity: 1 }}
-                    exit={{ width: 0, opacity: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className="overflow-hidden mr-1"
-                  >
-                    <input
-                      ref={searchRef}
-                      type="text"
-                      value={searchQuery}
-                      onChange={e => setSearchQuery(e.target.value)}
-                      onKeyDown={e => e.key === "Escape" && setSearchOpen(false)}
-                      placeholder={t.nav.searchPlaceholder}
-                      className="w-full h-10 rounded-xl px-4 text-sm text-gray-800 placeholder-gray-400 outline-none transition-colors"
-                      style={{ background: "#f3f4f6", border: "1.5px solid #e5e7eb" }}
-                      onFocus={e => { (e.currentTarget as HTMLElement).style.borderColor = "#DC2626"; }}
-                      onBlur={e => { (e.currentTarget as HTMLElement).style.borderColor = "#e5e7eb"; }}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              <button
-                onClick={() => setSearchOpen(!searchOpen)}
-                className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200"
-                style={{ color: "#6b7280", background: "transparent" }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#f3f4f6"; (e.currentTarget as HTMLElement).style.color = "#DC2626"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#6b7280"; }}
-                title="Search"
-              >
-                <Search size={20} />
-              </button>
-            </div>
+            <SearchBar className="w-56 xl:w-64" />
 
             {/* Cart */}
             <button
@@ -365,14 +324,8 @@ export function Navbar() {
             <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
 
               {/* Mobile search */}
-              <div className="relative mb-3">
-                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder={t.nav.searchPlaceholder}
-                  className="w-full h-11 rounded-xl pl-10 pr-4 text-sm text-gray-800 placeholder-gray-400 outline-none"
-                  style={{ background: "#f3f4f6", border: "1.5px solid #e5e7eb" }}
-                />
+              <div className="mb-3">
+                <SearchBar mobileVariant onClose={() => setMobileOpen(false)} />
               </div>
 
               {NAV_LINKS.map((link) =>

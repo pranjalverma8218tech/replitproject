@@ -1,0 +1,122 @@
+Bhai is issue ke liye bhi ek professional prompt use kar sakte ho:
+
+---
+
+# Fix Search Bar Visibility & Product Search Functionality
+
+Carefully analyze and completely fix the website search system.
+
+## Issue 1: Search Bar Is Not Clearly Visible
+
+Currently the search bar blends into the white header background and is difficult for users to notice.
+
+### Required UI Improvements
+
+1. Make the search bar visually prominent.
+2. Add a clear border or subtle shadow to separate it from the header background.
+3. Improve contrast between:
+
+   * Background
+   * Border
+   * Placeholder text
+   * Search icon
+4. Increase height and padding for better usability.
+5. Ensure the search bar looks modern and professional.
+6. Maintain consistency with the Radhe Digital branding.
+7. Make it responsive on:
+
+   * Desktop
+   * Tablet
+   * Mobile
+8. Improve focus state:
+
+   * Visible border highlight
+   * Smooth animation
+   * Better accessibility
+9. Ensure the search icon remains clearly visible.
+
+---
+
+## Issue 2: Product Search Is Not Working
+
+Currently users can type product names into the search bar, but relevant products are not displayed.
+
+### Required Functional Fixes
+
+1. Connect the search bar to the actual product database/data source.
+2. Search should work across:
+
+   * Product Name
+   * Product Category
+   * Product Description
+   * Product Tags
+3. Implement real-time search.
+4. Show matching results instantly while typing.
+5. Support partial matches.
+
+Examples:
+
+* "Tshirt" → Show all T-Shirt products
+* "Mug" → Show all Mug products
+* "Pen" → Show all Pen Printing products
+* "Photo Frame" → Show all Photo Frame products
+* "Badge" → Show all Badge products
+
+6. Search should be case-insensitive.
+7. Search should work in both English and Hindi.
+
+Examples:
+
+* T-Shirt
+* टी-शर्ट
+
+Both should return the same products.
+
+---
+
+## Search Results Experience
+
+1. Show a dropdown below the search bar while typing.
+2. Display:
+
+   * Product Image
+   * Product Name
+   * Category
+   * Price
+3. Clicking a result should open the corresponding product page.
+4. If no results are found:
+
+   * Show a professional "No products found" message.
+   * Suggest related products if available.
+
+---
+
+## Performance Requirements
+
+1. Search should respond instantly.
+2. Avoid unnecessary re-renders.
+3. Debounce user input for better performance.
+4. Ensure smooth experience on mobile devices.
+
+---
+
+## Translation Support
+
+When language is switched:
+
+* Search placeholder must translate correctly.
+* Search results must translate correctly.
+* Product names and categories should display in the selected language.
+* Search matching should work in both English and Hindi.
+
+---
+
+## Final Goal
+
+The search bar should be highly visible, modern, and professional, while the search functionality should reliably find products by name, category, description, or tags and provide instant, accurate results in both English and Hindi.
+
+**Also perform a complete audit of the current search implementation, identify why search results are not appearing, and fix the root cause instead of applying temporary UI-only changes.**
+
+---
+
+Ye prompt dene se AI sirf design nahi, backend/frontend search logic bhi check karega aur actual search functionality repair karega.
