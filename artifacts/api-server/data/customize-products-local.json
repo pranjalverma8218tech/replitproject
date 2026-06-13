@@ -12,7 +12,7 @@
     "sideImage": "",
     "colors": [
       "Royal Blue",
-      "red"
+      "Red"
     ],
     "sizes": [
       "S",
@@ -26,11 +26,16 @@
         "color": "Royal Blue",
         "hex": "#2563EB",
         "image": "/api/uploads/1781328792706-32b4p8h45op.jpg"
+      },
+      {
+        "color": "Red",
+        "hex": "#ff0000",
+        "image": "/api/uploads/1781330647001-c9viqmeekg9.jpg"
       }
     ],
     "status": "Active",
     "createdAt": "2026-06-13T05:33:31.803Z",
-    "updatedAt": "2026-06-13T05:58:54.213Z"
+    "updatedAt": "2026-06-13T06:04:09.903Z"
   },
   {
     "id": "plain-ceramic-mug",
@@ -322,41 +327,5 @@
     "status": "Active",
     "createdAt": "2024-01-01T00:00:00.000Z",
     "updatedAt": "2024-01-01T00:00:00.000Z"
-  },
-  {
-    "id": "CUS-1781330484939",
-    "name": "Test Color Variant Product",
-    "productType": "Round Neck",
-    "category": "T-Shirts",
-    "categorySlug": "t-shirts",
-    "basePrice": 199,
-    "description": "Test product",
-    "frontImage": "",
-    "backImage": "",
-    "sideImage": "",
-    "colors": [
-      "Red",
-      "Royal Blue"
-    ],
-    "sizes": [
-      "S",
-      "M",
-      "L"
-    ],
-    "colorVariants": [
-      {
-        "color": "Red",
-        "hex": "#EF4444",
-        "image": "/api/uploads/red-test.jpg"
-      },
-      {
-        "color": "Royal Blue",
-        "hex": "#2563EB",
-        "image": "/api/uploads/blue-test.jpg"
-      }
-    ],
-    "status": "Active",
-    "createdAt": "2026-06-13T06:01:24.940Z",
-    "updatedAt": "2026-06-13T06:01:24.940Z"
   }
 ]
