@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus, ImageOff, User, Phone } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
+import { useLanguage } from "@/context/LanguageContext";
 
 const WHATSAPP_NUMBER = "919319903380";
 const T_SHIRT_SIZES = ["S", "M", "L", "XL", "XXL", "3XL"];
@@ -42,6 +43,7 @@ export function ProductOptionsModal({
   variantImageUrls = [],
   onClose,
 }: Props) {
+  const { t } = useLanguage();
   const isTShirt = categorySlug === "t-shirts";
 
   const hasColors = variants.length > 0;
@@ -104,11 +106,11 @@ export function ProductOptionsModal({
 
   const validate = () => {
     const errs: { name?: string; mobile?: string } = {};
-    if (!customerName.trim()) errs.name = "Please enter your name";
+    if (!customerName.trim()) errs.name = t.modal.nameRequired;
     if (!customerMobile.trim()) {
-      errs.mobile = "Please enter your mobile number";
+      errs.mobile = t.modal.mobileRequired;
     } else if (!/^[6-9]\d{9}$/.test(customerMobile.trim())) {
-      errs.mobile = "Enter a valid 10-digit Indian mobile number";
+      errs.mobile = t.modal.mobileInvalid;
     }
     return errs;
   };
@@ -260,7 +262,7 @@ export function ProductOptionsModal({
             {/* ── Product Preview ── */}
             <div className="rounded-2xl overflow-hidden border border-gray-100 bg-gray-50" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}>
               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 pt-3 pb-1.5">
-                Product Preview
+                {t.modal.productPreview}
               </p>
               <motion.div
                 key={previewImageUrl ?? "no-img"}
@@ -309,9 +311,9 @@ export function ProductOptionsModal({
             {hasColors && (
               <div>
                 <p className="text-sm font-bold text-gray-700 mb-3">
-                  Colour:{" "}
+                  {t.modal.colour}{" "}
                   <span className="text-gray-900">
-                    {isOriginal ? "Not selected" : colorName}
+                    {isOriginal ? t.modal.notSelected : colorName}
                   </span>
                 </p>
                 <div className="flex flex-wrap gap-2.5 mb-3">
@@ -342,14 +344,14 @@ export function ProductOptionsModal({
                         : "border-gray-200 text-gray-500 hover:border-gray-400"
                     }`}
                   >
-                    + Custom
+                    {t.modal.customColor}
                   </button>
                 </div>
                 {showCustomColor && (
                   <input
                     value={customColor}
                     onChange={e => setCustomColor(e.target.value)}
-                    placeholder="e.g. Royal Blue, #1a2b3c…"
+                    placeholder={t.modal.colorPlaceholder}
                     className="w-full h-10 px-3 rounded-xl border-2 border-[#C4962A]/40 text-sm outline-none focus:border-[#C4962A]"
                     autoFocus
                   />
@@ -360,7 +362,7 @@ export function ProductOptionsModal({
             {/* ── Gender (T-shirts only) ── */}
             {isTShirt && (
               <div>
-                <p className="text-sm font-bold text-gray-700 mb-3">Gender</p>
+                <p className="text-sm font-bold text-gray-700 mb-3">{t.modal.gender}</p>
                 <div className="flex gap-2">
                   {GENDERS.map(g => (
                     <button
@@ -382,7 +384,7 @@ export function ProductOptionsModal({
             {/* ── Sizes & Qty ── */}
             {isTShirt ? (
               <div>
-                <p className="text-sm font-bold text-gray-700 mb-3">Sizes & Quantities</p>
+                <p className="text-sm font-bold text-gray-700 mb-3">{t.modal.sizesQty}</p>
                 <div className="space-y-2">
                   {T_SHIRT_SIZES.map(size => (
                     <div
@@ -412,7 +414,7 @@ export function ProductOptionsModal({
               </div>
             ) : (
               <div>
-                <p className="text-sm font-bold text-gray-700 mb-3">Quantity</p>
+                <p className="text-sm font-bold text-gray-700 mb-3">{t.modal.quantity}</p>
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => setQty(v => Math.max(1, v - 1))}
@@ -434,12 +436,12 @@ export function ProductOptionsModal({
             {/* ── Order Summary ── */}
             <div className="bg-gray-50 rounded-2xl p-4 space-y-1.5 border border-gray-100">
               <div className="flex justify-between text-sm text-gray-500">
-                <span>Price per piece</span>
+                <span>{t.modal.pricePerPiece}</span>
                 <span className="font-semibold text-gray-900">{product.priceLabel ?? `₹${product.price}`}</span>
               </div>
               {hasColors && !isOriginal && !showCustomColor && colorName && (
                 <div className="flex justify-between text-sm text-gray-500">
-                  <span>Colour</span>
+                  <span>{t.modal.colourRow}</span>
                   <span className="flex items-center gap-1.5 font-semibold text-gray-900">
                     <span
                       className="w-3 h-3 rounded-full inline-block border border-gray-200"
@@ -450,18 +452,18 @@ export function ProductOptionsModal({
                 </div>
               )}
               <div className="flex justify-between text-sm text-gray-500">
-                <span>Total pieces</span>
+                <span>{t.modal.totalPieces}</span>
                 <span className="font-semibold text-gray-900">{totalQty}</span>
               </div>
               <div className="border-t border-gray-200 pt-1.5 flex justify-between font-extrabold text-gray-900">
-                <span>Total</span>
+                <span>{t.modal.total}</span>
                 <span className="text-primary">₹{total.toLocaleString("en-IN")}</span>
               </div>
             </div>
 
             {/* ── Customer Details ── */}
             <div>
-              <p className="text-sm font-bold text-gray-700 mb-3">Your Details</p>
+              <p className="text-sm font-bold text-gray-700 mb-3">{t.modal.yourDetails}</p>
               <div className="space-y-3">
                 <div>
                   <div className="relative">
@@ -469,7 +471,7 @@ export function ProductOptionsModal({
                     <input
                       value={customerName}
                       onChange={e => { setCustomerName(e.target.value); setErrors(prev => ({ ...prev, name: undefined })); }}
-                      placeholder="Your full name"
+                      placeholder={t.modal.namePlaceholder}
                       className={`${inputCls(errors.name)} pl-9`}
                     />
                   </div>
@@ -481,7 +483,7 @@ export function ProductOptionsModal({
                     <input
                       value={customerMobile}
                       onChange={e => { setCustomerMobile(e.target.value.replace(/\D/g, "").slice(0, 10)); setErrors(prev => ({ ...prev, mobile: undefined })); }}
-                      placeholder="10-digit mobile number"
+                      placeholder={t.modal.mobilePlaceholder}
                       inputMode="numeric"
                       className={`${inputCls(errors.mobile)} pl-9`}
                     />
@@ -506,11 +508,11 @@ export function ProductOptionsModal({
               >
                 <FaWhatsapp size={20} />
                 {totalQty === 0
-                  ? "Select quantity to continue"
-                  : `Order via WhatsApp · ${totalQty} item${totalQty !== 1 ? "s" : ""}`}
+                  ? t.modal.selectQtyFirst
+                  : `${t.modal.orderViaWhatsApp} ${totalQty} ${totalQty !== 1 ? t.modal.itemPlural : t.modal.itemSingular}`}
               </motion.button>
               <p className="text-xs text-gray-400 text-center mt-3">
-                No payment upfront · Complete your order on WhatsApp
+                {t.modal.noPaymentUpfront}
               </p>
             </div>
           </div>

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Shirt, Coffee, HardHat, Pen, Award, Image, Gift } from "lucide-react";
 import { CATEGORIES } from "@/data/products";
 import { useApiProducts } from "@/hooks/useApiProducts";
+import { useLanguage } from "@/context/LanguageContext";
 
 const ICONS: Record<string, JSX.Element> = {
   "t-shirts": <Shirt size={28} />,
@@ -17,6 +18,7 @@ const ICONS: Record<string, JSX.Element> = {
 
 export default function CategoriesPage() {
   const apiProducts = useApiProducts();
+  const { t } = useLanguage();
 
   const countBySlug = useMemo(() => {
     const map: Record<string, number> = {};
@@ -36,13 +38,13 @@ export default function CategoriesPage() {
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 60%, rgba(196,150,42,0.08) 0%, transparent 65%)" }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10 text-center">
           <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-4 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.35)", background: "rgba(196,150,42,0.1)" }}>
-            All Categories
+            {t.categoriesPage.badge}
           </span>
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold mb-4 text-white">
-            Customize <span style={{ color: "#C4962A" }}>Anything You Imagine</span>
+            {t.categoriesPage.titleStart} <span style={{ color: "#C4962A" }}>{t.categoriesPage.titleHighlight}</span>
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
-            From a single personalised mug to 1000-piece corporate orders — browse our full range of printable products.
+            {t.categoriesPage.subtitle}
           </p>
         </div>
       </section>
@@ -84,11 +86,11 @@ export default function CategoriesPage() {
                   <div className="flex items-center justify-between mt-auto">
                     <span className="text-xs text-gray-400">
                       {countBySlug[cat.slug] !== undefined
-                        ? `${countBySlug[cat.slug]} product${countBySlug[cat.slug] !== 1 ? "s" : ""}`
-                        : "Browse products"}
+                        ? `${countBySlug[cat.slug]} ${countBySlug[cat.slug] !== 1 ? t.categoriesPage.productsSuffix : t.categoriesPage.productSuffix}`
+                        : t.categoriesPage.browseProducts}
                     </span>
                     <span className="flex items-center gap-1 text-sm font-bold text-primary transition-all group-hover:gap-2">
-                      View <ArrowRight size={14} />
+                      {t.categoriesPage.view} <ArrowRight size={14} />
                     </span>
                   </div>
                 </motion.div>

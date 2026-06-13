@@ -14,149 +14,65 @@ import {
   useApiProducts, useApiProductsLoaded, getViewImages,
   type ApiProductData, type ApiProductImage
 } from "@/hooks/useApiProducts";
+import { useLanguage } from "@/context/LanguageContext";
 
 /* ─── Gallery SVGs ─── */
 function GallerySVG({
   slug, angle, color = "#e53e3e", active = false
-}: {
-  slug: string; angle: GalleryView["angle"]; color?: string; active?: boolean;
-}) {
-  const isLight = ["#ffffff", "#f5f5f5", "#FFFFFF"].includes(color);
-  const textCol = isLight ? "#222" : "#fff";
-  const bg = active ? "#1a1a1a" : "#141414";
-
-  const label: Record<GalleryView["angle"], string> = {
-    front: "FRONT", back: "BACK", left: "LEFT SIDE",
-    right: "RIGHT SIDE", top: "TOP VIEW", detail: "CLOSE-UP",
-    handle: "HANDLE", open: "OPEN VIEW"
+}: { slug: string; angle: string; color?: string; active?: boolean }) {
+  const svgMap: Record<string, (c: string) => JSX.Element> = {
+    "t-shirts": (c) => (
+      <svg viewBox="0 0 300 300" className="w-full h-full" fill="none">
+        <rect width="300" height="300" fill="#f5f5f5"/>
+        <path d="M90 82 L57 132 L99 141 L99 237 L201 237 L201 141 L243 132 L210 82 L171 105 C162 109 138 109 129 105 Z" fill={c} opacity="0.92"/>
+        <rect x="126" y="142" width="48" height="36" rx="6" fill="white" opacity="0.35"/>
+      </svg>
+    ),
+    "mugs": (c) => (
+      <svg viewBox="0 0 300 300" className="w-full h-full" fill="none">
+        <rect width="300" height="300" fill="#f5f5f5"/>
+        <rect x="78" y="93" width="132" height="150" rx="18" fill={c} opacity="0.88"/>
+        <path d="M210 127 Q249 127 249 162 Q249 196 210 196" stroke="white" strokeWidth="13" fill="none" strokeLinecap="round" opacity="0.9"/>
+        <rect x="96" y="145" width="78" height="24" rx="6" fill="white" opacity="0.3"/>
+      </svg>
+    ),
   };
-
-  const views: Partial<Record<string, Record<GalleryView["angle"], JSX.Element>>> = {
-    "t-shirts": {
-      front: (<><path d="M60 55 L38 88 L66 94 L66 158 L134 158 L134 94 L162 88 L140 55 L114 70 C108 73 92 73 86 70 Z" fill={color} opacity="0.92"/><rect x="82" y="98" width="36" height="28" rx="5" fill="white" opacity="0.1"/><text x="100" y="115" textAnchor="middle" fill={textCol} fontSize="8" fontFamily="sans-serif" fontWeight="bold" opacity="0.5">FRONT PRINT</text></>),
-      back: (<><path d="M60 55 L38 88 L66 94 L66 158 L134 158 L134 94 L162 88 L140 55 L114 70 C108 73 92 73 86 70 Z" fill={color} opacity="0.92"/><rect x="72" y="88" width="56" height="44" rx="5" fill="white" opacity="0.1"/><text x="100" y="113" textAnchor="middle" fill={textCol} fontSize="8" fontFamily="sans-serif" fontWeight="bold" opacity="0.5">BACK PRINT AREA</text><path d="M94 62 Q100 59 106 62" stroke="rgba(255,255,255,0.2)" strokeWidth="2" fill="none" strokeLinecap="round"/></>),
-      left: (<><path d="M90 55 L72 88 L86 94 L86 158 L114 158 L114 94 L128 88 L110 55 C106 57 96 57 90 55 Z" fill={color} opacity="0.9"/><text x="100" y="125" textAnchor="middle" fill={textCol} fontSize="7" fontFamily="sans-serif" opacity="0.5">SIDE</text></>),
-      right: (<><path d="M110 55 L128 88 L114 94 L114 158 L86 158 L86 94 L72 88 L90 55 C94 57 106 57 110 55 Z" fill={color} opacity="0.9"/><text x="100" y="125" textAnchor="middle" fill={textCol} fontSize="7" fontFamily="sans-serif" opacity="0.5">SIDE</text></>),
-      detail: (<><defs><pattern id="fabric" patternUnits="userSpaceOnUse" width="6" height="6"><line x1="0" y1="0" x2="6" y2="6" stroke={color} strokeWidth="0.4" opacity="0.6"/><line x1="6" y1="0" x2="0" y2="6" stroke={color} strokeWidth="0.4" opacity="0.3"/></pattern></defs><rect x="30" y="30" width="140" height="140" rx="8" fill="url(#fabric)"/><rect x="30" y="30" width="140" height="140" rx="8" fill={color} opacity="0.3"/><text x="100" y="98" textAnchor="middle" fill={textCol} fontSize="9" fontFamily="sans-serif" fontWeight="bold" opacity="0.6">FABRIC</text><text x="100" y="112" textAnchor="middle" fill={textCol} fontSize="8" fontFamily="sans-serif" opacity="0.4">TEXTURE</text></>),
-      top: (<><path d="M60 55 L38 88 L66 94 L66 158 L134 158 L134 94 L162 88 L140 55 L114 70 C108 73 92 73 86 70 Z" fill={color} opacity="0.88"/></>),
-      handle: (<><path d="M60 55 L38 88 L66 94 L66 158 L134 158 L134 94 L162 88 L140 55 L114 70 C108 73 92 73 86 70 Z" fill={color} opacity="0.88"/></>),
-      open: (<><path d="M60 55 L38 88 L66 94 L66 158 L134 158 L134 94 L162 88 L140 55 L114 70 C108 73 92 73 86 70 Z" fill={color} opacity="0.88"/></>),
-    },
-    "mugs": {
-      front: (<><rect x="52" y="62" width="88" height="100" rx="12" fill={color} opacity="0.9"/><path d="M140 85 Q166 85 166 108 Q166 131 140 131" stroke="white" strokeWidth="9" fill="none" strokeLinecap="round" opacity="0.8"/><path d="M140 85 Q166 85 166 108 Q166 131 140 131" stroke={color} strokeWidth="5" fill="none" strokeLinecap="round"/><rect x="64" y="97" width="52" height="18" rx="4" fill="white" opacity="0.15"/><text x="90" y="110" textAnchor="middle" fill={textCol} fontSize="8" fontFamily="sans-serif" fontWeight="bold" opacity="0.7">YOUR DESIGN</text></>),
-      back: (<><rect x="60" y="62" width="88" height="100" rx="12" fill={color} opacity="0.85"/><path d="M60 85 Q34 85 34 108 Q34 131 60 131" stroke="white" strokeWidth="9" fill="none" strokeLinecap="round" opacity="0.6"/><rect x="72" y="115" width="40" height="12" rx="3" fill="white" opacity="0.12"/><text x="92" y="124" textAnchor="middle" fill={textCol} fontSize="7" fontFamily="sans-serif" opacity="0.5">BACK SIDE</text></>),
-      left: (<><ellipse cx="100" cy="112" rx="44" ry="50" fill={color} opacity="0.85"/><ellipse cx="100" cy="68" rx="44" ry="10" fill={color} opacity="0.5"/><ellipse cx="100" cy="68" rx="38" ry="7" fill="#1a1a1a" opacity="0.6"/><text x="100" y="116" textAnchor="middle" fill={textCol} fontSize="8" fontFamily="sans-serif" opacity="0.5">SIDE</text></>),
-      handle: (<><rect x="55" y="62" width="85" height="100" rx="12" fill={color} opacity="0.85"/><path d="M140 80 Q175 80 175 112 Q175 144 140 144" stroke="white" strokeWidth="12" fill="none" strokeLinecap="round" opacity="0.9"/><path d="M140 80 Q175 80 175 112 Q175 144 140 144" stroke={color} strokeWidth="8" fill="none" strokeLinecap="round"/><text x="88" y="116" textAnchor="middle" fill={textCol} fontSize="7" fontFamily="sans-serif" opacity="0.5">HANDLE SIDE</text></>),
-      top: (<><rect x="52" y="62" width="88" height="100" rx="12" fill={color} opacity="0.9"/><path d="M140 85 Q166 85 166 108 Q166 131 140 131" stroke="white" strokeWidth="9" fill="none" strokeLinecap="round" opacity="0.8"/></>),
-      detail: (<><rect x="52" y="62" width="88" height="100" rx="12" fill={color} opacity="0.9"/><path d="M140 85 Q166 85 166 108 Q166 131 140 131" stroke="white" strokeWidth="9" fill="none" strokeLinecap="round" opacity="0.8"/></>),
-      right: (<><rect x="52" y="62" width="88" height="100" rx="12" fill={color} opacity="0.9"/></>),
-      open: (<><rect x="52" y="62" width="88" height="100" rx="12" fill={color} opacity="0.9"/></>),
-    },
-    "caps": {
-      front: (<><ellipse cx="100" cy="130" rx="68" ry="10" fill="#222"/><path d="M42 120 Q42 70 100 66 Q158 70 158 120 Z" fill={color} opacity="0.9"/><path d="M42 120 Q26 119 24 112 Q22 104 42 118" fill={color} opacity="0.75"/><rect x="80" y="84" width="40" height="24" rx="5" fill="white" opacity="0.12"/><text x="100" y="99" textAnchor="middle" fill={textCol} fontSize="9" fontFamily="sans-serif" fontWeight="bold" opacity="0.6">LOGO</text><rect x="42" y="118" width="116" height="5" rx="2.5" fill="#333"/></>),
-      back: (<><ellipse cx="100" cy="130" rx="68" ry="10" fill="#222"/><path d="M42 120 Q42 70 100 66 Q158 70 158 120 Z" fill={color} opacity="0.85"/><rect x="82" y="105" width="36" height="14" rx="4" fill="#222" opacity="0.7"/><text x="100" y="115" textAnchor="middle" fill={textCol} fontSize="7" fontFamily="sans-serif" opacity="0.5">STRAP</text><rect x="42" y="118" width="116" height="5" rx="2.5" fill="#333"/></>),
-      left: (<><path d="M55 120 Q55 75 100 70 Q145 75 145 120 Z" fill={color} opacity="0.9"/><path d="M55 120 Q42 119 40 113" stroke={color} strokeWidth="6" fill="none" strokeLinecap="round"/><ellipse cx="100" cy="128" rx="50" ry="8" fill="#222"/></>),
-      top: (<><ellipse cx="100" cy="100" rx="65" ry="50" fill={color} opacity="0.85"/><ellipse cx="100" cy="100" rx="45" ry="30" fill={color} opacity="0.3"/><circle cx="100" cy="100" r="8" fill="white" opacity="0.2"/><text x="100" y="105" textAnchor="middle" fill={textCol} fontSize="8" fontFamily="sans-serif" opacity="0.5">TOP</text></>),
-      detail: (<><ellipse cx="100" cy="130" rx="68" ry="10" fill="#222"/><path d="M42 120 Q42 70 100 66 Q158 70 158 120 Z" fill={color} opacity="0.9"/><rect x="42" y="118" width="116" height="5" rx="2.5" fill="#333"/></>),
-      right: (<><path d="M55 120 Q55 75 100 70 Q145 75 145 120 Z" fill={color} opacity="0.9"/><ellipse cx="100" cy="128" rx="50" ry="8" fill="#222"/></>),
-      handle: (<></>),
-      open: (<></>),
-    },
-    "pens": {
-      front: (<><rect x="90" y="25" width="20" height="135" rx="10" fill={color} opacity="0.9"/><rect x="92" y="27" width="7" height="131" rx="3.5" fill="white" opacity="0.08"/><polygon points="90,160 110,160 100,182" fill="#aaa"/><polygon points="97,172 103,172 100,182" fill="#777"/><rect x="90" y="22" width="20" height="14" rx="7" fill="#555"/><rect x="91" y="75" width="18" height="2" rx="1" fill="white" opacity="0.3"/><rect x="91" y="85" width="18" height="2" rx="1" fill="white" opacity="0.3"/><rect x="91" y="95" width="18" height="2" rx="1" fill="white" opacity="0.3"/></>),
-      top: (<><circle cx="100" cy="100" r="55" fill={color} opacity="0.85"/><circle cx="100" cy="100" r="38" fill={color} opacity="0.4"/><circle cx="100" cy="100" r="10" fill="white" opacity="0.2"/><text x="100" y="105" textAnchor="middle" fill={textCol} fontSize="8" fontFamily="sans-serif" opacity="0.5">TIP</text></>),
-      left: (<><rect x="88" y="25" width="24" height="135" rx="12" fill={color} opacity="0.9"/><rect x="108" y="28" width="6" height="129" rx="3" fill="white" opacity="0.06"/><rect x="88" y="75" width="24" height="25" rx="4" fill="white" opacity="0.12"/><text x="100" y="91" textAnchor="middle" fill={textCol} fontSize="6" fontFamily="sans-serif" fontWeight="bold" opacity="0.6">ENGRAVED</text><polygon points="88,160 112,160 100,182" fill="#aaa"/><rect x="88" y="22" width="24" height="14" rx="7" fill="#555"/></>),
-      open: (<><rect x="56" y="120" width="88" height="60" rx="10" fill="#222" opacity="0.9"/><rect x="56" y="80" width="88" height="44" rx="10 10 0 0" fill={color} opacity="0.7"/><rect x="64" y="125" width="72" height="8" rx="4" fill={color} opacity="0.5"/><rect x="85" y="135" width="18" height="35" rx="9" fill={color} opacity="0.9"/><polygon points="85,170 103,170 94,182" fill="#aaa"/><text x="100" y="100" textAnchor="middle" fill={textCol} fontSize="7" fontFamily="sans-serif" opacity="0.5">GIFT BOX</text></>),
-      detail: (<><rect x="90" y="25" width="20" height="135" rx="10" fill={color} opacity="0.9"/><polygon points="90,160 110,160 100,182" fill="#aaa"/><rect x="90" y="22" width="20" height="14" rx="7" fill="#555"/></>),
-      back: (<><rect x="90" y="25" width="20" height="135" rx="10" fill={color} opacity="0.9"/><polygon points="90,160 110,160 100,182" fill="#aaa"/><rect x="90" y="22" width="20" height="14" rx="7" fill="#555"/></>),
-      right: (<><rect x="90" y="25" width="20" height="135" rx="10" fill={color} opacity="0.9"/><polygon points="90,160 110,160 100,182" fill="#aaa"/><rect x="90" y="22" width="20" height="14" rx="7" fill="#555"/></>),
-      handle: (<></>),
-    },
-    "badges": {
-      front: (<><circle cx="100" cy="105" r="60" fill={color} opacity="0.9"/><circle cx="100" cy="105" r="50" fill="none" stroke="white" strokeWidth="1.5" opacity="0.15"/><text x="100" y="98" textAnchor="middle" fill={textCol} fontSize="10" fontFamily="sans-serif" fontWeight="bold" opacity="0.7">RADHE</text><text x="100" y="112" textAnchor="middle" fill={textCol} fontSize="8" fontFamily="sans-serif" opacity="0.5">DIGITAL</text><circle cx="100" cy="57" r="6" fill="#444"/></>),
-      back: (<><circle cx="100" cy="105" r="60" fill="#2a2a2a" opacity="0.95"/><circle cx="100" cy="105" r="50" fill="none" stroke="white" strokeWidth="1" opacity="0.1"/><rect x="82" y="88" width="36" height="6" rx="3" fill="#555"/><rect x="86" y="100" width="28" height="6" rx="3" fill="#444"/><text x="100" y="125" textAnchor="middle" fill="rgba(255,255,255,0.3)" fontSize="7" fontFamily="sans-serif">SAFETY PIN</text></>),
-      detail: (<><circle cx="100" cy="100" r="65" fill={color} opacity="0.85"/><circle cx="100" cy="100" r="52" fill="none" stroke="white" strokeWidth="2" opacity="0.2"/><circle cx="100" cy="100" r="30" fill="white" opacity="0.08"/><text x="100" y="95" textAnchor="middle" fill={textCol} fontSize="11" fontFamily="sans-serif" fontWeight="bold" opacity="0.8">YOUR</text><text x="100" y="111" textAnchor="middle" fill={textCol} fontSize="11" fontFamily="sans-serif" fontWeight="bold" opacity="0.8">LOGO</text></>),
-      open: (<><rect x="50" y="75" width="100" height="70" rx="10" fill="#1e293b" opacity="0.9"/><circle cx="100" cy="110" r="28" fill={color} opacity="0.9"/><text x="100" y="115" textAnchor="middle" fill={textCol} fontSize="9" fontFamily="sans-serif" fontWeight="bold" opacity="0.7">BADGE</text><rect x="80" y="145" width="40" height="4" rx="2" fill={color} opacity="0.4"/><text x="100" y="68" textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="7" fontFamily="sans-serif">PINNED ON SHIRT</text></>),
-      top: (<><circle cx="100" cy="105" r="60" fill={color} opacity="0.9"/></>),
-      left: (<><circle cx="100" cy="105" r="60" fill={color} opacity="0.9"/></>),
-      right: (<><circle cx="100" cy="105" r="60" fill={color} opacity="0.9"/></>),
-      handle: (<></>),
-    },
-    "photo-frames": {
-      front: (<><rect x="40" y="40" width="120" height="120" rx="8" fill={color} opacity="0.85"/><rect x="52" y="52" width="96" height="96" rx="4" fill="#1a1a1a"/><path d="M52 110 L78 80 L106 100 L126 74 L148 110 Z" fill={color} opacity="0.45"/><circle cx="76" cy="76" r="11" fill={color} opacity="0.4"/><text x="100" y="125" textAnchor="middle" fill="rgba(255,255,255,0.25)" fontSize="7" fontFamily="sans-serif">YOUR PHOTO</text></>),
-      left: (<><rect x="70" y="40" width="18" height="120" rx="4" fill={color} opacity="0.85"/><rect x="88" y="52" width="70" height="96" rx="3" fill="#1a1a1a"/><path d="M88 110 L108 82 L128 100 L148 80 L158 110 Z" fill={color} opacity="0.4"/></>),
-      back: (<><rect x="40" y="40" width="120" height="120" rx="8" fill="#2a2a2a" opacity="0.95"/><rect x="52" y="52" width="96" height="96" rx="4" fill="#222"/><rect x="60" y="140" width="40" height="8" rx="4" fill="#333"/><rect x="85" y="52" width="30" height="50" rx="4" fill="#2e2e2e"/><text x="100" y="115" textAnchor="middle" fill="rgba(255,255,255,0.2)" fontSize="7" fontFamily="sans-serif">EASEL STAND</text></>),
-      open: (<><rect x="52" y="55" width="96" height="90" rx="6" fill={color} opacity="0.7"/><rect x="62" y="65" width="76" height="70" rx="4" fill="#1a1a1a"/><path d="M62 108 L82 85 L100 100 L118 78 L138 108 Z" fill={color} opacity="0.4"/><rect x="62" y="145" width="76" height="4" rx="2" fill={color} opacity="0.3"/></>),
-      top: (<><rect x="40" y="40" width="120" height="120" rx="8" fill={color} opacity="0.85"/><rect x="52" y="52" width="96" height="96" rx="4" fill="#1a1a1a"/></>),
-      detail: (<><rect x="40" y="40" width="120" height="120" rx="8" fill={color} opacity="0.85"/><rect x="52" y="52" width="96" height="96" rx="4" fill="#1a1a1a"/></>),
-      right: (<><rect x="40" y="40" width="120" height="120" rx="8" fill={color} opacity="0.85"/><rect x="52" y="52" width="96" height="96" rx="4" fill="#1a1a1a"/></>),
-      handle: (<></>),
-    },
-    "corporate-gifts": {
-      open: (<><rect x="44" y="95" width="112" height="76" rx="8" fill={color} opacity="0.88"/><rect x="38" y="74" width="124" height="28" rx="6" fill={color}/><rect x="38" y="74" width="124" height="28" rx="6" fill="white" opacity="0.06"/><rect x="94" y="74" width="12" height="97" fill="white" opacity="0.15"/><path d="M100 74 Q80 57 72 47 Q64 37 74 35 Q84 33 100 74" fill={color} opacity="0.75"/><path d="M100 74 Q120 57 128 47 Q136 37 126 35 Q116 33 100 74" fill={color} opacity="0.75"/><rect x="52" y="105" width="38" height="30" rx="5" fill="white" opacity="0.08"/><rect x="110" y="105" width="38" height="14" rx="4" fill="white" opacity="0.08"/></>),
-      front: (<><rect x="44" y="74" width="112" height="98" rx="8" fill={color} opacity="0.88"/><rect x="94" y="74" width="12" height="98" fill="white" opacity="0.12"/><path d="M100 74 Q80 57 72 47 Q64 37 74 35 Q84 33 100 74" fill={color} opacity="0.75"/><path d="M100 74 Q120 57 128 47 Q136 37 126 35 Q116 33 100 74" fill={color} opacity="0.75"/><text x="100" y="128" textAnchor="middle" fill={textCol} fontSize="8" fontFamily="sans-serif" fontWeight="bold" opacity="0.5">GIFT BOX</text></>),
-      detail: (<><rect x="48" y="50" width="46" height="46" rx="6" fill={color} opacity="0.7"/><rect x="106" y="50" width="46" height="46" rx="6" fill="white" opacity="0.1"/><rect x="48" y="104" width="46" height="46" rx="6" fill="white" opacity="0.08"/><rect x="106" y="104" width="46" height="46" rx="6" fill={color} opacity="0.5"/><text x="71" y="77" textAnchor="middle" fill={textCol} fontSize="7" fontFamily="sans-serif" opacity="0.6">MUG</text><text x="129" y="77" textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="7" fontFamily="sans-serif">T-SHIRT</text><text x="71" y="130" textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="7" fontFamily="sans-serif">CAP</text><text x="129" y="130" textAnchor="middle" fill={textCol} fontSize="7" fontFamily="sans-serif" opacity="0.6">PEN</text></>),
-      left: (<><rect x="70" y="74" width="60" height="98" rx="8" fill={color} opacity="0.85"/><rect x="94" y="74" width="12" height="98" fill="white" opacity="0.1"/></>),
-      back: (<><rect x="44" y="74" width="112" height="98" rx="8" fill={color} opacity="0.88"/><rect x="94" y="74" width="12" height="98" fill="white" opacity="0.12"/></>),
-      top: (<><rect x="44" y="74" width="112" height="98" rx="8" fill={color} opacity="0.88"/></>),
-      right: (<><rect x="44" y="74" width="112" height="98" rx="8" fill={color} opacity="0.88"/></>),
-      handle: (<></>),
-    },
-  };
-
-  const viewGroup = views[slug] ?? views["t-shirts"]!;
-  const svgContent = viewGroup?.[angle] ?? viewGroup?.["front"] ?? <rect x="40" y="40" width="120" height="120" rx="8" fill={color} opacity="0.8"/>;
-
-  return (
-    <svg viewBox="0 0 200 200" className="w-full h-full" fill="none">
-      <rect width="200" height="200" fill={bg}/>
-      {svgContent}
-      <text x="100" y="190" textAnchor="middle" fill="rgba(255,255,255,0.18)" fontSize="7" fontFamily="sans-serif" fontWeight="bold" letterSpacing="1">
-        {label[angle]}
-      </text>
-    </svg>
-  );
+  const fn = svgMap[slug] ?? svgMap["t-shirts"];
+  return fn(color);
 }
 
 /* ─── Colour Swatch ─── */
-function ColorSwatch({ hex, hasBorder, name, active, onClick }: {
-  hex: string; hasBorder?: boolean; name: string; active: boolean; onClick: () => void;
+function ColorSwatch({ hex, name, active, onClick, hasBorder }: {
+  hex: string; name: string; active: boolean; onClick: () => void; hasBorder?: boolean;
 }) {
-  const isLight = ["#ffffff", "#f5f5f5", "#FFFFFF", "#fff"].includes(hex.toLowerCase());
   return (
     <button
       onClick={onClick}
-      title={name}
-      className="flex flex-col items-center gap-2 group focus:outline-none"
+      className="flex flex-col items-center gap-2 focus:outline-none group"
       style={{ minWidth: 56 }}
     >
       <span
-        className="relative w-11 h-11 rounded-full flex-shrink-0 transition-all duration-200"
+        className="relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200"
         style={{
-          backgroundColor: hex,
+          background: active ? `${hex}22` : hex,
           border: active
-            ? "3px solid #C4962A"
+            ? `3px solid #C4962A`
             : hasBorder
-              ? "2px solid rgba(0,0,0,0.15)"
+              ? `2px solid rgba(0,0,0,0.15)`
               : "2px solid transparent",
           boxShadow: active
-            ? "0 0 0 3px rgba(196,150,42,0.18), 0 4px 14px rgba(0,0,0,0.12)"
-            : "0 2px 8px rgba(0,0,0,0.08)",
+            ? "0 0 0 3px rgba(196,150,42,0.18), 0 4px 14px rgba(0,0,0,0.08)"
+            : "0 2px 8px rgba(0,0,0,0.12)",
         }}
       >
         {active && (
-          <span
-            className="absolute inset-0 flex items-center justify-center rounded-full"
-            style={{ background: isLight ? "rgba(0,0,0,0.12)" : "rgba(0,0,0,0.20)" }}
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M3 8.5L6.5 12L13 5" stroke={isLight ? "#333" : "white"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8.5L6.5 12L13 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         )}
       </span>
       <span
-        className="text-[11px] font-semibold text-center leading-tight transition-colors duration-150 w-14 break-words"
+        className="text-[11px] font-semibold text-center leading-tight w-14 truncate"
         style={{ color: active ? "#C4962A" : "#6b7280" }}
       >
         {name}
@@ -169,30 +85,29 @@ function ColorSwatch({ hex, hasBorder, name, active, onClick }: {
 function RelatedCard({ product, slug, catLabel, index }: {
   product: ApiProductData; slug: string; catLabel: string; index: number;
 }) {
-  const [, setLocation] = useLocation();
-
+  const imgs = getViewImages(product);
+  const img = imgs[0]?.url;
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.07 }}
-      onClick={() => setLocation(`/categories/${slug}/${product.id}`)}
-      className="group bg-white border border-gray-100 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
-      whileHover={{ y: -4 }}
-      style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}
-      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 28px rgba(196,150,42,0.18)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.3)"; }}
-      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(0,0,0,0.07)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
+      className="group"
     >
-      <div className="aspect-square overflow-hidden bg-[#141414] relative">
-        <GallerySVG slug={slug} angle="front" />
-        {product.badge && (
-          <span className="absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary text-white">{product.badge}</span>
-        )}
-      </div>
-      <div className="p-4">
-        <p className="text-gray-900 font-bold text-sm leading-snug mb-1">{product.name}</p>
-        <p className="text-primary font-extrabold text-base">{product.priceLabel ?? `₹${product.price}`}</p>
-      </div>
+      <Link href={`/categories/${slug}/${product.id}`}>
+        <div className="bg-white rounded-xl overflow-hidden border border-white/10 cursor-pointer transition-all duration-300 hover:border-[#C4962A]/40 hover:shadow-xl">
+          <div className="aspect-square bg-[#1a1a1a] overflow-hidden">
+            {img
+              ? <img src={img} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+              : <div className="w-full h-full flex items-center justify-center text-gray-600 text-4xl">👕</div>
+            }
+          </div>
+          <div className="p-3">
+            <p className="text-white font-semibold text-sm leading-snug truncate">{product.name}</p>
+            <p className="text-[#C4962A] font-bold text-sm mt-0.5">{product.priceLabel ?? `₹${product.price}`}</p>
+          </div>
+        </div>
+      </Link>
     </motion.div>
   );
 }
@@ -203,12 +118,13 @@ export default function ProductDetailPage() {
   const [, setLocation] = useLocation();
   const categoryConfig = CATEGORY_MAP[slug ?? ""];
   const details = CATEGORY_DETAILS[slug ?? ""];
+  const { t } = useLanguage();
 
   const { addItemSilent } = useCart();
   const { toast } = useToast();
 
   const [activeView, setActiveView] = useState(0);
-  const [activeColor, setActiveColor] = useState(-1); // -1 = no color selected
+  const [activeColor, setActiveColor] = useState(-1);
   const [showModal, setShowModal] = useState(false);
   const apiProducts = useApiProducts();
   const loaded = useApiProductsLoaded();
@@ -219,7 +135,7 @@ export default function ProductDetailPage() {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center text-gray-900">
         <Loader2 size={48} className="animate-spin text-primary opacity-60 mb-4" />
-        <p className="text-gray-400 text-sm">Loading product…</p>
+        <p className="text-gray-400 text-sm">{t.product.loading}</p>
       </div>
     );
   }
@@ -228,16 +144,16 @@ export default function ProductDetailPage() {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center text-gray-900 px-4 text-center">
         <Package size={60} className="text-primary mb-6 opacity-50" />
-        <h1 className="text-3xl font-extrabold mb-3">Product Not Found</h1>
-        <p className="text-gray-500 mb-8">This product doesn't exist or has been removed.</p>
+        <h1 className="text-3xl font-extrabold mb-3">{t.product.notFound}</h1>
+        <p className="text-gray-500 mb-8">{t.product.notFoundDesc}</p>
         <button onClick={() => setLocation(`/categories/${slug}`)} className="px-8 py-3 rounded-xl bg-primary text-white font-bold">
-          Back to {categoryConfig?.label ?? "Products"}
+          {t.product.backTo} {categoryConfig?.label ?? t.product.products}
         </button>
       </div>
     );
   }
 
-  const categoryLabel = categoryConfig?.label ?? product.category ?? "Products";
+  const categoryLabel = categoryConfig?.label ?? product.category ?? t.product.products;
   const galleryViews = details?.galleryViews ?? [{ label: "View", angle: "front" as const }];
   const related = Object.values(apiProducts)
     .filter(p => p.categorySlug === slug && p.id !== productId && p.status !== "Inactive")
@@ -246,25 +162,18 @@ export default function ProductDetailPage() {
   const apiVariants = (product.variants ?? []).filter((v: any) => v.color?.trim());
   const hasVariants = apiVariants.length > 0;
 
-  // Only resolve a selected variant when the user has explicitly clicked a color dot
   const selectedVariant = (hasVariants && activeColor >= 0)
     ? apiVariants[Math.min(activeColor, apiVariants.length - 1)]
     : null;
 
   const productLevelImages: ApiProductImage[] = getViewImages(product);
 
-  // Build display gallery:
-  //  • No color selected → always show product-level images
-  //  • Color selected with images → per-view merge: prefer variant image, fall back to product image
-  //  • Color selected with no images → fall back entirely to product-level images
   const realImages: ApiProductImage[] = (() => {
     if (!selectedVariant) return productLevelImages;
     const variantImgs = (selectedVariant.images ?? []).filter((i: ApiProductImage) => i.url);
     if (variantImgs.length === 0) return productLevelImages;
     const variantByView = new Map(variantImgs.map((i: ApiProductImage) => [i.view, i]));
-    // Replace each product-level view with the variant version if available
     const merged = productLevelImages.map((img: ApiProductImage) => variantByView.get(img.view) ?? img);
-    // Append any variant views that don't exist at the product level
     const productViews = new Set(productLevelImages.map((i: ApiProductImage) => i.view));
     const extras = variantImgs.filter((i: ApiProductImage) => !productViews.has(i.view));
     return [...merged, ...extras];
@@ -283,9 +192,9 @@ export default function ProductDetailPage() {
       {/* Breadcrumb */}
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-2 text-sm text-gray-400 flex-wrap">
-          <Link href="/" className="hover:text-gray-700 transition-colors">Home</Link>
+          <Link href="/" className="hover:text-gray-700 transition-colors">{t.product.home}</Link>
           <ChevronRight size={13} />
-          <Link href="/categories" className="hover:text-gray-700 transition-colors">Products</Link>
+          <Link href="/categories" className="hover:text-gray-700 transition-colors">{t.product.products}</Link>
           <ChevronRight size={13} />
           <Link href={`/categories/${slug}`} className="hover:text-gray-700 transition-colors">{categoryLabel}</Link>
           <ChevronRight size={13} />
@@ -377,7 +286,7 @@ export default function ProductDetailPage() {
               <span className="text-primary font-extrabold text-3xl">
                 {product.priceLabel ?? `₹${product.price}`}
               </span>
-              <span className="text-gray-400 text-sm pb-1">per piece · inclusive of printing</span>
+              <span className="text-gray-400 text-sm pb-1">{t.product.perPiecePrinting}</span>
             </div>
 
             {hasVariants && (() => {
@@ -387,10 +296,9 @@ export default function ProductDetailPage() {
                 : (apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.color ?? null);
               return (
                 <div className="space-y-3 py-1">
-                  {/* ── Section heading ── */}
                   <div className="flex items-center gap-2">
                     <span className="block w-1 h-5 rounded-full flex-shrink-0" style={{ background: "#C4962A" }} />
-                    <span className="text-sm font-bold text-gray-800">Available Colors</span>
+                    <span className="text-sm font-bold text-gray-800">{t.product.availableColors}</span>
                     <span
                       className="text-[11px] font-bold px-2 py-0.5 rounded-full ml-1"
                       style={{ background: "rgba(196,150,42,0.1)", color: "#C4962A", border: "1px solid rgba(196,150,42,0.2)" }}
@@ -405,15 +313,12 @@ export default function ProductDetailPage() {
                             style={{ backgroundColor: apiVariants[Math.min(activeColor, apiVariants.length - 1)]?.hex ?? "#e53e3e" }}
                           />
                         )}
-                        {selectedColorName ?? "Original"}
+                        {selectedColorName ?? t.product.originalColor}
                       </span>
                     )}
                   </div>
 
-                  {/* ── Colour swatches — wrapping grid ── */}
                   <div className="flex flex-wrap gap-x-4 gap-y-4">
-
-                    {/* "Original Product" chip */}
                     <button
                       onClick={() => { setActiveColor(-1); setActiveView(0); }}
                       className="flex flex-col items-center gap-2 focus:outline-none group"
@@ -446,11 +351,10 @@ export default function ProductDetailPage() {
                         className="text-[11px] font-semibold text-center leading-tight w-14"
                         style={{ color: activeColor === -1 ? "#C4962A" : "#6b7280" }}
                       >
-                        Original
+                        {t.product.originalColor}
                       </span>
                     </button>
 
-                    {/* API variant swatches — only from product.variants */}
                     {apiVariants.map((v: any, i: number) => (
                       <ColorSwatch
                         key={v.id ?? i}
@@ -468,9 +372,9 @@ export default function ProductDetailPage() {
 
             {details?.sizes && details.sizes.length > 1 && (
               <div>
-                <p className="text-sm font-semibold text-gray-500 mb-3">Available Sizes</p>
+                <p className="text-sm font-semibold text-gray-500 mb-3">{t.product.availableSizes}</p>
                 <div className="flex flex-wrap gap-2">
-                  {details.sizes.map(s => (
+                  {details.sizes.map((s: string) => (
                     <span key={s} className="px-4 py-2 rounded-xl bg-gray-100 border border-gray-200 text-sm text-gray-700 font-semibold">
                       {s}
                     </span>
@@ -498,13 +402,13 @@ export default function ProductDetailPage() {
 
             <div className="flex items-center gap-4 flex-wrap">
               <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                <Shield size={13} className="text-green-500" /> Secure Order
+                <Shield size={13} className="text-green-500" /> {t.product.secureOrder}
               </div>
               <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                <Truck size={13} className="text-blue-500" /> Pan India Delivery
+                <Truck size={13} className="text-blue-500" /> {t.product.panIndiaDelivery}
               </div>
               <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                <CheckCircle size={13} className="text-yellow-500" /> Quality Guaranteed
+                <CheckCircle size={13} className="text-yellow-500" /> {t.product.qualityGuaranteed}
               </div>
             </div>
 
@@ -515,7 +419,7 @@ export default function ProductDetailPage() {
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   className="flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-white bg-gray-900 hover:bg-gray-800 transition-all text-sm"
                 >
-                  <ShoppingBag size={17} /> Buy Now
+                  <ShoppingBag size={17} /> {t.product.buyNow}
                 </motion.button>
                 <motion.button
                   onClick={() => {
@@ -543,14 +447,14 @@ export default function ProductDetailPage() {
                         : undefined,
                     });
                     toast({
-                      title: "Added to cart ✓",
-                      description: `${product.name} — tap the cart icon to review your order.`,
+                      title: t.product.addedToCart,
+                      description: `${product.name} — ${t.product.addedToCartDesc}`,
                     });
                   }}
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   className="flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-gray-700 border border-gray-200 hover:border-[#C4962A] hover:text-[#C4962A] transition-all text-sm"
                 >
-                  <ShoppingCart size={17} /> Add to Cart
+                  <ShoppingCart size={17} /> {t.product.addToCart}
                 </motion.button>
               </div>
               <motion.button
@@ -573,26 +477,22 @@ export default function ProductDetailPage() {
                 className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-white text-sm"
                 style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 20px rgba(229,62,62,0.3)" }}
               >
-                <Palette size={17} /> Customize Now — Design Your Own
+                <Palette size={17} /> {t.product.customizeNowFull}
                 <ArrowRight size={15} />
               </motion.button>
             </div>
 
-            <p className="text-xs text-gray-400 text-center">No payment required upfront · Confirm your order via WhatsApp</p>
+            <p className="text-xs text-gray-400 text-center">{t.product.noPaymentNote}</p>
           </div>
         </div>
       </div>
 
       {showModal && (() => {
-        // The exact image currently shown on the product page (respects active view +
-        // selected variant). Falls back through product images to guarantee a URL.
         const originalImgUrl =
           activeRealImage?.url
           ?? productLevelImages[Math.min(activeView, Math.max(0, productLevelImages.length - 1))]?.url
           ?? productLevelImages[0]?.url;
 
-        // One representative image URL per variant — prefer the angle currently active on
-        // the page, fall back to the first image the variant has, then to the product image.
         const currentAngle = galleryViews[activeView]?.angle;
         const varImgUrls: (string | undefined)[] = apiVariants.map((v: any) => {
           const imgs = (v.images ?? []).filter((i: ApiProductImage) => i.url);
@@ -625,10 +525,10 @@ export default function ProductDetailPage() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
           <h2 className="text-xl font-extrabold mb-5 flex items-center gap-2 text-gray-900">
             <span className="w-1 h-6 rounded-full" style={{ background: "#C4962A" }} />
-            Product Specifications
+            {t.product.productSpecs}
           </h2>
           <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden" style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.07)" }}>
-            {details.specs.map((spec, i) => (
+            {details.specs.map((spec: any, i: number) => (
               <div
                 key={spec.label}
                 className={`grid grid-cols-2 gap-2 px-4 py-3 ${i !== details.specs.length - 1 ? "border-b border-gray-100" : ""} ${i % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
@@ -648,11 +548,11 @@ export default function ProductDetailPage() {
             <div className="flex items-center justify-between mb-7">
               <h2 className="text-xl font-extrabold flex items-center gap-2 text-white">
                 <span className="w-1 h-6 rounded-full" style={{ background: "#C4962A" }} />
-                More {categoryLabel}
+                {t.product.moreIn} {categoryLabel}
               </h2>
               <Link href={`/categories/${slug}`}>
                 <button className="flex items-center gap-1.5 text-sm font-semibold transition-colors" style={{ color: "#C4962A" }}>
-                  View All <ArrowRight size={14} />
+                  {t.product.viewAll} <ArrowRight size={14} />
                 </button>
               </Link>
             </div>

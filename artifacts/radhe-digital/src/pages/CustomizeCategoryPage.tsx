@@ -2,10 +2,12 @@ import { useParams, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Tag, ChevronRight, Sparkles, Loader2, AlertCircle, ImageOff } from "lucide-react";
 import { useCustomizeCategoryProducts } from "@/hooks/useCustomizeApi";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function CustomizeCategoryPage() {
   const { category } = useParams<{ category: string }>();
   const [, setLocation] = useLocation();
+  const { t } = useLanguage();
 
   const { products, categoryLabel, description, loading, error } = useCustomizeCategoryProducts(category ?? "");
 
@@ -14,7 +16,7 @@ export default function CustomizeCategoryPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <Loader2 size={28} className="animate-spin text-red-600 mx-auto mb-3" />
-          <p className="text-gray-400 text-sm">Loading products…</p>
+          <p className="text-gray-400 text-sm">{t.customizeCat.loading}</p>
         </div>
       </div>
     );
@@ -25,12 +27,12 @@ export default function CustomizeCategoryPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <AlertCircle size={36} className="mx-auto mb-3 text-gray-300" />
-          <p className="text-gray-500 text-lg mb-4">{error ?? "Category not found."}</p>
+          <p className="text-gray-500 text-lg mb-4">{error ?? t.customizeCat.notFound}</p>
           <button
             onClick={() => setLocation("/customize")}
             className="text-red-600 underline text-sm font-semibold"
           >
-            Go back to categories
+            {t.customizeCat.goBack}
           </button>
         </div>
       </div>
@@ -47,13 +49,13 @@ export default function CustomizeCategoryPage() {
             onClick={() => setLocation("/customize")}
             className="flex items-center gap-2 text-gray-500 hover:text-red-600 text-sm font-semibold mb-5 transition-colors"
           >
-            <ArrowLeft size={14} /> Back to Categories
+            <ArrowLeft size={14} /> {t.customizeCat.backToCategories}
           </button>
 
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-xs text-gray-400 mb-4 flex-wrap">
             <span className="hover:text-red-600 cursor-pointer font-medium" onClick={() => setLocation("/customize")}>
-              Customize
+              {t.nav.customize}
             </span>
             <ChevronRight size={12} />
             <span className="text-gray-700 font-semibold">{categoryLabel}</span>
@@ -65,17 +67,17 @@ export default function CustomizeCategoryPage() {
                 className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase px-3 py-1.5 rounded-full text-white mb-3"
                 style={{ background: "#DC2626" }}
               >
-                <Sparkles size={11} /> Step 2 of 3
+                <Sparkles size={11} /> {t.customizeCat.step2}
               </span>
               <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight">
-                Choose a <span style={{ color: "#DC2626" }}>{categoryLabel}</span>
+                {t.customizeCat.chooseA} <span style={{ color: "#DC2626" }}>{categoryLabel}</span>
               </h1>
               {description && (
                 <p className="text-gray-500 text-sm mt-2 leading-relaxed">{description}</p>
               )}
             </div>
             <div className="text-right text-sm text-gray-400 hidden sm:block">
-              <span className="font-bold text-gray-700 text-lg">{products.length}</span> products available
+              <span className="font-bold text-gray-700 text-lg">{products.length}</span> {t.customizeCat.productsAvailable}
             </div>
           </div>
         </div>
@@ -128,7 +130,7 @@ export default function CustomizeCategoryPage() {
                       className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full font-bold text-sm text-white"
                       style={{ background: "#DC2626", boxShadow: "0 4px 16px rgba(220,38,38,0.5)" }}
                     >
-                      Customize <ArrowRight size={13} />
+                      {t.customizeCat.customize} <ArrowRight size={13} />
                     </span>
                   </div>
                 </div>
@@ -150,7 +152,7 @@ export default function CustomizeCategoryPage() {
                     <span className="font-black text-base" style={{ color: "#DC2626" }}>
                       {product.priceLabel}
                     </span>
-                    <span className="text-gray-400 text-xs">base</span>
+                    <span className="text-gray-400 text-xs">{t.customizeCat.base}</span>
                   </div>
                   <span className="text-gray-300 group-hover:text-red-500 transition-colors">
                     <ArrowRight size={14} />
@@ -168,7 +170,7 @@ export default function CustomizeCategoryPage() {
         >
           <span style={{ color: "#DC2626" }} className="text-lg flex-shrink-0">💡</span>
           <p className="text-gray-600 text-sm leading-relaxed">
-            Select a plain product to open the <strong className="text-gray-900">Customization Studio</strong> where you can upload your logo, design, or describe what you need.
+            {t.customizeCat.tipText1} <strong className="text-gray-900">{t.customizeCat.tipStudio}</strong> {t.customizeCat.tipText2}
           </p>
         </div>
       </div>

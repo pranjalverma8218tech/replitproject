@@ -10,6 +10,7 @@ import { ProductOptionsModal } from "@/components/ProductOptionsModal";
 import {
   useApiProducts, useApiProductsLoaded, getFrontImage, type ApiProductData
 } from "@/hooks/useApiProducts";
+import { useLanguage } from "@/context/LanguageContext";
 
 /* ─── SVG Product Illustrations ─── */
 function ProductSVG({ slug, index }: { slug: string; index: number }) {
@@ -107,6 +108,7 @@ function ProductCard({ product, slug, categoryLabel, index }: {
   product: ApiProductData; slug: string; categoryLabel: string; index: number;
 }) {
   const [showModal, setShowModal] = useState(false);
+  const { t } = useLanguage();
   const realImageUrl = getFrontImage(product);
 
   return (
@@ -143,7 +145,7 @@ function ProductCard({ product, slug, categoryLabel, index }: {
             )}
             <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
               <span className="flex items-center gap-2 px-4 py-2.5 bg-white rounded-xl text-xs font-bold text-gray-900">
-                <Eye size={13} /> View Details
+                <Eye size={13} /> {t.category.viewDetails}
               </span>
             </div>
           </div>
@@ -168,7 +170,7 @@ function ProductCard({ product, slug, categoryLabel, index }: {
 
           <div className="flex items-end justify-between mb-3">
             <div>
-              <span className="text-[10px] text-gray-400 uppercase tracking-widest block">Starting from</span>
+              <span className="text-[10px] text-gray-400 uppercase tracking-widest block">{t.category.startingFrom}</span>
               <span className="text-primary font-extrabold text-xl leading-none">
                 {product.priceLabel ?? `₹${product.price}`}
               </span>
@@ -181,17 +183,17 @@ function ProductCard({ product, slug, categoryLabel, index }: {
                 onClick={e => { e.preventDefault(); e.stopPropagation(); setShowModal(true); }}
                 className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-white bg-gray-900 hover:bg-gray-800 transition-all duration-200"
               >
-                <ShoppingBag size={13} /> Buy Now
+                <ShoppingBag size={13} /> {t.category.buyNow}
               </button>
               <Link href={`/categories/${slug}/${product.id}`}>
                 <button className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-gray-700 border border-gray-200 hover:border-gray-400 transition-all duration-200">
-                  <Eye size={13} /> Details
+                  <Eye size={13} /> {t.category.details}
                 </button>
               </Link>
             </div>
             <Link href={`/customize/${slug}`}>
               <button className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-white bg-primary hover:bg-red-700 transition-all duration-200">
-                <Palette size={13} /> Customize This
+                <Palette size={13} /> {t.category.customizeThis}
               </button>
             </Link>
           </div>
@@ -208,6 +210,7 @@ export default function CategoryPage() {
   const category = CATEGORY_MAP[slug];
   const apiProducts = useApiProducts();
   const loaded = useApiProductsLoaded();
+  const { t } = useLanguage();
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc">("default");
@@ -236,7 +239,7 @@ export default function CategoryPage() {
       );
     }
     if (activeTags.length > 0) {
-      list = list.filter(p => activeTags.every(t => (p.tags ?? []).includes(t)));
+      list = list.filter(p => activeTags.every(tag => (p.tags ?? []).includes(tag)));
     }
     if (sortBy === "price-asc") list.sort((a, b) => a.price - b.price);
     if (sortBy === "price-desc") list.sort((a, b) => b.price - a.price);
@@ -255,11 +258,11 @@ export default function CategoryPage() {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center text-gray-900 text-center px-4">
         <Package size={64} className="text-primary mb-6 opacity-60" />
-        <h1 className="text-4xl font-extrabold mb-4">Category Not Found</h1>
-        <p className="text-gray-500 mb-8">The category you're looking for doesn't exist.</p>
+        <h1 className="text-4xl font-extrabold mb-4">{t.category.notFoundTitle}</h1>
+        <p className="text-gray-500 mb-8">{t.category.notFoundDesc}</p>
         <Link href="/categories">
           <button className="px-8 py-3 rounded-xl bg-primary text-white font-bold hover:bg-red-700 transition-colors">
-            Browse All Products
+            {t.category.browseAllProducts}
           </button>
         </Link>
       </div>
@@ -273,16 +276,18 @@ export default function CategoryPage() {
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 60% 50%, rgba(196,150,42,0.08) 0%, transparent 60%)" }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 relative z-10">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-            <Link href="/" className="hover:text-gray-300 transition-colors">Home</Link>
+            <Link href="/" className="hover:text-gray-300 transition-colors">{t.category.home}</Link>
             <ChevronRight size={14} />
-            <Link href="/categories" className="hover:text-gray-300 transition-colors">Products</Link>
+            <Link href="/categories" className="hover:text-gray-300 transition-colors">{t.category.products}</Link>
             <ChevronRight size={14} />
             <span className="font-semibold" style={{ color: "#C4962A" }}>{category.label}</span>
           </div>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
               <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.35)", background: "rgba(196,150,42,0.1)" }}>
-                {loaded ? `${categoryProducts.length} Product${categoryProducts.length !== 1 ? "s" : ""}` : "Loading…"}
+                {loaded
+                  ? `${categoryProducts.length} ${categoryProducts.length !== 1 ? t.category.products : t.category.productSingular}`
+                  : t.category.loading}
               </span>
               <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-white">{category.banner}</h1>
               <p className="text-gray-400 text-lg max-w-2xl leading-relaxed">{category.description}</p>
@@ -293,7 +298,7 @@ export default function CategoryPage() {
                 className="flex items-center gap-2 px-7 py-3 rounded-xl font-bold text-white text-sm whitespace-nowrap flex-shrink-0"
                 style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 18px rgba(229,62,62,0.35)" }}
               >
-                <Palette size={16} /> Start Customizing <ArrowRight size={15} />
+                <Palette size={16} /> {t.category.startCustomizing} <ArrowRight size={15} />
               </motion.button>
             </Link>
           </div>
@@ -349,7 +354,7 @@ export default function CategoryPage() {
               type="text"
               value={search}
               onChange={e => { setSearch(e.target.value); setVisibleCount(6); }}
-              placeholder="Search Products, Categories..."
+              placeholder={t.category.searchPlaceholder}
               className="w-full h-12 bg-white border-2 border-gray-200 rounded-xl pl-11 pr-10 text-sm font-medium text-gray-900 placeholder-gray-400 outline-none transition-all duration-200"
               style={search ? { borderColor: "#e53e3e", boxShadow: "0 0 0 3px rgba(229,62,62,0.1)" } : {}}
               onFocus={e => { e.currentTarget.style.borderColor = "#e53e3e"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(229,62,62,0.12)"; }}
@@ -366,9 +371,9 @@ export default function CategoryPage() {
             onChange={e => setSortBy(e.target.value as typeof sortBy)}
             className="h-12 bg-white border-2 border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-700 outline-none cursor-pointer transition-all duration-200 focus:border-primary"
           >
-            <option value="default">Sort: Default</option>
-            <option value="price-asc">Price: Low → High</option>
-            <option value="price-desc">Price: High → Low</option>
+            <option value="default">{t.category.sortDefault}</option>
+            <option value="price-asc">{t.category.sortPriceLow}</option>
+            <option value="price-desc">{t.category.sortPriceHigh}</option>
           </select>
           <button
             onClick={() => setFilterOpen(!filterOpen)}
@@ -379,7 +384,7 @@ export default function CategoryPage() {
             }`}
           >
             <SlidersHorizontal size={15} />
-            Filter {activeTags.length > 0 && (
+            {t.category.filter} {activeTags.length > 0 && (
               <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center font-bold">{activeTags.length}</span>
             )}
           </button>
@@ -393,7 +398,7 @@ export default function CategoryPage() {
               className="overflow-hidden"
             >
               <div className="pt-4">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Filter by Tag</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{t.category.filterByTag}</p>
                 <div className="flex flex-wrap gap-2">
                   {allTags.map(tag => (
                     <button
@@ -411,7 +416,7 @@ export default function CategoryPage() {
                   ))}
                   {activeTags.length > 0 && (
                     <button onClick={() => setActiveTags([])} className="px-3 py-1.5 rounded-full text-xs font-semibold text-gray-400 hover:text-gray-700 transition-colors">
-                      Clear all
+                      {t.category.clearAll}
                     </button>
                   )}
                 </div>
@@ -423,13 +428,13 @@ export default function CategoryPage() {
         <div className="mt-4 flex items-center justify-between">
           <p className="text-sm text-gray-400">
             {!loaded
-              ? <span className="flex items-center gap-2"><Loader2 size={14} className="animate-spin" /> Loading products…</span>
-              : <>Showing <span className="text-gray-900 font-semibold">{visible.length}</span> of <span className="text-gray-900 font-semibold">{filtered.length}</span> products</>
+              ? <span className="flex items-center gap-2"><Loader2 size={14} className="animate-spin" /> {t.category.loading}</span>
+              : <>{t.category.showing} <span className="text-gray-900 font-semibold">{visible.length}</span> {t.category.of} <span className="text-gray-900 font-semibold">{filtered.length}</span> {t.category.productsLabel}</>
             }
           </p>
           {(search || activeTags.length > 0) && (
             <button onClick={() => { setSearch(""); setActiveTags([]); setVisibleCount(6); }} className="text-xs font-semibold transition-colors" style={{ color: "#C4962A" }}>
-              Clear filters
+              {t.category.clearFilters}
             </button>
           )}
         </div>
@@ -445,11 +450,11 @@ export default function CategoryPage() {
           <div className="text-center py-24">
             <Package size={56} className="text-gray-300 mx-auto mb-4" />
             <p className="text-gray-500 text-lg">
-              {(search || activeTags.length > 0) ? "No products match your search." : "No products in this category yet."}
+              {(search || activeTags.length > 0) ? t.category.noMatch : t.category.noProducts}
             </p>
             {(search || activeTags.length > 0) && (
               <button onClick={() => { setSearch(""); setActiveTags([]); }} className="mt-4 font-semibold transition-colors" style={{ color: "#C4962A" }}>
-                Clear filters
+                {t.category.clearFilters}
               </button>
             )}
           </div>
@@ -475,7 +480,7 @@ export default function CategoryPage() {
               className="px-10 py-3.5 rounded-xl font-bold text-gray-700 border border-gray-200 hover:border-[#C4962A] hover:text-[#C4962A] transition-all duration-200 text-sm bg-white"
               style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}
             >
-              Load More ({filtered.length - visibleCount} remaining)
+              {t.category.loadMore} ({filtered.length - visibleCount} remaining)
             </motion.button>
           </div>
         )}
@@ -485,10 +490,10 @@ export default function CategoryPage() {
       <section className="border-t py-14" style={{ background: "linear-gradient(135deg, #0a0a0a 0%, #1a1010 100%)", borderColor: "rgba(196,150,42,0.15)" }}>
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
-            Need a <span style={{ color: "#C4962A" }}>Custom Design?</span>
+            <span style={{ color: "#C4962A" }}>{t.category.customDesign}</span>
           </h2>
           <p className="text-gray-400 mb-7 text-base">
-            Share your artwork or brief — we'll print, pack, and deliver across India.
+            {t.category.customDesignDesc}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/customize">
@@ -497,7 +502,7 @@ export default function CategoryPage() {
                 className="px-8 py-3.5 rounded-xl font-bold text-white text-sm"
                 style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 18px rgba(229,62,62,0.35)" }}
               >
-                <Palette size={15} className="inline mr-2" /> Start Customizing
+                <Palette size={15} className="inline mr-2" /> {t.category.startCustomizing}
               </motion.button>
             </Link>
             <a
@@ -508,7 +513,7 @@ export default function CategoryPage() {
                 whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
                 className="px-8 py-3.5 rounded-xl font-bold text-gray-300 border border-gray-700 hover:border-[#C4962A] hover:text-[#C4962A] transition-all text-sm"
               >
-                WhatsApp Us <ArrowRight size={14} className="inline ml-1" />
+                {t.category.whatsappUs} <ArrowRight size={14} className="inline ml-1" />
               </motion.button>
             </a>
           </div>

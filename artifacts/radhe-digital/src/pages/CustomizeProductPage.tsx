@@ -9,6 +9,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/context/CartContext";
 import { useCustomizeProduct, type ColorVariant } from "@/hooks/useCustomizeApi";
+import { useLanguage } from "@/context/LanguageContext";
 
 /* ─── Print Position Card ─── */
 function PositionCard({
@@ -44,7 +45,7 @@ function PositionCard({
 
 /* ─── Upload Box ─── */
 function UploadBox({
-  label, sublabel, file, preview, inputRef, accept, onFileChange, onRemove, icon: Icon,
+  label, sublabel, file, preview, inputRef, accept, onFileChange, onRemove, icon: Icon, browseLabel,
 }: {
   label: string;
   sublabel?: string;
@@ -55,6 +56,7 @@ function UploadBox({
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onRemove: () => void;
   icon?: React.ElementType;
+  browseLabel: string;
 }) {
   const IconComp = Icon ?? Upload;
 
@@ -107,7 +109,7 @@ function UploadBox({
         className="text-sm font-bold px-4 py-2 rounded-full transition-colors"
         style={{ background: "#DC2626", color: "#ffffff" }}
       >
-        BROWSE FILE
+        {browseLabel}
       </span>
       <input
         ref={inputRef}
@@ -122,7 +124,7 @@ function UploadBox({
 
 /* ─── Section Card ─── */
 function SectionCard({
-  title, step, badge, badgeGreen, children, required,
+  title, step, badge, badgeGreen, children, required, requiredLabel,
 }: {
   title: string;
   step: number;
@@ -130,13 +132,13 @@ function SectionCard({
   badgeGreen?: boolean;
   children: React.ReactNode;
   required?: boolean;
+  requiredLabel?: string;
 }) {
   return (
     <div
       className="rounded-2xl border bg-white overflow-hidden"
       style={{ borderColor: "#e5e7eb", boxShadow: "0 1px 8px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)" }}
     >
-      {/* Card Header */}
       <div
         className="flex items-center justify-between px-5 py-4 border-b"
         style={{ borderColor: "#f3f4f6", background: "#fafafa" }}
@@ -150,7 +152,7 @@ function SectionCard({
           </span>
           <h2 className="text-gray-900 font-black text-xl tracking-tight">{title}</h2>
           {required && (
-            <span className="text-sm font-bold text-red-500">*required</span>
+            <span className="text-sm font-bold text-red-500">*{requiredLabel}</span>
           )}
         </div>
         {badge && (
@@ -166,8 +168,6 @@ function SectionCard({
           </span>
         )}
       </div>
-
-      {/* Card Body */}
       <div className="p-5">
         {children}
       </div>
@@ -177,10 +177,15 @@ function SectionCard({
 
 /* ─── Quantity Selector ─── */
 function QuantitySelector({
-  value, onChange,
+  value, onChange, pieceSingular, piecePlural, minimumOrder, orTypeNumber, bulkMsg,
 }: {
   value: number;
   onChange: (v: number) => void;
+  pieceSingular: string;
+  piecePlural: string;
+  minimumOrder: string;
+  orTypeNumber: string;
+  bulkMsg: string;
 }) {
   const [inputVal, setInputVal] = useState(String(value));
 
@@ -216,7 +221,6 @@ function QuantitySelector({
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        {/* Minus */}
         <button
           onClick={dec}
           disabled={value <= 1}
@@ -230,7 +234,6 @@ function QuantitySelector({
           <Minus size={18} />
         </button>
 
-        {/* Manual input */}
         <input
           type="number"
           min={1}
@@ -241,7 +244,6 @@ function QuantitySelector({
           style={{ borderColor: "#DC2626", color: "#111827" }}
         />
 
-        {/* Plus */}
         <button
           onClick={inc}
           className="w-12 h-12 rounded-xl border-2 flex items-center justify-center font-bold text-xl transition-all duration-150"
@@ -251,12 +253,11 @@ function QuantitySelector({
         </button>
 
         <div className="ml-1">
-          <p className="text-gray-900 font-bold text-base">{value} piece{value !== 1 ? "s" : ""}</p>
-          <p className="text-gray-400 text-sm">Minimum order: 1</p>
+          <p className="text-gray-900 font-bold text-base">{value} {value !== 1 ? piecePlural : pieceSingular}</p>
+          <p className="text-gray-400 text-sm">{minimumOrder}</p>
         </div>
       </div>
 
-      {/* Quick presets */}
       <div className="flex flex-wrap gap-2">
         {[1, 5, 10, 25, 50, 100].map(n => (
           <button
@@ -272,7 +273,7 @@ function QuantitySelector({
             {n}
           </button>
         ))}
-        <span className="px-3 py-1.5 text-xs text-gray-400 flex items-center">or type any number above</span>
+        <span className="px-3 py-1.5 text-xs text-gray-400 flex items-center">{orTypeNumber}</span>
       </div>
 
       {value >= 10 && (
@@ -282,7 +283,7 @@ function QuantitySelector({
           className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold"
           style={{ background: "rgba(234,179,8,0.1)", color: "#b45309", border: "1px solid rgba(234,179,8,0.3)" }}
         >
-          🎉 Bulk order! You qualify for a special bulk discount price.
+          {bulkMsg}
         </motion.div>
       )}
     </div>
@@ -293,11 +294,11 @@ function QuantitySelector({
 export default function CustomizeProductPage() {
   const { category, productSlug } = useParams<{ category: string; productSlug: string }>();
   const [, setLocation] = useLocation();
+  const { t } = useLanguage();
 
   const { product, loading, error } = useCustomizeProduct(category ?? "", productSlug ?? "");
   const { addItem, openCart } = useCart();
 
-  /* ── Print position ── */
   const positions = product?.printPositions ?? [];
   const [printPosition, setPrintPosition] = useState<string>("front");
 
@@ -307,7 +308,6 @@ export default function CustomizeProductPage() {
     }
   }, [product?.id]);
 
-  /* ── Color variant selection ── */
   const [selectedVariant, setSelectedVariant] = useState<ColorVariant | null>(null);
 
   useEffect(() => {
@@ -320,7 +320,6 @@ export default function CustomizeProductPage() {
 
   const displayImage = selectedVariant?.image || product?.image || "";
 
-  /* ── File states ── */
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const logoRef = useRef<HTMLInputElement>(null);
@@ -333,13 +332,9 @@ export default function CustomizeProductPage() {
   const [backPreview, setBackPreview] = useState<string | null>(null);
   const backRef = useRef<HTMLInputElement>(null);
 
-  /* ── Text ── */
   const [designInstructions, setDesignInstructions] = useState("");
-
-  /* ── Quantity ── */
   const [quantity, setQuantity] = useState(1);
 
-  /* ── T-Shirt size breakdown ── */
   const SIZES = ["S", "M", "L", "XL", "XXL", "3XL"] as const;
   type Size = typeof SIZES[number];
   const [sizeQty, setSizeQty] = useState<Record<Size, number>>({ S: 0, M: 0, L: 0, XL: 0, XXL: 0, "3XL": 0 });
@@ -353,11 +348,9 @@ export default function CustomizeProductPage() {
     setSizeQty(prev => ({ ...prev, [size]: n }));
   };
 
-  /* ── UI states ── */
   const [showError, setShowError] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  /* ── File handler factory ── */
   const makeFileHandler = (
     setFile: React.Dispatch<React.SetStateAction<File | null>>,
     setPreview: React.Dispatch<React.SetStateAction<string | null>>
@@ -385,14 +378,12 @@ export default function CustomizeProductPage() {
     if (ref.current) ref.current.value = "";
   };
 
-  /* ── Validation ── */
   const isBothSides = printPosition === "both";
   const hasLogo = !!logoFile;
   const hasDesign = !!(frontFile || backFile);
   const hasInstructions = designInstructions.trim().length > 0;
   const isValid = hasLogo || hasDesign || hasInstructions;
 
-  /* ── Save to cart ── */
   const handleSaveToCart = () => {
     if (!isValid) { setShowError(true); return; }
     setShowError(false);
@@ -424,7 +415,6 @@ export default function CustomizeProductPage() {
     setTimeout(() => { setSaved(false); openCart(); }, 1600);
   };
 
-  /* ── WhatsApp ── */
   const handleWhatsApp = () => {
     if (!isValid) { setShowError(true); return; }
     const printPositionLabel = positions.find(p => p.id === printPosition)?.label ?? printPosition;
@@ -451,7 +441,7 @@ export default function CustomizeProductPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <Loader2 size={28} className="animate-spin text-red-600 mx-auto mb-3" />
-          <p className="text-gray-400 text-sm">Loading product…</p>
+          <p className="text-gray-400 text-sm">{t.customizeProd.loading}</p>
         </div>
       </div>
     );
@@ -461,9 +451,9 @@ export default function CustomizeProductPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-500 text-lg mb-4">{error ?? "Product not found."}</p>
+          <p className="text-gray-500 text-lg mb-4">{error ?? t.customizeProd.notFound}</p>
           <button onClick={() => setLocation("/customize")} className="text-red-600 underline text-sm font-semibold">
-            Back to Customize
+            {t.customizeProd.backToCustomize}
           </button>
         </div>
       </div>
@@ -483,13 +473,12 @@ export default function CustomizeProductPage() {
             className="flex items-center gap-1.5 text-gray-500 hover:text-red-600 text-sm font-semibold transition-colors"
           >
             <ArrowLeft size={15} />
-            <span className="hidden sm:inline">Back</span>
+            <span className="hidden sm:inline">{t.customizeProd.back}</span>
           </button>
           <span className="text-gray-300">/</span>
-          {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-xs text-gray-400 flex-wrap">
             <span className="hover:text-red-600 cursor-pointer font-medium" onClick={() => setLocation("/customize")}>
-              Customize
+              {t.customizeProd.customize}
             </span>
             <ChevronRight size={11} />
             <span className="hover:text-red-600 cursor-pointer font-medium" onClick={() => setLocation(`/customize/${category}`)}>
@@ -504,7 +493,7 @@ export default function CustomizeProductPage() {
               style={{ background: "#DC2626" }}
             >
               <Sparkles size={11} />
-              Customization Studio
+              {t.customizeProd.studio}
             </span>
           </div>
         </div>
@@ -514,12 +503,9 @@ export default function CustomizeProductPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-8">
 
-          {/* ══════════════════════════════════════
-              LEFT: Product Preview + Info
-          ══════════════════════════════════════ */}
+          {/* LEFT: Product Preview + Info */}
           <div className="lg:sticky lg:top-20 lg:self-start space-y-4">
 
-            {/* Product Image */}
             <div
               className="rounded-2xl overflow-hidden bg-white border border-gray-200"
               style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)" }}
@@ -530,7 +516,6 @@ export default function CustomizeProductPage() {
                   alt={product.name}
                   className="w-full h-full object-cover"
                 />
-                {/* Print position overlay badge */}
                 <div className="absolute top-3 left-3">
                   <span
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white"
@@ -539,7 +524,6 @@ export default function CustomizeProductPage() {
                     <Award size={11} /> {printPositionLabel}
                   </span>
                 </div>
-                {/* Selected color badge */}
                 {selectedVariant && (
                   <div className="absolute top-3 right-3">
                     <span
@@ -552,10 +536,9 @@ export default function CustomizeProductPage() {
                 )}
               </div>
 
-              {/* Color Variants Selector */}
               {(product.colorVariants?.length ?? 0) > 0 && (
                 <div className="px-5 pb-5 pt-4 border-t border-gray-100">
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Select Color</p>
+                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">{t.customizeProd.selectColor}</p>
                   <div className="flex flex-wrap gap-2.5">
                     {product.colorVariants.map((v, i) => (
                       <button
@@ -585,7 +568,6 @@ export default function CustomizeProductPage() {
                 </div>
               )}
 
-              {/* Product info inside the card */}
               <div className="p-5 border-t border-gray-100">
                 <h1 className="text-2xl font-black text-gray-900 leading-tight mb-1">
                   {product.name}
@@ -599,11 +581,11 @@ export default function CustomizeProductPage() {
                     <span className="text-3xl font-black" style={{ color: "#DC2626" }}>
                       {product.priceLabel}
                     </span>
-                    <span className="text-gray-400 text-sm font-medium">/ piece</span>
+                    <span className="text-gray-400 text-sm font-medium">{t.customizeProd.pieceLabel}</span>
                   </div>
                   {quantity >= 10 && (
                     <span className="text-xs font-bold px-2 py-1 rounded-full bg-yellow-50 text-yellow-700 border border-yellow-200">
-                      Bulk Rate
+                      {t.customizeProd.bulkRate}
                     </span>
                   )}
                 </div>
@@ -616,82 +598,78 @@ export default function CustomizeProductPage() {
               style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.06)" }}
             >
               <p className="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">
-                Order Summary
+                {t.customizeProd.orderSummary}
               </p>
               <div className="space-y-2.5">
-                <SummaryRow label="Product" value={product.name} />
+                <SummaryRow label={t.customizeProd.productLabel} value={product.name} />
                 {selectedVariant && (
-                  <SummaryRow label="Color" value={selectedVariant.color} valueColor={selectedVariant.hex} />
+                  <SummaryRow label={t.customizeProd.colorLabel} value={selectedVariant.color} valueColor={selectedVariant.hex} />
                 )}
-                <SummaryRow label="Print Position" value={printPositionLabel} valueColor="#DC2626" />
+                <SummaryRow label={t.customizeProd.printPositionLabel} value={printPositionLabel} valueColor="#DC2626" />
                 {isTShirt ? (
                   <>
                     {SIZES.filter(s => sizeQty[s] > 0).map(s => (
                       <SummaryRow key={s} label={`Size ${s}`} value={`${sizeQty[s]} pc${sizeQty[s] > 1 ? "s" : ""}`} />
                     ))}
-                    <SummaryRow label="Total Pieces" value={`${totalSizeQty} piece${totalSizeQty !== 1 ? "s" : ""}`} />
+                    <SummaryRow label={t.customizeProd.totalPiecesLabel} value={`${totalSizeQty} ${t.customizeProd.piecePlural}`} />
                   </>
                 ) : (
-                  <SummaryRow label="Quantity" value={`${quantity} piece${quantity > 1 ? "s" : ""}`} />
+                  <SummaryRow label={t.customizeProd.quantityLabel} value={`${quantity} ${quantity !== 1 ? t.customizeProd.piecePlural : t.customizeProd.pieceSingular}`} />
                 )}
                 <div className="border-t border-gray-100 pt-2.5 mt-1">
                   <SummaryRow
-                    label="Base Total"
+                    label={t.customizeProd.baseTotalLabel}
                     value={`₹${(product.price * effectiveQty).toLocaleString("en-IN")}`}
                     valueColor="#DC2626"
                     bold
                     large
                   />
                 </div>
-                {hasLogo && <SummaryRow label="Logo" value="Uploaded ✓" valueColor="#16a34a" />}
+                {hasLogo && <SummaryRow label={t.customizeProd.logoLabel} value={t.customizeProd.uploadedMark} valueColor="#16a34a" />}
                 {hasDesign && (
                   <SummaryRow
-                    label={isBothSides ? "Designs" : "Design"}
+                    label={isBothSides ? t.customizeProd.designsLabel : t.customizeProd.designLabel}
                     value={isBothSides
-                      ? [frontFile && "Front ✓", backFile && "Back ✓"].filter(Boolean).join(", ")
-                      : "Uploaded ✓"
+                      ? [frontFile && `Front ✓`, backFile && `Back ✓`].filter(Boolean).join(", ")
+                      : t.customizeProd.uploadedMark
                     }
                     valueColor="#16a34a"
                   />
                 )}
-                {hasInstructions && <SummaryRow label="Instructions" value="Added ✓" valueColor="#16a34a" />}
+                {hasInstructions && <SummaryRow label={t.customizeProd.instructionsLabel} value={t.customizeProd.addedMark} valueColor="#16a34a" />}
               </div>
               <p className="text-gray-400 text-xs mt-4 leading-relaxed">
-                * Final price may vary by print complexity & bulk quantity.
+                {t.customizeProd.finalPriceNote}
               </p>
             </div>
           </div>
 
-          {/* ══════════════════════════════════════
-              RIGHT: Customization Form
-          ══════════════════════════════════════ */}
+          {/* RIGHT: Customization Form */}
           <div className="space-y-5">
 
-            {/* Page Title */}
             <div className="mb-2">
-              <h2 className="text-4xl font-black text-gray-900 tracking-tight leading-tight">Customize Your Product</h2>
+              <h2 className="text-4xl font-black text-gray-900 tracking-tight leading-tight">{t.customizeProd.customizeYour}</h2>
               <p className="text-gray-500 text-base mt-2">
-                Fill in your design details below. At least one of logo, design, or instructions is required.
+                {t.customizeProd.customizeYourDesc}
               </p>
             </div>
 
             {/* 1. Quantity / Size */}
             {isTShirt ? (
               <SectionCard
-                title="SIZE & QUANTITY"
+                title={t.customizeProd.sizeQtyTitle}
                 step={1}
-                badge={totalSizeQty > 0 ? `${totalSizeQty} pcs` : "Required"}
+                badge={totalSizeQty > 0 ? `${totalSizeQty} pcs` : t.customizeProd.requiredBadge}
                 badgeGreen={totalSizeQty > 0}
+                requiredLabel="required"
               >
                 <div className="space-y-4">
-                  <p className="text-gray-500 text-base">Enter how many pieces you need per size. Leave blank if not required.</p>
+                  <p className="text-gray-500 text-base">{t.customizeProd.sizeQtyDesc}</p>
 
-                  {/* Size grid */}
                   <div className="space-y-2">
-                    {/* Header row */}
                     <div className="grid grid-cols-[80px_1fr_auto] gap-3 px-1">
-                      <span className="text-sm font-extrabold text-gray-400 uppercase tracking-wider">Size</span>
-                      <span className="text-sm font-extrabold text-gray-400 uppercase tracking-wider">Quantity (pieces)</span>
+                      <span className="text-sm font-extrabold text-gray-400 uppercase tracking-wider">{t.customizeProd.sizeHeader}</span>
+                      <span className="text-sm font-extrabold text-gray-400 uppercase tracking-wider">{t.customizeProd.qtyHeader}</span>
                       <span className="w-20" />
                     </div>
 
@@ -705,7 +683,6 @@ export default function CustomizeProductPage() {
                             : { borderColor: "#e5e7eb", background: "#fafafa" }
                         }
                       >
-                        {/* Size badge */}
                         <span
                           className="w-12 h-10 rounded-lg flex items-center justify-center text-base font-black border-2"
                           style={
@@ -717,7 +694,6 @@ export default function CustomizeProductPage() {
                           {size}
                         </span>
 
-                        {/* Quantity input */}
                         <input
                           type="number"
                           min={0}
@@ -731,7 +707,6 @@ export default function CustomizeProductPage() {
                           }}
                         />
 
-                        {/* +/- stepper */}
                         <div className="flex items-center gap-1 w-20 flex-shrink-0">
                           <button
                             onClick={() => setSizeAmount(size, String(Math.max(0, sizeQty[size] - 1)))}
@@ -752,7 +727,6 @@ export default function CustomizeProductPage() {
                     ))}
                   </div>
 
-                  {/* Total bar */}
                   <div
                     className="flex items-center justify-between px-4 py-3 rounded-xl border-2"
                     style={
@@ -761,7 +735,7 @@ export default function CustomizeProductPage() {
                         : { borderColor: "#e5e7eb", background: "#f9fafb" }
                     }
                   >
-                    <span className="text-base font-bold text-gray-700">Total T-Shirts</span>
+                    <span className="text-base font-bold text-gray-700">{t.customizeProd.totalTShirts}</span>
                     <div className="flex items-center gap-2">
                       {sizeBreakdown && (
                         <span className="text-sm text-gray-400 font-medium">{sizeBreakdown}</span>
@@ -782,20 +756,28 @@ export default function CustomizeProductPage() {
                       className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold"
                       style={{ background: "rgba(234,179,8,0.1)", color: "#b45309", border: "1px solid rgba(234,179,8,0.3)" }}
                     >
-                      🎉 Bulk order! You qualify for a special bulk discount price.
+                      {t.customizeProd.bulkMsg}
                     </motion.div>
                   )}
                 </div>
               </SectionCard>
             ) : (
-              <SectionCard title="QUANTITY" step={1}>
-                <QuantitySelector value={quantity} onChange={setQuantity} />
+              <SectionCard title={t.customizeProd.quantityTitle} step={1} requiredLabel="required">
+                <QuantitySelector
+                  value={quantity}
+                  onChange={setQuantity}
+                  pieceSingular={t.customizeProd.pieceSingular}
+                  piecePlural={t.customizeProd.piecePlural}
+                  minimumOrder={t.customizeProd.minimumOrder}
+                  orTypeNumber={t.customizeProd.orTypeNumber}
+                  bulkMsg={t.customizeProd.bulkMsg}
+                />
               </SectionCard>
             )}
 
             {/* 2. Print Position */}
             {positions.length > 0 && (
-              <SectionCard title="PRINT POSITION" step={2}>
+              <SectionCard title={t.customizeProd.printPositionTitle} step={2} requiredLabel="required">
                 <div className="grid grid-cols-3 gap-3">
                   {positions.map(pos => (
                     <PositionCard
@@ -811,11 +793,12 @@ export default function CustomizeProductPage() {
 
             {/* 3. Upload Logo */}
             <SectionCard
-              title="UPLOAD YOUR LOGO"
+              title={t.customizeProd.uploadLogoTitle}
               step={3}
-              badge={hasLogo ? "Uploaded ✓" : "Optional"}
+              badge={hasLogo ? t.customizeProd.uploadedMark : t.customizeProd.logoOptional}
               badgeGreen={hasLogo}
               required={!isValid && showError}
+              requiredLabel="required"
             >
               <UploadBox
                 label="Drop your logo here or click to browse"
@@ -827,21 +810,23 @@ export default function CustomizeProductPage() {
                 icon={Award}
                 onFileChange={makeFileHandler(setLogoFile, setLogoPreview)}
                 onRemove={makeRemoveHandler(setLogoFile, setLogoPreview, logoRef)}
+                browseLabel={t.customizeProd.browseFile}
               />
             </SectionCard>
 
             {/* 4. Upload Design */}
             <SectionCard
-              title={isBothSides ? "UPLOAD YOUR DESIGNS (FRONT & BACK)" : "UPLOAD YOUR DESIGN"}
+              title={isBothSides ? t.customizeProd.uploadDesignsTitle : t.customizeProd.uploadDesignTitle}
               step={4}
-              badge={hasDesign ? "Uploaded ✓" : "Optional"}
+              badge={hasDesign ? t.customizeProd.uploadedMark : t.customizeProd.designOptional}
               badgeGreen={hasDesign}
               required={!isValid && showError}
+              requiredLabel="required"
             >
               {isBothSides ? (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs font-extrabold text-gray-500 uppercase tracking-wider mb-2">Front Design</p>
+                    <p className="text-xs font-extrabold text-gray-500 uppercase tracking-wider mb-2">{t.customizeProd.frontDesign}</p>
                     <UploadBox
                       label="Upload Front"
                       sublabel="PNG, JPG, PDF"
@@ -852,10 +837,11 @@ export default function CustomizeProductPage() {
                       icon={ImageIcon}
                       onFileChange={makeFileHandler(setFrontFile, setFrontPreview)}
                       onRemove={makeRemoveHandler(setFrontFile, setFrontPreview, frontRef)}
+                      browseLabel={t.customizeProd.browseFile}
                     />
                   </div>
                   <div>
-                    <p className="text-xs font-extrabold text-gray-500 uppercase tracking-wider mb-2">Back Design</p>
+                    <p className="text-xs font-extrabold text-gray-500 uppercase tracking-wider mb-2">{t.customizeProd.backDesign}</p>
                     <UploadBox
                       label="Upload Back"
                       sublabel="PNG, JPG, PDF"
@@ -866,6 +852,7 @@ export default function CustomizeProductPage() {
                       icon={ImageIcon}
                       onFileChange={makeFileHandler(setBackFile, setBackPreview)}
                       onRemove={makeRemoveHandler(setBackFile, setBackPreview, backRef)}
+                      browseLabel={t.customizeProd.browseFile}
                     />
                   </div>
                 </div>
@@ -880,26 +867,28 @@ export default function CustomizeProductPage() {
                   icon={ImageIcon}
                   onFileChange={makeFileHandler(setFrontFile, setFrontPreview)}
                   onRemove={makeRemoveHandler(setFrontFile, setFrontPreview, frontRef)}
+                  browseLabel={t.customizeProd.browseFile}
                 />
               )}
             </SectionCard>
 
             {/* 5. Design Instructions */}
             <SectionCard
-              title="DESIGN INSTRUCTIONS"
+              title={t.customizeProd.designInstrTitle}
               step={5}
-              badge={hasInstructions ? "Added ✓" : "Optional"}
+              badge={hasInstructions ? t.customizeProd.addedMark : t.customizeProd.instrOptional}
               badgeGreen={hasInstructions}
               required={!isValid && showError}
+              requiredLabel="required"
             >
               <div className="space-y-3">
                 <p className="text-gray-500 text-base leading-relaxed">
-                  Describe exactly what you want — text, colors, placement, fonts, or any other details. Our design team will follow your instructions precisely.
+                  {t.customizeProd.instrDesc}
                 </p>
                 <Textarea
                   value={designInstructions}
                   onChange={e => { setDesignInstructions(e.target.value); setShowError(false); }}
-                  placeholder={`Example: "Print our company logo on the front in white. Add 'Est. 2020' text below. Use bold Montserrat font."`}
+                  placeholder={t.customizeProd.instrPlaceholder}
                   className="border-gray-200 text-gray-900 placeholder-gray-400 focus:border-red-400 rounded-xl resize-none h-32 text-base"
                   style={{ background: "#fafafa" }}
                 />
@@ -909,7 +898,7 @@ export default function CustomizeProductPage() {
                 >
                   <FileText size={16} className="text-red-400 flex-shrink-0 mt-0.5" />
                   <p className="text-gray-600 text-sm leading-relaxed">
-                    <strong className="text-gray-800">No design file?</strong> Just describe your idea here — our team will create it for you at no extra charge.
+                    <strong className="text-gray-800">{t.customizeProd.noDesignFile}</strong> {t.customizeProd.noDesignFileDesc}
                   </p>
                 </div>
               </div>
@@ -927,9 +916,9 @@ export default function CustomizeProductPage() {
                 >
                   <AlertTriangle size={20} className="text-red-500 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-red-700 font-bold text-base">Design information required</p>
+                    <p className="text-red-700 font-bold text-base">{t.customizeProd.validationTitle}</p>
                     <p className="text-red-600 text-sm mt-0.5 leading-snug">
-                      Please provide at least one of: Upload Logo, Upload Design, or Design Instructions before proceeding.
+                      {t.customizeProd.validationDesc}
                     </p>
                   </div>
                 </motion.div>
@@ -938,7 +927,6 @@ export default function CustomizeProductPage() {
 
             {/* ── CTA Buttons ── */}
             <div className="space-y-3 pt-2">
-              {/* Primary */}
               <motion.button
                 onClick={handleSaveToCart}
                 whileHover={isValid ? { scale: 1.01, y: -1 } : {}}
@@ -953,24 +941,23 @@ export default function CustomizeProductPage() {
                 }
               >
                 {saved ? (
-                  <><CheckCircle2 size={20} /> ORDER SAVED — OPENING CART</>
+                  <><CheckCircle2 size={20} /> {t.customizeProd.orderSaved}</>
                 ) : isValid ? (
                   <div className="flex items-center justify-between w-full px-1">
                     <div className="flex items-center gap-2">
                       <Sparkles size={20} />
-                      <span>PROCEED TO ORDER</span>
+                      <span>{t.customizeProd.proceedToOrder}</span>
                     </div>
                     <div className="flex flex-col items-end leading-tight">
                       <span className="text-sm font-bold opacity-90">₹{(product.price * effectiveQty).toLocaleString("en-IN")}</span>
-                      <span className="text-xs font-medium opacity-70">{effectiveQty} pc{effectiveQty > 1 ? "s" : ""}</span>
+                      <span className="text-xs font-medium opacity-70">{effectiveQty} {effectiveQty > 1 ? t.customizeProd.piecePlural : t.customizeProd.pieceSingular}</span>
                     </div>
                   </div>
                 ) : (
-                  <><FileText size={18} /> PROVIDE DESIGN INFORMATION TO CONTINUE</>
+                  <><FileText size={18} /> {t.customizeProd.provideDesign}</>
                 )}
               </motion.button>
 
-              {/* Secondary: WhatsApp */}
               <motion.button
                 onClick={handleWhatsApp}
                 whileHover={{ scale: 1.01 }}
@@ -979,12 +966,12 @@ export default function CustomizeProductPage() {
                 style={{ borderColor: "#25d366", color: "#16a34a", background: "rgba(37,211,102,0.05)" }}
               >
                 <MessageCircle size={20} style={{ color: "#25d366" }} />
-                SUBMIT REQUEST VIA WHATSAPP
+                {t.customizeProd.submitWhatsApp}
               </motion.button>
             </div>
 
             <p className="text-center text-gray-400 text-sm pb-4">
-              No upfront payment · Our team will confirm your order via WhatsApp before printing starts.
+              {t.customizeProd.noUpfrontNote}
             </p>
           </div>
         </div>
