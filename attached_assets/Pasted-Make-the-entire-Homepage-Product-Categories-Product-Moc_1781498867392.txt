@@ -1,0 +1,56 @@
+Make the entire Homepage Product Categories / Product Mockup section fully dynamic and editable from the Admin Panel.
+
+Requirements:
+
+1. Remove all hardcoded images, icons, and mockups from the homepage.
+2. Every category card (T-Shirts, Mugs, Caps, Pens, Badges, Photo Frames, Corporate Gifts, etc.) must have:
+   - Category Name
+   - Category Image
+   - Display Order
+   - Enable/Disable Toggle
+
+3. Create an Admin Panel section called:
+   "Homepage Categories Manager"
+
+4. In the Admin Panel, I should be able to:
+   - Upload a real image from my device/gallery
+   - Replace an existing image
+   - Delete an image
+   - Change category name
+   - Change category order
+   - Show/Hide categories
+   - Save changes instantly
+
+5. Homepage must automatically display the uploaded images from the database/storage.
+   No hardcoded images should remain anywhere in the homepage category section.
+
+6. IMPORTANT:
+   - Do NOT generate or add any images automatically.
+   - Do NOT use placeholder images.
+   - Do NOT use AI-generated images.
+   - Show only images that I upload from the Admin Panel.
+   - If no image is uploaded, display an empty upload state with an "Upload Image" message.
+
+7. Image Requirements:
+   - JPG, PNG, WEBP support
+   - Image compression and optimization
+   - Responsive display on mobile, tablet, and desktop
+   - Proper image cropping and aspect ratio handling
+
+8. Database Requirements:
+   - Store image URL/path in database
+   - Store category name
+   - Store display order
+   - Store visibility status
+
+9. Existing Homepage Mockups:
+   Convert ALL homepage mockup/image sections into editable sections managed from Admin Panel.
+   Any image currently visible on the homepage should become replaceable through image upload.
+
+10. Future-Proof:
+   - New categories can be added from Admin Panel without code changes.
+   - Unlimited categories supported.
+   - Changes should reflect instantly on the website after saving.
+
+Goal:
+The website owner should be able to upload real photos from their device and manage every homepage image/mockup directly from the Admin Panel without touching the code.

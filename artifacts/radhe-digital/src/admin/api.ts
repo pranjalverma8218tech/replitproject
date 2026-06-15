@@ -288,3 +288,41 @@ export const getDashboardStats = () => apiFetch<DashboardStats>("/dashboard/stat
 // ─── DB status banner component (React JSX) ──────────────────────────────────
 export const DB_NOT_CONNECTED_MSG =
   "Database not connected. Set DB_HOST, DB_USER, DB_PASSWORD, DB_NAME environment variables and restart the API server.";
+
+// ─── Homepage Categories ──────────────────────────────────────────────────────
+export interface HomepageCategory {
+  id: number;
+  slug: string;
+  name: string;
+  nameHi: string | null;
+  imageUrl: string | null;
+  displayOrder: number;
+  isVisible: number;
+}
+
+export const getAdminHomepageCategories = () =>
+  apiFetch<HomepageCategory[]>("/homepage-categories/all");
+
+export const updateHomepageCategory = (
+  id: number,
+  data: { name?: string; nameHi?: string | null; imageUrl?: string | null; displayOrder?: number; isVisible?: number }
+) => {
+  const body: Record<string, unknown> = {};
+  if ("name"          in data) body.name          = data.name;
+  if ("nameHi"        in data) body.name_hi       = data.nameHi;
+  if ("imageUrl"      in data) body.image_url     = data.imageUrl;
+  if ("displayOrder"  in data) body.display_order = data.displayOrder;
+  if ("isVisible"     in data) body.is_visible    = data.isVisible;
+  return apiFetch<HomepageCategory>(`/homepage-categories/${id}`, { method: "PUT", body: JSON.stringify(body) });
+};
+
+export const createHomepageCategory = (data: {
+  slug: string; name: string; nameHi?: string; imageUrl?: string; displayOrder?: number;
+}) =>
+  apiFetch<HomepageCategory>("/homepage-categories", {
+    method: "POST",
+    body: JSON.stringify({ slug: data.slug, name: data.name, name_hi: data.nameHi, image_url: data.imageUrl, display_order: data.displayOrder }),
+  });
+
+export const deleteHomepageCategory = (id: number) =>
+  apiFetch<{ deleted: number }>(`/homepage-categories/${id}`, { method: "DELETE" });

@@ -10,47 +10,33 @@ import {
 import { CATEGORIES } from "@/data/products";
 import { useApiProducts, type ApiProductData } from "@/hooks/useApiProducts";
 import { useLanguage } from "@/context/LanguageContext";
+import { useHomepageCategories } from "@/hooks/useHomepageCategories";
 const logoSrc = "/radhe-logo.png";
 
-/* ─── Category Product Photography ─── */
-const CATEGORY_PHOTOS: Record<string, { src: string; alt: string }> = {
-  "t-shirts": {
-    src: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=500&h=500&q=85",
-    alt: "Custom printed t-shirt",
-  },
-  "mugs": {
-    src: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=500&h=500&q=85",
-    alt: "Premium branded coffee mug",
-  },
-  "caps": {
-    src: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=500&h=500&q=85",
-    alt: "Custom embroidered cap",
-  },
-  "pens": {
-    src: "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&w=500&h=500&q=85",
-    alt: "Premium corporate branding pen",
-  },
-  "badges": {
-    src: "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=500&h=500&q=85",
-    alt: "Professional custom badge",
-  },
-  "photo-frames": {
-    src: "https://images.unsplash.com/photo-1513031640451-77ef0e87f0a2?auto=format&fit=crop&w=500&h=500&q=85",
-    alt: "Premium printed photo frame",
-  },
-  "corporate-gifts": {
-    src: "https://images.unsplash.com/photo-1563208723-7b1f4f34b8ef?auto=format&fit=crop&w=500&h=500&q=85",
-    alt: "Luxury branded corporate gift set",
-  },
+/* ─── Category Icons ─── */
+const CAT_ICONS: Record<string, JSX.Element> = {
+  "t-shirts": <Shirt size={18}/>, "mugs": <Coffee size={18}/>, "caps": <HardHat size={18}/>,
+  "pens": <Pen size={18}/>, "badges": <Award size={18}/>, "photo-frames": <Image size={18}/>,
+  "corporate-gifts": <Gift size={18}/>,
 };
 
-function CategoryImage({ slug }: { slug: string }) {
-  const data = CATEGORY_PHOTOS[slug] ?? CATEGORY_PHOTOS["t-shirts"];
+/* ─── Category Image ─── */
+function CategoryImage({ slug, imageUrl }: { slug: string; imageUrl: string | null }) {
+  if (!imageUrl) {
+    return (
+      <div className="w-full h-full bg-[#1a1a1a] flex flex-col items-center justify-center gap-2">
+        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center" style={{ color: "rgba(255,255,255,0.15)" }}>
+          {CAT_ICONS[slug] ?? <Image size={18}/>}
+        </div>
+        <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.1)" }}>No image uploaded</span>
+      </div>
+    );
+  }
   return (
     <>
       <img
-        src={data.src}
-        alt={data.alt}
+        src={imageUrl}
+        alt={slug}
         className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
         loading="lazy"
         draggable={false}
@@ -61,14 +47,8 @@ function CategoryImage({ slug }: { slug: string }) {
   );
 }
 
-const CAT_ICONS: Record<string, JSX.Element> = {
-  "t-shirts": <Shirt size={18}/>, "mugs": <Coffee size={18}/>, "caps": <HardHat size={18}/>,
-  "pens": <Pen size={18}/>, "badges": <Award size={18}/>, "photo-frames": <Image size={18}/>,
-  "corporate-gifts": <Gift size={18}/>,
-};
-
 /* ─── BestSellersCarousel ─── */
-function BestSellersCarousel() {
+function BestSellersCarousel({ categoryImages }: { categoryImages: Record<string, string | null> }) {
   const { t } = useLanguage();
   const tabs = CATEGORIES.map(c => c.label);
   const [active, setActive] = useState(0);
@@ -173,7 +153,7 @@ function BestSellersCarousel() {
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 14px rgba(0,0,0,0.07)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
                 >
                   <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden">
-                    <CategoryImage slug={currentCategory.slug}/>
+                    <CategoryImage slug={currentCategory.slug} imageUrl={categoryImages[currentCategory.slug] ?? null}/>
                     {product.badge && (
                       <span className="absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary text-white">{product.badge}</span>
                     )}
@@ -261,6 +241,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 /* ─── HomePage ─── */
 export default function HomePage() {
   const { t } = useLanguage();
+  const { categoryImages } = useHomepageCategories();
   const apiProducts = useApiProducts();
   const featuredBySlug: Record<string, ApiProductData> = {};
   Object.values(apiProducts).forEach(p => {
@@ -555,7 +536,7 @@ export default function HomePage() {
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
                   >
                     <div className="w-full aspect-square rounded-xl overflow-hidden relative mb-3">
-                      <CategoryImage slug={cat.slug}/>
+                      <CategoryImage slug={cat.slug} imageUrl={categoryImages[cat.slug] ?? null}/>
                     </div>
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-2" style={{ background: "rgba(196,150,42,0.1)", color: "#C4962A" }}>
                       {CAT_ICONS[cat.slug]}
@@ -610,7 +591,7 @@ export default function HomePage() {
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 14px rgba(0,0,0,0.07)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
                   >
                     <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden">
-                      <CategoryImage slug={cat.slug}/>
+                      <CategoryImage slug={cat.slug} imageUrl={categoryImages[cat.slug] ?? null}/>
                       {product?.badge && (
                         <span className="absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full bg-primary text-white">{product.badge}</span>
                       )}
@@ -659,7 +640,7 @@ export default function HomePage() {
             </h2>
             <p className="text-gray-500 text-base max-w-xl mx-auto">{t.bestSellers.subtitle}</p>
           </div>
-          <BestSellersCarousel/>
+          <BestSellersCarousel categoryImages={categoryImages}/>
         </div>
       </section>
 

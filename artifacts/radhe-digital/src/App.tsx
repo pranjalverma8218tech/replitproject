@@ -32,6 +32,7 @@ import AdminOrders from "@/admin/AdminOrders";
 import AdminCustomers from "@/admin/AdminCustomers";
 import AdminWhatsApp from "@/admin/AdminWhatsApp";
 import AdminSettings from "@/admin/AdminSettings";
+import AdminHomepageCategories from "@/admin/AdminHomepageCategories";
 import { useAdmin } from "@/admin/AdminContext";
 
 if ("scrollRestoration" in history) {
@@ -101,6 +102,11 @@ function AdminRouter() {
       <Route path="/admin/settings">
         <AdminProtectedRoute>
           <AdminLayout><AdminSettings /></AdminLayout>
+        </AdminProtectedRoute>
+      </Route>
+      <Route path="/admin/homepage-categories">
+        <AdminProtectedRoute>
+          <AdminLayout><AdminHomepageCategories /></AdminLayout>
         </AdminProtectedRoute>
       </Route>
       <Route path="/admin" component={AdminRedirect} />

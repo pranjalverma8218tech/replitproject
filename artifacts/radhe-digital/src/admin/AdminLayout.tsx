@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Package, ShoppingCart, Users, MessageCircle,
-  Settings, LogOut, Menu, X, ChevronRight, Bell, Paintbrush
+  Settings, LogOut, Menu, X, ChevronRight, Bell, Paintbrush, Images
 } from "lucide-react";
 import { useAdmin } from "./AdminContext";
 
@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { label: "Orders",                 path: "/admin/orders",             icon: ShoppingCart },
   { label: "Customers",              path: "/admin/customers",          icon: Users },
   { label: "WhatsApp Orders",        path: "/admin/whatsapp-orders",    icon: MessageCircle },
+  { label: "Homepage Images",        path: "/admin/homepage-categories", icon: Images },
   { label: "Settings",               path: "/admin/settings",           icon: Settings },
 ];
 
