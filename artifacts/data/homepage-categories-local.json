@@ -4,7 +4,7 @@
     "slug": "t-shirts",
     "name": "T-Shirts",
     "name_hi": "टी-शर्ट",
-    "image_url": "/api/uploads/1781516894953-k09o60hkh6.webp",
+    "image_url": "/api/uploads/1781517487813-ygdhjpw62vc.webp",
     "display_order": 1,
     "is_visible": 1
   },
@@ -13,7 +13,7 @@
     "slug": "mugs",
     "name": "Mugs",
     "name_hi": "मग",
-    "image_url": null,
+    "image_url": "/api/uploads/1781601933773-kanskklecha.webp",
     "display_order": 2,
     "is_visible": 1
   },
@@ -22,7 +22,7 @@
     "slug": "caps",
     "name": "Caps",
     "name_hi": "कैप",
-    "image_url": null,
+    "image_url": "/api/uploads/1781605932848-c3mh59sr79.webp",
     "display_order": 3,
     "is_visible": 1
   },
@@ -31,7 +31,7 @@
     "slug": "pens",
     "name": "Pens",
     "name_hi": "पेन",
-    "image_url": null,
+    "image_url": "/api/uploads/1781605972661-7nn7s29tnks.webp",
     "display_order": 4,
     "is_visible": 1
   },
@@ -40,7 +40,7 @@
     "slug": "badges",
     "name": "Badges",
     "name_hi": "बैज",
-    "image_url": null,
+    "image_url": "/api/uploads/1781605979788-x1cm0jxzcuc.webp",
     "display_order": 5,
     "is_visible": 1
   },
@@ -49,7 +49,7 @@
     "slug": "photo-frames",
     "name": "Photo Frames",
     "name_hi": "फोटो फ्रेम",
-    "image_url": null,
+    "image_url": "/api/uploads/1781606532295-axq61nbd0kh.webp",
     "display_order": 6,
     "is_visible": 1
   },
@@ -58,7 +58,7 @@
     "slug": "corporate-gifts",
     "name": "Corporate Gifts",
     "name_hi": "कॉर्पोरेट गिफ्ट",
-    "image_url": null,
+    "image_url": "/api/uploads/1781606432401-d141s3omfuq.webp",
     "display_order": 7,
     "is_visible": 1
   }

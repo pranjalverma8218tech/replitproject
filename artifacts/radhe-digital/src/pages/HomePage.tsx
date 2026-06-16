@@ -506,16 +506,29 @@ export default function HomePage() {
       </section>
 
       {/* ── CATEGORIES ── */}
-      <section className="bg-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+      <section className="relative py-24 overflow-hidden" style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)" }}>
+
+        {/* Decorative blurred shapes */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full" style={{ background: "radial-gradient(circle, rgba(196,150,42,0.04) 0%, transparent 70%)" }}/>
+          <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full" style={{ background: "radial-gradient(circle, rgba(239,68,68,0.03) 0%, transparent 70%)" }}/>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full" style={{ background: "radial-gradient(ellipse, rgba(196,150,42,0.025) 0%, transparent 65%)" }}/>
+        </div>
+
+        {/* Top divider line */}
+        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(229,231,235,0.8), transparent)" }}/>
+        {/* Bottom divider line */}
+        <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(229,231,235,0.8), transparent)" }}/>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
               {t.categories.badge}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900">
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 mt-2 text-gray-900" style={{ letterSpacing: "-0.01em" }}>
               {t.categories.title}
             </h2>
-            <p className="text-gray-500 text-base max-w-xl mx-auto">{t.categories.subtitle}</p>
+            <p className="text-gray-500 text-base max-w-xl mx-auto leading-relaxed">{t.categories.subtitle}</p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
@@ -529,13 +542,19 @@ export default function HomePage() {
               >
                 <Link href={`/categories/${cat.slug}`}>
                   <motion.div
-                    className="group flex flex-col items-center text-center p-5 bg-white border border-gray-100 rounded-2xl cursor-pointer transition-all duration-300"
+                    className="group flex flex-col items-center text-center p-4 bg-white border rounded-[20px] cursor-pointer transition-all duration-300"
                     whileHover={{ y: -6 }}
-                    style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 32px rgba(196,150,42,0.18)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.35)"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
+                    style={{ borderColor: "#e5e7eb", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.boxShadow = "0 16px 40px rgba(0,0,0,0.12)";
+                      (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.4)";
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 20px rgba(0,0,0,0.06)";
+                      (e.currentTarget as HTMLElement).style.borderColor = "#e5e7eb";
+                    }}
                   >
-                    <div className="w-full aspect-square rounded-xl overflow-hidden relative mb-3">
+                    <div className="w-full aspect-square rounded-xl overflow-hidden relative mb-3" style={{ background: "#fafafa" }}>
                       <CategoryImage slug={cat.slug} imageUrl={categoryImages[cat.slug] ?? null}/>
                     </div>
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-2" style={{ background: "rgba(196,150,42,0.1)", color: "#C4962A" }}>
@@ -548,9 +567,12 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="text-center mt-10">
+          <div className="text-center mt-14">
             <Link href="/categories">
-              <button className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold border text-sm transition-all duration-200 hover:bg-gray-50" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.35)" }}>
+              <button
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold border text-sm transition-all duration-200 hover:bg-[#faf7f0]"
+                style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.35)", boxShadow: "0 2px 12px rgba(196,150,42,0.1)" }}
+              >
                 {t.categories.browseAll} <ArrowRight size={15}/>
               </button>
             </Link>
