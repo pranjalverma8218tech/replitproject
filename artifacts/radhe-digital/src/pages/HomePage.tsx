@@ -268,7 +268,7 @@ export default function HomePage() {
 
       {/* ── HERO ── */}
       <section
-        className="relative overflow-hidden sm:min-h-[92vh] flex items-center"
+        className="relative overflow-hidden sm:min-h-[85vh] flex items-center"
         style={{
           background: "linear-gradient(145deg, #0e0e0e 0%, #161010 25%, #1f0a0a 50%, #2a0d0d 70%, #1a1010 85%, #111111 100%)",
         }}
@@ -506,7 +506,7 @@ export default function HomePage() {
       </section>
 
       {/* ── CATEGORIES ── */}
-      <section className="relative py-24 overflow-hidden" style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)" }}>
+      <section className="relative py-14 overflow-hidden" style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)" }}>
 
         {/* Decorative blurred shapes */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -521,17 +521,17 @@ export default function HomePage() {
         <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(229,231,235,0.8), transparent)" }}/>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
+          <div className="text-center mb-9">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
               {t.categories.badge}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 mt-2 text-gray-900" style={{ letterSpacing: "-0.01em" }}>
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900" style={{ letterSpacing: "-0.01em" }}>
               {t.categories.title}
             </h2>
             <p className="text-gray-500 text-base max-w-xl mx-auto leading-relaxed">{t.categories.subtitle}</p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-5">
             {CATEGORIES.map((cat, i) => (
               <motion.div
                 key={cat.slug}
@@ -542,7 +542,7 @@ export default function HomePage() {
               >
                 <Link href={`/categories/${cat.slug}`}>
                   <motion.div
-                    className="group flex flex-col items-center text-center p-4 bg-white border rounded-[20px] cursor-pointer transition-all duration-300"
+                    className="group flex flex-col items-center text-center p-5 bg-white border rounded-[20px] cursor-pointer transition-all duration-300"
                     whileHover={{ y: -6 }}
                     style={{ borderColor: "#e5e7eb", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}
                     onMouseEnter={e => {
@@ -557,17 +557,17 @@ export default function HomePage() {
                     <div className="w-full aspect-square rounded-xl overflow-hidden relative mb-3" style={{ background: "#fafafa" }}>
                       <CategoryImage slug={cat.slug} imageUrl={categoryImages[cat.slug] ?? null}/>
                     </div>
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-2" style={{ background: "rgba(196,150,42,0.1)", color: "#C4962A" }}>
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-2" style={{ background: "rgba(196,150,42,0.1)", color: "#C4962A" }}>
                       {CAT_ICONS[cat.slug]}
                     </div>
-                    <h3 className="text-gray-900 font-bold text-sm leading-tight">{cat.label}</h3>
+                    <h3 className="text-gray-900 font-bold text-[15px] leading-tight">{cat.label}</h3>
                   </motion.div>
                 </Link>
               </motion.div>
             ))}
           </div>
 
-          <div className="text-center mt-14">
+          <div className="text-center mt-8">
             <Link href="/categories">
               <button
                 className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold border text-sm transition-all duration-200 hover:bg-[#faf7f0]"
@@ -581,9 +581,9 @@ export default function HomePage() {
       </section>
 
       {/* ── FEATURED PRODUCTS ── */}
-      <section className="py-20 bg-[#f7f7f5]">
+      <section className="py-14 bg-[#f7f7f5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
               {t.featured.badge}
             </span>
@@ -640,7 +640,7 @@ export default function HomePage() {
             })}
           </div>
 
-          <div className="text-center mt-10">
+          <div className="text-center mt-8">
             <Link href="/categories">
               <button className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold border text-sm transition-all duration-200 hover:bg-white" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.35)" }}>
                 {t.featured.viewAll} <ArrowRight size={15}/>
@@ -651,9 +651,9 @@ export default function HomePage() {
       </section>
 
       {/* ── BEST SELLERS CAROUSEL ── */}
-      <section className="bg-white py-20">
+      <section className="bg-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
+          <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
               {t.bestSellers.badge}
             </span>
@@ -667,9 +667,9 @@ export default function HomePage() {
       </section>
 
       {/* ── WHY CHOOSE US ── */}
-      <section className="py-20" style={{ background: "linear-gradient(135deg,#0a0a0a 0%,#111111 100%)" }}>
+      <section className="py-14" style={{ background: "linear-gradient(135deg,#0a0a0a 0%,#111111 100%)" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
               {t.why.badge}
             </span>
@@ -706,9 +706,9 @@ export default function HomePage() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="py-20 bg-[#f7f7f5]">
+      <section className="py-14 bg-[#f7f7f5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
+          <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
               {t.howItWorks.badge}
             </span>
@@ -743,7 +743,7 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-8">
             <Link href="/customize">
               <motion.button
                 whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
@@ -758,9 +758,9 @@ export default function HomePage() {
       </section>
 
       {/* ── TESTIMONIALS ── */}
-      <section className="py-20 bg-white">
+      <section className="py-14 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
               {t.testimonials.badge}
             </span>
