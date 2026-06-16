@@ -11,6 +11,7 @@ import { CATEGORIES } from "@/data/products";
 import { useApiProducts, type ApiProductData } from "@/hooks/useApiProducts";
 import { useLanguage } from "@/context/LanguageContext";
 import { useHomepageCategories } from "@/hooks/useHomepageCategories";
+import { useHomepageCms } from "@/hooks/useHomepageCms";
 const logoSrc = "/radhe-logo.png";
 
 /* ─── Category Icons ─── */
@@ -250,18 +251,35 @@ export default function HomePage() {
     }
   });
 
-  const trustItems = t.trust;
+  const { cmsData } = useHomepageCms();
 
+  const trustItems = cmsData?.trust?.map(i => i.text) ?? t.trust;
+
+  const WHY_ICON_MAP: Record<string, JSX.Element> = {
+    zap: <Zap size={22}/>, shield: <Shield size={22}/>, package: <Package size={22}/>,
+    palette: <Palette size={22}/>, truck: <Truck size={22}/>, users: <Users size={22}/>,
+    star: <Star size={22}/>, clock: <Clock size={22}/>, sparkles: <Sparkles size={22}/>,
+    check: <CheckCircle size={22}/>, award: <Award size={22}/>,
+  };
   const whyIcons = [<Zap size={22}/>, <Shield size={22}/>, <Truck size={22}/>, <Package size={22}/>, <Palette size={22}/>, <Users size={22}/>];
-  const whyChooseUs = t.why.items.map((item, i) => ({ ...item, icon: whyIcons[i] }));
+  const whyChooseUs = cmsData?.whyUs
+    ? cmsData.whyUs.map(item => ({ title: item.title, desc: item.description, icon: WHY_ICON_MAP[item.iconName] ?? <Zap size={22}/> }))
+    : t.why.items.map((item, i) => ({ ...item, icon: whyIcons[i] }));
 
+  const STEP_ICON_MAP: Record<string, JSX.Element> = {
+    sparkles: <Sparkles size={24}/>, palette: <Palette size={24}/>, clock: <Clock size={24}/>,
+    check: <CheckCircle size={24}/>, package: <Package size={24}/>, truck: <Truck size={24}/>,
+    zap: <Zap size={24}/>, star: <Star size={24}/>,
+  };
   const stepIcons = [<Sparkles size={24}/>, <Palette size={24}/>, <Clock size={24}/>, <CheckCircle size={24}/>];
   const stepNums = ["01", "02", "03", "04"];
-  const steps = t.howItWorks.steps.map((s, i) => ({ ...s, icon: stepIcons[i], step: stepNums[i] }));
+  const steps = cmsData?.steps
+    ? cmsData.steps.map(s => ({ title: s.title, desc: s.description, icon: STEP_ICON_MAP[s.iconName] ?? <Sparkles size={24}/>, step: s.stepNumber }))
+    : t.howItWorks.steps.map((s, i) => ({ ...s, icon: stepIcons[i], step: stepNums[i] }));
 
-  const testimonials = t.testimonials.items;
+  const testimonials = cmsData?.testimonials ?? t.testimonials.items;
 
-  const faqs = t.faq.items;
+  const faqs = cmsData?.faqs?.map(f => ({ q: f.question, a: f.answer })) ?? t.faq.items;
 
   return (
     <div className="bg-white">
@@ -319,7 +337,7 @@ export default function HomePage() {
                   boxShadow: "0 0 20px rgba(196,150,42,0.12), inset 0 1px 0 rgba(255,255,255,0.06)",
                 }}
               >
-                <Zap size={14} className="fill-current"/> {t.hero.tag}
+                <Zap size={14} className="fill-current"/> {cmsData?.hero?.tag ?? t.hero.tag}
               </motion.div>
 
               <motion.h1
@@ -327,11 +345,11 @@ export default function HomePage() {
                 className="text-[36px] sm:text-[46px] md:text-[52px] lg:text-[60px] font-extrabold leading-[1.12] tracking-tight mb-2 text-white"
                 style={{ letterSpacing: "-0.015em" }}
               >
-                {t.hero.line1}{" "}
+                {cmsData?.hero?.line1 ?? t.hero.line1}{" "}
                 <span style={{
                   background: "linear-gradient(135deg, #FBBF24 0%, #F59E0B 40%, #D97706 100%)",
                   WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                }}>{t.hero.brand}</span>
+                }}>{cmsData?.hero?.brand ?? t.hero.brand}</span>
               </motion.h1>
               <motion.h1
                 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.18 }}
@@ -341,7 +359,7 @@ export default function HomePage() {
                 <span style={{
                   background: "linear-gradient(135deg, #FBBF24 0%, #F59E0B 40%, #D97706 100%)",
                   WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                }}>{t.hero.line2}</span>
+                }}>{cmsData?.hero?.line2 ?? t.hero.line2}</span>
               </motion.h1>
 
               <motion.p
@@ -349,7 +367,7 @@ export default function HomePage() {
                 className="text-base sm:text-lg text-gray-300 font-normal mb-8 max-w-lg leading-[1.7]"
                 style={{ color: "rgba(200,200,212,0.88)" }}
               >
-                {t.hero.subtitle}
+                {cmsData?.hero?.subtitle ?? t.hero.subtitle}
               </motion.p>
 
               <motion.div
@@ -365,7 +383,7 @@ export default function HomePage() {
                       boxShadow: "0 8px 32px rgba(220,38,38,0.5), 0 2px 8px rgba(220,38,38,0.3), inset 0 1px 0 rgba(255,255,255,0.15)",
                     }}
                   >
-                    <Sparkles size={20}/> {t.hero.startDesigning} <ArrowRight size={20}/>
+                    <Sparkles size={20}/> {cmsData?.hero?.btn1Text ?? t.hero.startDesigning} <ArrowRight size={20}/>
                   </motion.button>
                 </Link>
                 <Link href="/categories">
@@ -379,7 +397,7 @@ export default function HomePage() {
                       boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
                     }}
                   >
-                    {t.hero.browseProducts} <ChevronRight size={18}/>
+                    {cmsData?.hero?.btn2Text ?? t.hero.browseProducts} <ChevronRight size={18}/>
                   </motion.button>
                 </Link>
               </motion.div>
@@ -846,14 +864,14 @@ export default function HomePage() {
         </div>
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-5 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
-            {t.cta.badge}
+            {cmsData?.cta?.badge ?? t.cta.badge}
           </span>
           <h2 className="text-3xl sm:text-5xl font-extrabold mb-5 text-white leading-tight">
-            {t.cta.title}{" "}
-            <span style={{ color: "#C4962A" }}>{t.cta.highlight}</span>
+            {cmsData?.cta?.title ?? t.cta.title}{" "}
+            <span style={{ color: "#C4962A" }}>{cmsData?.cta?.highlight ?? t.cta.highlight}</span>
           </h2>
           <p className="text-gray-300 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-            {t.cta.subtitle}
+            {cmsData?.cta?.subtitle ?? t.cta.subtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/customize">
@@ -862,21 +880,21 @@ export default function HomePage() {
                 className="flex items-center gap-3 px-8 py-4 rounded-2xl font-extrabold text-lg text-white"
                 style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 6px 28px rgba(229,62,62,0.4)" }}
               >
-                {t.cta.startNow} <ArrowRight size={20}/>
+                {cmsData?.cta?.btn1Text ?? t.cta.startNow} <ArrowRight size={20}/>
               </motion.button>
             </Link>
-            <a href="https://wa.me/919319903380" target="_blank" rel="noopener noreferrer">
+            <a href={cmsData?.cta?.btn2Link ?? "https://wa.me/919319903380"} target="_blank" rel="noopener noreferrer">
               <motion.button
                 whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
                 className="flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-base border text-white hover:bg-white/5 transition-all"
                 style={{ borderColor: "rgba(255,255,255,0.2)" }}
               >
-                {t.cta.whatsapp}
+                {cmsData?.cta?.btn2Text ?? t.cta.whatsapp}
               </motion.button>
             </a>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 mt-12">
-            {t.cta.points.map(item => (
+            {(cmsData?.cta ? [cmsData.cta.point1, cmsData.cta.point2, cmsData.cta.point3].filter(Boolean) : t.cta.points).map(item => (
               <div key={item} className="flex items-center gap-2 text-sm text-gray-400">
                 <CheckCircle size={14} style={{ color: "#C4962A" }}/> {item}
               </div>

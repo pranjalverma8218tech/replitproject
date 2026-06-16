@@ -8,6 +8,7 @@ import dashboardRouter             from "./dashboard";
 import authRouter                  from "./auth";
 import uploadRouter                from "./upload";
 import homepageCategoriesRouter    from "./homepageCategories";
+import homepageCmsRouter           from "./homepageCms";
 
 const router: IRouter = Router();
 
@@ -20,5 +21,6 @@ router.use("/customers",             customersRouter);
 router.use("/dashboard",             dashboardRouter);
 router.use("/upload",                uploadRouter);
 router.use("/homepage-categories",   homepageCategoriesRouter);
+router.use("/homepage-cms",          homepageCmsRouter);
 
 export default router;

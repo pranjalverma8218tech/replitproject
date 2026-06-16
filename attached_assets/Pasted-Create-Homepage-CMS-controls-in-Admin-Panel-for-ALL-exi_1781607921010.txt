@@ -1,0 +1,182 @@
+Create Homepage CMS controls in Admin Panel for ALL existing homepage sections.
+
+Current Homepage Sections:
+
+1. Hero Section
+2. Everything We Can Print
+3. Most Popular Picks
+4. Top Products by Category
+5. The Radhe Digital Advantage
+6. From Idea to Delivery in 4 Steps
+7. Customer Reviews
+8. FAQ Section
+9. Final CTA Section
+10. Footer
+
+=================================
+ADMIN PANEL → HOMEPAGE MANAGER
+==============================
+
+Create a dedicated Homepage Manager.
+
+Each section must have its own edit panel.
+
+=================================
+
+1. HERO SECTION
+   =================================
+
+Allow editing:
+
+* Hero Image
+* Hero Logo
+* Hero Background Image
+* Title
+* Subtitle
+* Buttons
+* Trust Badges
+
+=================================
+2. EVERYTHING WE CAN PRINT
+==========================
+
+Already supports images.
+
+Upgrade it so admin can:
+
+* Add Category
+* Delete Category
+* Upload Category Image
+* Change Category Name
+* Reorder Categories
+
+=================================
+3. MOST POPULAR PICKS
+=====================
+
+Allow admin to:
+
+* Select Featured Products
+  OR
+* Manually upload featured product cards
+
+Fields:
+
+* Product Image
+* Product Name
+* Price
+* Badge
+* Sort Order
+
+=================================
+4. TOP PRODUCTS BY CATEGORY
+===========================
+
+Allow admin to:
+
+* Upload category thumbnail
+* Change category image
+* Change category title
+* Control display order
+
+=================================
+5. THE RADHE DIGITAL ADVANTAGE
+==============================
+
+Allow editing:
+
+* Feature Icon
+* Feature Title
+* Feature Description
+
+Allow unlimited cards.
+
+=================================
+6. FROM IDEA TO DELIVERY
+========================
+
+Allow editing:
+
+* Step Icon/Image
+* Step Title
+* Step Description
+
+Add/Delete/Reorder Steps.
+
+=================================
+7. CUSTOMER REVIEWS
+===================
+
+Allow:
+
+* Customer Photo
+* Customer Name
+* Review Text
+* Rating
+
+Add/Delete Reviews.
+
+=================================
+8. FAQ SECTION
+==============
+
+Allow:
+
+* Add FAQ
+* Edit FAQ
+* Delete FAQ
+* Reorder FAQ
+
+=================================
+9. FINAL CTA SECTION
+====================
+
+Allow:
+
+* Background Image
+* Title
+* Subtitle
+* Button Text
+* Button Link
+
+=================================
+10. FOOTER
+==========
+
+Allow:
+
+* Footer Logo
+* Footer Banner
+* Trust Badges
+* Contact Details
+* Social Icons
+
+=================================
+IMAGE REQUIREMENTS
+==================
+
+For every image:
+
+* Upload
+* Replace
+* Delete
+* Preview
+* Drag & Drop Reorder
+
+=================================
+DATABASE
+========
+
+Store all homepage content in database.
+
+Do not use hardcoded images.
+
+All homepage content must be loaded dynamically from admin-managed data.
+
+=================================
+RESULT
+======
+
+Admin should be able to completely redesign the homepage without touching code.
+
+Every image, icon, banner, review photo, category image and CTA graphic must be manageable from Admin Panel.

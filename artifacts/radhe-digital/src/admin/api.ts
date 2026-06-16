@@ -326,3 +326,32 @@ export const createHomepageCategory = (data: {
 
 export const deleteHomepageCategory = (id: number) =>
   apiFetch<{ deleted: number }>(`/homepage-categories/${id}`, { method: "DELETE" });
+
+// ─── Homepage CMS ──────────────────────────────────────────────────────────────
+export interface CmsHero { tag: string; line1: string; brand: string; line2: string; subtitle: string; btn1Text: string; btn2Text: string; }
+export interface CmsTrustItem { id: number; text: string; displayOrder: number; }
+export interface CmsWhyUs { id: number; iconName: string; title: string; description: string; displayOrder: number; }
+export interface CmsStep { id: number; stepNumber: string; iconName: string; title: string; description: string; displayOrder: number; }
+export interface CmsTestimonial { id: number; name: string; initials: string; location: string; rating: number; text: string; displayOrder: number; }
+export interface CmsFaq { id: number; question: string; answer: string; displayOrder: number; }
+export interface CmsCta { badge: string; title: string; highlight: string; subtitle: string; btn1Text: string; btn2Text: string; btn2Link: string; point1: string; point2: string; point3: string; }
+
+export const getCmsHero = () => apiFetch<CmsHero>("/homepage-cms/hero");
+export const putCmsHero = (d: Partial<CmsHero>) => apiFetch<CmsHero>("/homepage-cms/hero", { method: "PUT", body: JSON.stringify(d) });
+export const getCmsCta  = () => apiFetch<CmsCta>("/homepage-cms/cta");
+export const putCmsCta  = (d: Partial<CmsCta>)  => apiFetch<CmsCta>("/homepage-cms/cta",  { method: "PUT", body: JSON.stringify(d) });
+
+function makeCmsArr<T extends { id: number }>(section: string) {
+  return {
+    get:    ()                            => apiFetch<T[]>(`/homepage-cms/${section}`),
+    create: (d: Record<string, unknown>)  => apiFetch<T>(`/homepage-cms/${section}`,      { method: "POST",   body: JSON.stringify(d) }),
+    update: (id: number, d: Partial<T>)  => apiFetch<T>(`/homepage-cms/${section}/${id}`, { method: "PUT",    body: JSON.stringify(d) }),
+    remove: (id: number)                 => apiFetch<{ deleted: number }>(`/homepage-cms/${section}/${id}`, { method: "DELETE" }),
+  };
+}
+
+export const cmsTrust        = makeCmsArr<CmsTrustItem>("trust");
+export const cmsWhyUs        = makeCmsArr<CmsWhyUs>("why-us");
+export const cmsSteps        = makeCmsArr<CmsStep>("steps");
+export const cmsTestimonials = makeCmsArr<CmsTestimonial>("testimonials");
+export const cmsFaqs         = makeCmsArr<CmsFaq>("faqs");
