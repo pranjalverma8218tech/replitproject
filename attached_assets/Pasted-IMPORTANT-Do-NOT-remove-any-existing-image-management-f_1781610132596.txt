@@ -1,0 +1,128 @@
+IMPORTANT: Do NOT remove any existing image management functionality.
+
+Current Issue:
+
+The "Everything We Can Print" section already had image upload support from the Admin Panel.
+
+After recent homepage CMS changes, that functionality appears to be removed or disconnected.
+
+Required Fix:
+
+1. Restore the existing "Everything We Can Print" image upload functionality.
+
+2. Do NOT replace it.
+
+3. Do NOT remove existing image data.
+
+4. Keep all current uploaded images working.
+
+=================================
+NEW REQUIREMENT
+===============
+
+I want ALL homepage images to be manually manageable from the Admin Panel.
+
+Not just Hero Section.
+
+Not just Everything We Can Print.
+
+EVERY image visible on the Homepage must be editable.
+
+=================================
+ADMIN PANEL
+===========
+
+Create:
+
+Admin Panel
+→ Homepage Manager
+
+Sections:
+
+1. Hero Section
+
+   * Hero Image
+   * Background Image
+   * Logo Image
+
+2. Everything We Can Print
+
+   * Keep existing image upload system
+   * Add/Edit/Delete category images
+
+3. Most Popular Picks
+
+   * Product card images
+   * Section banner images
+
+4. Top Products By Category
+
+   * Category images
+   * Category banners
+
+5. Radhe Digital Advantage
+
+   * Feature icons
+   * Feature images
+
+6. From Idea To Delivery
+
+   * Step illustrations
+   * Step images
+
+7. Customer Reviews
+
+   * Customer photos
+
+8. FAQ Section
+
+   * Optional section image/banner
+
+9. Final CTA Section
+
+   * CTA image
+   * Promotional banner
+
+10. Footer
+
+* Footer logo
+* Footer banner
+* Trust badge images
+
+=================================
+IMAGE CONTROLS
+==============
+
+For every image:
+
+* Upload
+* Replace
+* Delete
+* Preview
+* Reorder
+
+=================================
+CRITICAL
+========
+
+Do NOT use hardcoded homepage images.
+
+All homepage images must come from Admin Panel data.
+
+If an image is changed in Admin Panel:
+
+Admin Save
+→ Homepage Updates Automatically
+
+=================================
+DO NOT BREAK EXISTING FEATURES
+==============================
+
+* Keep current Everything We Can Print image uploads working.
+* Keep category management working.
+* Keep product management working.
+* Extend functionality instead of replacing it.
+
+Goal:
+
+Every image visible on the Homepage should be manually controlled from the Admin Panel without editing code.
