@@ -328,13 +328,13 @@ export const deleteHomepageCategory = (id: number) =>
   apiFetch<{ deleted: number }>(`/homepage-categories/${id}`, { method: "DELETE" });
 
 // ─── Homepage CMS ──────────────────────────────────────────────────────────────
-export interface CmsHero { tag: string; line1: string; brand: string; line2: string; subtitle: string; btn1Text: string; btn2Text: string; }
+export interface CmsHero { tag: string; line1: string; brand: string; line2: string; subtitle: string; btn1Text: string; btn2Text: string; heroImageUrl?: string; }
 export interface CmsTrustItem { id: number; text: string; displayOrder: number; }
 export interface CmsWhyUs { id: number; iconName: string; title: string; description: string; displayOrder: number; }
 export interface CmsStep { id: number; stepNumber: string; iconName: string; title: string; description: string; displayOrder: number; }
-export interface CmsTestimonial { id: number; name: string; initials: string; location: string; rating: number; text: string; displayOrder: number; }
+export interface CmsTestimonial { id: number; name: string; initials: string; location: string; rating: number; text: string; photoUrl?: string; displayOrder: number; }
 export interface CmsFaq { id: number; question: string; answer: string; displayOrder: number; }
-export interface CmsCta { badge: string; title: string; highlight: string; subtitle: string; btn1Text: string; btn2Text: string; btn2Link: string; point1: string; point2: string; point3: string; }
+export interface CmsCta { badge: string; title: string; highlight: string; subtitle: string; btn1Text: string; btn2Text: string; btn2Link: string; point1: string; point2: string; point3: string; ctaImageUrl?: string; }
 
 export const getCmsHero = () => apiFetch<CmsHero>("/homepage-cms/hero");
 export const putCmsHero = (d: Partial<CmsHero>) => apiFetch<CmsHero>("/homepage-cms/hero", { method: "PUT", body: JSON.stringify(d) });

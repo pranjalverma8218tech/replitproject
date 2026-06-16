@@ -12,7 +12,7 @@ import { useApiProducts, type ApiProductData } from "@/hooks/useApiProducts";
 import { useLanguage } from "@/context/LanguageContext";
 import { useHomepageCategories } from "@/hooks/useHomepageCategories";
 import { useHomepageCms } from "@/hooks/useHomepageCms";
-const logoSrc = "/radhe-logo.png";
+const defaultLogoSrc = "/radhe-logo.png";
 
 /* ─── Category Icons ─── */
 const CAT_ICONS: Record<string, JSX.Element> = {
@@ -480,7 +480,7 @@ export default function HomePage() {
                   }}
                 >
                   <img
-                    src={logoSrc}
+                    src={cmsData?.hero?.heroImageUrl || defaultLogoSrc}
                     alt="Radhe Digital"
                     style={{ display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
                   />
@@ -807,12 +807,21 @@ export default function HomePage() {
                 <Quote size={22} style={{ color: "#C4962A" }} className="opacity-70"/>
                 <p className="text-gray-700 leading-relaxed text-sm italic flex-1">"{t.text}"</p>
                 <div className="flex items-center gap-3 pt-2 border-t border-gray-100">
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black shrink-0"
-                    style={{ background: "rgba(196,150,42,0.12)", border: "2px solid rgba(196,150,42,0.25)", color: "#C4962A" }}
-                  >
-                    {t.initials}
-                  </div>
+                  {(t as any).photoUrl ? (
+                    <img
+                      src={(t as any).photoUrl}
+                      alt={t.name}
+                      className="w-10 h-10 rounded-full object-cover shrink-0"
+                      style={{ border: "2px solid rgba(196,150,42,0.35)" }}
+                    />
+                  ) : (
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black shrink-0"
+                      style={{ background: "rgba(196,150,42,0.12)", border: "2px solid rgba(196,150,42,0.25)", color: "#C4962A" }}
+                    >
+                      {t.initials}
+                    </div>
+                  )}
                   <div>
                     <p className="text-gray-900 font-bold text-sm">{t.name}</p>
                     <p className="text-gray-400 text-xs">{t.location}</p>

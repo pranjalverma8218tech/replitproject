@@ -32,6 +32,7 @@ const D_HERO = {
   subtitle: "Custom T-shirts, mugs, caps, pens and more — printed with your logo or design in hours. Bulk-friendly, no minimums.",
   btn1Text: "Start Designing",
   btn2Text: "Browse Products",
+  heroImageUrl: "",
 };
 
 const D_TRUST = [
@@ -62,9 +63,9 @@ const D_STEPS = [
 ];
 
 const D_TESTIMONIALS = [
-  { id: 1, name: "Rahul Sharma", initials: "RS", location: "Mathura, UP", rating: 5, text: "Ordered 100 custom t-shirts for our company event. The quality was outstanding and delivered on time. Highly recommend!", displayOrder: 1 },
-  { id: 2, name: "Priya Gupta",  initials: "PG", location: "Delhi",       rating: 5, text: "Got custom mugs for my cafe — the printing is sharp and colors are vibrant. Will definitely order again!", displayOrder: 2 },
-  { id: 3, name: "Amit Verma",   initials: "AV", location: "Agra, UP",    rating: 5, text: "Same-day delivery saved us for our corporate gifting deadline. Amazing quality pens and badges. 5 stars!", displayOrder: 3 },
+  { id: 1, name: "Rahul Sharma", initials: "RS", location: "Mathura, UP", rating: 5, text: "Ordered 100 custom t-shirts for our company event. The quality was outstanding and delivered on time. Highly recommend!", photoUrl: "", displayOrder: 1 },
+  { id: 2, name: "Priya Gupta",  initials: "PG", location: "Delhi",       rating: 5, text: "Got custom mugs for my cafe — the printing is sharp and colors are vibrant. Will definitely order again!", photoUrl: "", displayOrder: 2 },
+  { id: 3, name: "Amit Verma",   initials: "AV", location: "Agra, UP",    rating: 5, text: "Same-day delivery saved us for our corporate gifting deadline. Amazing quality pens and badges. 5 stars!", photoUrl: "", displayOrder: 3 },
 ];
 
 const D_FAQS = [
@@ -87,6 +88,7 @@ const D_CTA = {
   point1: "No credit card needed",
   point2: "Free design assistance",
   point3: "100% satisfaction guaranteed",
+  ctaImageUrl: "",
 };
 
 // ── Router ────────────────────────────────────────────────────────────────────

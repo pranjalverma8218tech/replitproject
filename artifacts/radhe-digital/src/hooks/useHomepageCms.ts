@@ -8,6 +8,7 @@ export interface CmsHero {
   subtitle: string;
   btn1Text: string;
   btn2Text: string;
+  heroImageUrl?: string;
 }
 
 export interface CmsTrustItem {
@@ -40,6 +41,7 @@ export interface CmsTestimonial {
   location: string;
   rating: number;
   text: string;
+  photoUrl?: string;
   displayOrder: number;
 }
 
@@ -61,6 +63,7 @@ export interface CmsCta {
   point1: string;
   point2: string;
   point3: string;
+  ctaImageUrl?: string;
 }
 
 export interface CmsAll {

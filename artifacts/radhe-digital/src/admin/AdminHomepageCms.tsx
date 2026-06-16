@@ -3,14 +3,17 @@ import { motion } from "framer-motion";
 import {
   Plus, Trash2, Save, Loader2, CheckCircle2, AlertCircle,
   ChevronUp, ChevronDown, Layout, Megaphone, Award, ListOrdered,
-  MessageSquare, HelpCircle, Zap, Star,
+  MessageSquare, HelpCircle, Zap, Star, Upload, X, Image as ImageIcon, Grid,
 } from "lucide-react";
 import {
   getCmsHero, putCmsHero, getCmsCta, putCmsCta,
   cmsTrust, cmsWhyUs, cmsSteps, cmsTestimonials, cmsFaqs,
+  uploadImage,
   type CmsHero, type CmsTrustItem, type CmsWhyUs, type CmsStep,
   type CmsTestimonial, type CmsFaq, type CmsCta,
 } from "./api";
+import { invalidateHomepageCmsCache } from "@/hooks/useHomepageCms";
+import AdminHomepageCategories from "./AdminHomepageCategories";
 
 // ── Toasts ────────────────────────────────────────────────────────────────────
 interface Toast { id: number; text: string; ok: boolean; }
@@ -44,6 +47,89 @@ const iCls  = "w-full bg-white/5 border border-white/10 text-white text-sm px-3 
 const taCls = `${iCls} resize-none`;
 const lCls  = "text-gray-500 text-[11px] font-semibold uppercase tracking-wide mb-1 block";
 const cardCls = "bg-[#111] border border-white/8 rounded-2xl p-4";
+
+// ── Image Upload Field ─────────────────────────────────────────────────────────
+function ImageUploadField({
+  label, value, onChange, addToast, compact = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (url: string) => void;
+  addToast: (t: string, ok?: boolean) => void;
+  compact?: boolean;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (file: File) => {
+    setUploading(true);
+    try {
+      const { url } = await uploadImage(file);
+      onChange(url);
+      addToast("Image uploaded!");
+    } catch {
+      addToast("Upload failed.", false);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div>
+      <label className={lCls}>{label}</label>
+      <div className={`flex items-start gap-3 mt-1 ${compact ? "" : ""}`}>
+        {value ? (
+          <div className="relative flex-shrink-0">
+            <img
+              src={value}
+              alt="preview"
+              className="w-16 h-16 rounded-xl object-cover border border-white/15 bg-black/30"
+            />
+          </div>
+        ) : (
+          <div className="w-16 h-16 rounded-xl border border-dashed border-white/15 bg-white/3 flex items-center justify-center flex-shrink-0">
+            <ImageIcon size={18} className="text-gray-600"/>
+          </div>
+        )}
+        <div className="flex-1 space-y-2">
+          <div className="flex flex-wrap gap-2">
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileRef}
+              className="hidden"
+              onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }}
+            />
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/8 hover:bg-white/12 text-white text-xs font-bold border border-white/10 transition-all disabled:opacity-50"
+            >
+              {uploading ? <Loader2 size={12} className="animate-spin"/> : <Upload size={12}/>}
+              {uploading ? "Uploading..." : value ? "Replace" : "Upload Image"}
+            </button>
+            {value && (
+              <button
+                type="button"
+                onClick={() => onChange("")}
+                className="flex items-center gap-1 px-3 py-2 rounded-xl text-red-400 hover:bg-red-500/10 text-xs font-bold border border-white/10 transition-all"
+              >
+                <X size={12}/> Remove
+              </button>
+            )}
+          </div>
+          <input
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            className={iCls}
+            placeholder="Or paste image URL..."
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Generic list-section hook ─────────────────────────────────────────────────
 interface CmsArr<T extends { id: number; displayOrder: number }> {
@@ -96,6 +182,7 @@ function useSection<T extends { id: number; displayOrder: number }>(
       const updated = await api.update(item.id, updates as Partial<T>);
       setItems(p => p.map(i => i.id === item.id ? { ...i, ...updated } : i));
       setDraftMap(m => { const n = new Map(m); n.delete(item.id); return n; });
+      invalidateHomepageCmsCache();
       addToast("Saved!");
     } catch { addToast("Save failed.", false); }
     finally { setSavingIds(s => { const n = new Set(s); n.delete(item.id); return n; }); }
@@ -107,6 +194,7 @@ function useSection<T extends { id: number; displayOrder: number }>(
       await api.remove(id);
       setItems(p => p.filter(i => i.id !== id));
       setDelConfirm(null);
+      invalidateHomepageCmsCache();
       addToast("Deleted.");
     } catch { addToast("Delete failed.", false); }
     finally { setSavingIds(s => { const n = new Set(s); n.delete(id); return n; }); }
@@ -117,6 +205,7 @@ function useSection<T extends { id: number; displayOrder: number }>(
     try {
       const created = await api.create({ ...newData, displayOrder: maxOrd });
       setItems(p => [...p, created]);
+      invalidateHomepageCmsCache();
       addToast("Added!");
       return created;
     } catch { addToast("Add failed.", false); return null; }
@@ -194,7 +283,11 @@ function HeroTab({ addToast }: { addToast: (t: string, ok?: boolean) => void }) 
   const set = (k: keyof CmsHero, v: string) => setForm(p => ({ ...p, [k]: v }));
   const save = async () => {
     setSaving(true);
-    try { await putCmsHero(form as CmsHero); addToast("Hero section saved!"); }
+    try {
+      await putCmsHero(form as CmsHero);
+      invalidateHomepageCmsCache();
+      addToast("Hero section saved!");
+    }
     catch { addToast("Save failed.", false); }
     finally { setSaving(false); }
   };
@@ -203,45 +296,60 @@ function HeroTab({ addToast }: { addToast: (t: string, ok?: boolean) => void }) 
 
   return (
     <div className="max-w-xl space-y-4">
-      <p className="text-gray-500 text-sm mb-5">Edit the text in the hero banner at the top of the homepage.</p>
-      <div>
-        <label className={lCls}>Badge / Tag Text</label>
-        <input value={form.tag ?? ""} onChange={e => set("tag", e.target.value)} className={iCls} placeholder="Mathura's #1 Custom Printing Studio"/>
+      <p className="text-gray-500 text-sm mb-5">Edit the hero banner at the top of the homepage. You can change text and the main hero image.</p>
+
+      <div className={`${cardCls} space-y-4`}>
+        <p className="text-gray-400 text-xs font-bold uppercase tracking-wide">Hero Image</p>
+        <ImageUploadField
+          label="Hero Logo / Brand Image (replaces the circular logo shown on the right)"
+          value={form.heroImageUrl ?? ""}
+          onChange={v => set("heroImageUrl", v)}
+          addToast={addToast}
+        />
       </div>
-      <div className="grid grid-cols-3 gap-3">
+
+      <div className={`${cardCls} space-y-4`}>
+        <p className="text-gray-400 text-xs font-bold uppercase tracking-wide">Hero Text</p>
         <div>
-          <label className={lCls}>Title Line 1</label>
-          <input value={form.line1 ?? ""} onChange={e => set("line1", e.target.value)} className={iCls} placeholder="Print Your"/>
+          <label className={lCls}>Badge / Tag Text</label>
+          <input value={form.tag ?? ""} onChange={e => set("tag", e.target.value)} className={iCls} placeholder="Mathura's #1 Custom Printing Studio"/>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <div>
+            <label className={lCls}>Title Line 1</label>
+            <input value={form.line1 ?? ""} onChange={e => set("line1", e.target.value)} className={iCls} placeholder="Print Your"/>
+          </div>
+          <div>
+            <label className={lCls}>Highlighted Word</label>
+            <input value={form.brand ?? ""} onChange={e => set("brand", e.target.value)} className={iCls} placeholder="Brand"/>
+          </div>
+          <div>
+            <label className={lCls}>Title Line 2</label>
+            <input value={form.line2 ?? ""} onChange={e => set("line2", e.target.value)} className={iCls} placeholder="On Anything"/>
+          </div>
+        </div>
+        <div className="text-gray-600 text-xs px-1">
+          Preview: <span className="text-white">{form.line1} </span>
+          <span style={{ color: "#F59E0B" }}>{form.brand}</span>
+          <br/>
+          <span style={{ color: "#F59E0B" }}>{form.line2}</span>
         </div>
         <div>
-          <label className={lCls}>Highlighted Word</label>
-          <input value={form.brand ?? ""} onChange={e => set("brand", e.target.value)} className={iCls} placeholder="Brand"/>
+          <label className={lCls}>Subtitle / Description</label>
+          <textarea rows={3} value={form.subtitle ?? ""} onChange={e => set("subtitle", e.target.value)} className={taCls}/>
         </div>
-        <div>
-          <label className={lCls}>Title Line 2</label>
-          <input value={form.line2 ?? ""} onChange={e => set("line2", e.target.value)} className={iCls} placeholder="On Anything"/>
-        </div>
-      </div>
-      <div className="text-gray-600 text-xs px-1">
-        Preview: <span className="text-white">{form.line1} </span>
-        <span style={{ color: "#F59E0B" }}>{form.brand}</span>
-        <br/>
-        <span style={{ color: "#F59E0B" }}>{form.line2}</span>
-      </div>
-      <div>
-        <label className={lCls}>Subtitle / Description</label>
-        <textarea rows={3} value={form.subtitle ?? ""} onChange={e => set("subtitle", e.target.value)} className={taCls}/>
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className={lCls}>Primary Button Text</label>
-          <input value={form.btn1Text ?? ""} onChange={e => set("btn1Text", e.target.value)} className={iCls}/>
-        </div>
-        <div>
-          <label className={lCls}>Secondary Button Text</label>
-          <input value={form.btn2Text ?? ""} onChange={e => set("btn2Text", e.target.value)} className={iCls}/>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className={lCls}>Primary Button Text</label>
+            <input value={form.btn1Text ?? ""} onChange={e => set("btn1Text", e.target.value)} className={iCls}/>
+          </div>
+          <div>
+            <label className={lCls}>Secondary Button Text</label>
+            <input value={form.btn2Text ?? ""} onChange={e => set("btn2Text", e.target.value)} className={iCls}/>
+          </div>
         </div>
       </div>
+
       <button onClick={save} disabled={saving}
         className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary hover:bg-red-700 text-white text-sm font-bold transition-colors disabled:opacity-60">
         {saving ? <Loader2 size={14} className="animate-spin"/> : <Save size={14}/>} Save Hero Section
@@ -451,15 +559,27 @@ function StepsTab({ addToast }: { addToast: (t: string, ok?: boolean) => void })
 // ── Tab: Testimonials ──────────────────────────────────────────────────────────
 function TestimonialsTab({ addToast }: { addToast: (t: string, ok?: boolean) => void }) {
   const s = useSection<CmsTestimonial>(cmsTestimonials as unknown as CmsArr<CmsTestimonial>, addToast);
-  const [nf, setNf] = useState({ name: "", initials: "", location: "", rating: 5, text: "" });
+  const [nf, setNf] = useState({ name: "", initials: "", location: "", rating: 5, text: "", photoUrl: "" });
   const [adding, setAdding] = useState(false);
+  const [newPhotoUploading, setNewPhotoUploading] = useState(false);
+  const newPhotoRef = useRef<HTMLInputElement>(null);
 
   const handleAdd = async () => {
     if (!nf.name.trim() || !nf.text.trim()) return;
     setAdding(true);
     await s.addItem(nf);
-    setNf({ name: "", initials: "", location: "", rating: 5, text: "" });
+    setNf({ name: "", initials: "", location: "", rating: 5, text: "", photoUrl: "" });
     setAdding(false);
+  };
+
+  const handleNewPhotoUpload = async (file: File) => {
+    setNewPhotoUploading(true);
+    try {
+      const { url } = await uploadImage(file);
+      setNf(p => ({ ...p, photoUrl: url }));
+      addToast("Photo uploaded!");
+    } catch { addToast("Upload failed.", false); }
+    finally { setNewPhotoUploading(false); }
   };
 
   const StarRow = ({ value, onChange }: { value: number; onChange: (v: number) => void }) => (
@@ -477,7 +597,7 @@ function TestimonialsTab({ addToast }: { addToast: (t: string, ok?: boolean) => 
 
   return (
     <div className="max-w-2xl space-y-3">
-      <p className="text-gray-500 text-sm mb-4">Customer reviews displayed in the Testimonials section.</p>
+      <p className="text-gray-500 text-sm mb-4">Customer reviews shown on the homepage. You can upload a customer photo for each review.</p>
       <div className={`${cardCls} space-y-3`} style={{ borderStyle: "dashed", borderColor: "rgba(255,255,255,0.15)" }}>
         <p className="text-gray-500 text-xs font-bold uppercase tracking-wide">+ Add New Review</p>
         <div className="grid grid-cols-3 gap-3">
@@ -494,6 +614,28 @@ function TestimonialsTab({ addToast }: { addToast: (t: string, ok?: boolean) => 
         </div>
         <div><label className={lCls}>Star Rating</label><StarRow value={nf.rating} onChange={v => setNf(p => ({ ...p, rating: v }))}/></div>
         <div><label className={lCls}>Review Text</label><textarea rows={3} value={nf.text} onChange={e => setNf(p => ({ ...p, text: e.target.value }))} placeholder="What did the customer say?" className={taCls}/></div>
+        <div>
+          <label className={lCls}>Customer Photo (optional)</label>
+          <div className="flex items-center gap-3 mt-1">
+            {nf.photoUrl && (
+              <img src={nf.photoUrl} alt="preview" className="w-12 h-12 rounded-full object-cover border border-white/15"/>
+            )}
+            <div className="flex gap-2">
+              <input type="file" accept="image/*" ref={newPhotoRef} className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleNewPhotoUpload(f); e.target.value = ""; }}/>
+              <button type="button" onClick={() => newPhotoRef.current?.click()} disabled={newPhotoUploading}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/8 hover:bg-white/12 text-white text-xs font-bold border border-white/10 transition-all disabled:opacity-50">
+                {newPhotoUploading ? <Loader2 size={12} className="animate-spin"/> : <Upload size={12}/>}
+                {newPhotoUploading ? "Uploading..." : nf.photoUrl ? "Replace Photo" : "Upload Photo"}
+              </button>
+              {nf.photoUrl && (
+                <button type="button" onClick={() => setNf(p => ({ ...p, photoUrl: "" }))}
+                  className="flex items-center gap-1 px-3 py-2 rounded-xl text-red-400 hover:bg-red-500/10 text-xs font-bold border border-white/10">
+                  <X size={12}/> Remove
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
         <button onClick={handleAdd} disabled={adding || !nf.name.trim() || !nf.text.trim()}
           className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary hover:bg-red-700 text-white text-sm font-bold transition-colors disabled:opacity-50">
           {adding ? <Loader2 size={13} className="animate-spin"/> : <Plus size={13}/>} Add Review
@@ -523,6 +665,13 @@ function TestimonialsTab({ addToast }: { addToast: (t: string, ok?: boolean) => 
                   </div>
                 </div>
                 <div><label className={lCls}>Review Text</label><textarea rows={3} value={draft.text} onChange={e => s.setDraft(item.id, { text: e.target.value } as Partial<CmsTestimonial>)} className={taCls}/></div>
+                <ImageUploadField
+                  label="Customer Photo (optional — shown instead of initials avatar)"
+                  value={draft.photoUrl ?? ""}
+                  onChange={url => s.setDraft(item.id, { photoUrl: url } as Partial<CmsTestimonial>)}
+                  addToast={addToast}
+                  compact
+                />
               </div>
               <ItemActions
                 dirty={s.isDirty(item.id)} saving={s.isSaving(item.id)} onSave={() => s.saveItem(item)}
@@ -602,7 +751,11 @@ function CtaTab({ addToast }: { addToast: (t: string, ok?: boolean) => void }) {
   const set = (k: keyof CmsCta, v: string) => setForm(p => ({ ...p, [k]: v }));
   const save = async () => {
     setSaving(true);
-    try { await putCmsCta(form as CmsCta); addToast("CTA section saved!"); }
+    try {
+      await putCmsCta(form as CmsCta);
+      invalidateHomepageCmsCache();
+      addToast("CTA section saved!");
+    }
     catch { addToast("Save failed.", false); }
     finally { setSaving(false); }
   };
@@ -612,25 +765,40 @@ function CtaTab({ addToast }: { addToast: (t: string, ok?: boolean) => void }) {
   return (
     <div className="max-w-xl space-y-4">
       <p className="text-gray-500 text-sm mb-5">Edit the final call-to-action section at the bottom of the homepage.</p>
-      <div><label className={lCls}>Badge Text</label><input value={form.badge ?? ""} onChange={e => set("badge", e.target.value)} className={iCls} placeholder="GET STARTED"/></div>
-      <div className="grid grid-cols-2 gap-3">
-        <div><label className={lCls}>Title (before highlight)</label><input value={form.title ?? ""} onChange={e => set("title", e.target.value)} className={iCls} placeholder="Ready to Bring Your"/></div>
-        <div><label className={lCls}>Highlighted Text</label><input value={form.highlight ?? ""} onChange={e => set("highlight", e.target.value)} className={iCls} placeholder="Ideas to Life?"/></div>
+
+      <div className={`${cardCls} space-y-4`}>
+        <p className="text-gray-400 text-xs font-bold uppercase tracking-wide">CTA Image</p>
+        <ImageUploadField
+          label="CTA Section Image / Promotional Banner (optional)"
+          value={form.ctaImageUrl ?? ""}
+          onChange={v => set("ctaImageUrl", v)}
+          addToast={addToast}
+        />
       </div>
-      <div><label className={lCls}>Subtitle</label><textarea rows={2} value={form.subtitle ?? ""} onChange={e => set("subtitle", e.target.value)} className={taCls}/></div>
-      <div className="grid grid-cols-2 gap-3">
-        <div><label className={lCls}>Primary Button Text</label><input value={form.btn1Text ?? ""} onChange={e => set("btn1Text", e.target.value)} className={iCls}/></div>
-        <div><label className={lCls}>Secondary Button Text</label><input value={form.btn2Text ?? ""} onChange={e => set("btn2Text", e.target.value)} className={iCls}/></div>
-      </div>
-      <div><label className={lCls}>WhatsApp / Button 2 Link</label><input value={form.btn2Link ?? ""} onChange={e => set("btn2Link", e.target.value)} className={iCls} placeholder="https://wa.me/91..."/></div>
-      <div className="border-t border-white/8 pt-4">
-        <p className="text-gray-600 text-[11px] font-bold uppercase tracking-wide mb-3">Bottom Trust Points</p>
-        <div className="grid grid-cols-3 gap-3">
-          <div><label className={lCls}>Point 1</label><input value={form.point1 ?? ""} onChange={e => set("point1", e.target.value)} className={iCls}/></div>
-          <div><label className={lCls}>Point 2</label><input value={form.point2 ?? ""} onChange={e => set("point2", e.target.value)} className={iCls}/></div>
-          <div><label className={lCls}>Point 3</label><input value={form.point3 ?? ""} onChange={e => set("point3", e.target.value)} className={iCls}/></div>
+
+      <div className={`${cardCls} space-y-4`}>
+        <p className="text-gray-400 text-xs font-bold uppercase tracking-wide">CTA Text</p>
+        <div><label className={lCls}>Badge Text</label><input value={form.badge ?? ""} onChange={e => set("badge", e.target.value)} className={iCls} placeholder="GET STARTED"/></div>
+        <div className="grid grid-cols-2 gap-3">
+          <div><label className={lCls}>Title (before highlight)</label><input value={form.title ?? ""} onChange={e => set("title", e.target.value)} className={iCls} placeholder="Ready to Bring Your"/></div>
+          <div><label className={lCls}>Highlighted Text</label><input value={form.highlight ?? ""} onChange={e => set("highlight", e.target.value)} className={iCls} placeholder="Ideas to Life?"/></div>
+        </div>
+        <div><label className={lCls}>Subtitle</label><textarea rows={2} value={form.subtitle ?? ""} onChange={e => set("subtitle", e.target.value)} className={taCls}/></div>
+        <div className="grid grid-cols-2 gap-3">
+          <div><label className={lCls}>Primary Button Text</label><input value={form.btn1Text ?? ""} onChange={e => set("btn1Text", e.target.value)} className={iCls}/></div>
+          <div><label className={lCls}>Secondary Button Text</label><input value={form.btn2Text ?? ""} onChange={e => set("btn2Text", e.target.value)} className={iCls}/></div>
+        </div>
+        <div><label className={lCls}>WhatsApp / Button 2 Link</label><input value={form.btn2Link ?? ""} onChange={e => set("btn2Link", e.target.value)} className={iCls} placeholder="https://wa.me/91..."/></div>
+        <div className="border-t border-white/8 pt-4">
+          <p className="text-gray-600 text-[11px] font-bold uppercase tracking-wide mb-3">Bottom Trust Points</p>
+          <div className="grid grid-cols-3 gap-3">
+            <div><label className={lCls}>Point 1</label><input value={form.point1 ?? ""} onChange={e => set("point1", e.target.value)} className={iCls}/></div>
+            <div><label className={lCls}>Point 2</label><input value={form.point2 ?? ""} onChange={e => set("point2", e.target.value)} className={iCls}/></div>
+            <div><label className={lCls}>Point 3</label><input value={form.point3 ?? ""} onChange={e => set("point3", e.target.value)} className={iCls}/></div>
+          </div>
         </div>
       </div>
+
       <button onClick={save} disabled={saving}
         className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary hover:bg-red-700 text-white text-sm font-bold transition-colors disabled:opacity-60">
         {saving ? <Loader2 size={14} className="animate-spin"/> : <Save size={14}/>} Save CTA Section
@@ -639,17 +807,30 @@ function CtaTab({ addToast }: { addToast: (t: string, ok?: boolean) => void }) {
   );
 }
 
+// ── Tab: Categories (Everything We Can Print) ──────────────────────────────────
+function CategoriesTab() {
+  return (
+    <div>
+      <p className="text-gray-500 text-sm mb-5">
+        Manage the <span className="text-white font-semibold">"Everything We Can Print"</span> section — upload, replace, or remove images for each print category. Changes appear on the homepage instantly.
+      </p>
+      <AdminHomepageCategories />
+    </div>
+  );
+}
+
 // ── Tabs config ────────────────────────────────────────────────────────────────
-type Tab = "hero" | "trust" | "why-us" | "steps" | "testimonials" | "faqs" | "cta";
+type Tab = "hero" | "categories" | "trust" | "why-us" | "steps" | "testimonials" | "faqs" | "cta";
 
 const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
-  { key: "hero",         label: "Hero",          icon: <Layout size={14}/> },
-  { key: "trust",        label: "Trust Bar",     icon: <Megaphone size={14}/> },
-  { key: "why-us",       label: "Why Choose Us", icon: <Award size={14}/> },
-  { key: "steps",        label: "How It Works",  icon: <ListOrdered size={14}/> },
-  { key: "testimonials", label: "Testimonials",  icon: <MessageSquare size={14}/> },
-  { key: "faqs",         label: "FAQs",          icon: <HelpCircle size={14}/> },
-  { key: "cta",          label: "Final CTA",     icon: <Zap size={14}/> },
+  { key: "hero",         label: "Hero",             icon: <Layout size={14}/> },
+  { key: "categories",  label: "Print Categories",  icon: <Grid size={14}/> },
+  { key: "trust",       label: "Trust Bar",         icon: <Megaphone size={14}/> },
+  { key: "why-us",      label: "Why Choose Us",     icon: <Award size={14}/> },
+  { key: "steps",       label: "How It Works",      icon: <ListOrdered size={14}/> },
+  { key: "testimonials",label: "Testimonials",      icon: <MessageSquare size={14}/> },
+  { key: "faqs",        label: "FAQs",              icon: <HelpCircle size={14}/> },
+  { key: "cta",         label: "Final CTA",         icon: <Zap size={14}/> },
 ];
 
 // ── Main ───────────────────────────────────────────────────────────────────────
@@ -660,6 +841,7 @@ export default function AdminHomepageCms() {
   const renderTab = () => {
     switch (tab) {
       case "hero":         return <HeroTab addToast={addToast}/>;
+      case "categories":  return <CategoriesTab/>;
       case "trust":        return <TrustTab addToast={addToast}/>;
       case "why-us":       return <WhyUsTab addToast={addToast}/>;
       case "steps":        return <StepsTab addToast={addToast}/>;
@@ -673,7 +855,7 @@ export default function AdminHomepageCms() {
     <div>
       <div className="mb-6">
         <h1 className="text-xl font-extrabold text-white mb-1">Homepage Manager</h1>
-        <p className="text-gray-500 text-sm">Edit all homepage sections without touching code. Changes go live instantly.</p>
+        <p className="text-gray-500 text-sm">Edit every image and text on the homepage — no code needed. Changes go live instantly.</p>
       </div>
 
       <div className="flex flex-wrap gap-2 mb-6 pb-4 border-b border-white/8">
