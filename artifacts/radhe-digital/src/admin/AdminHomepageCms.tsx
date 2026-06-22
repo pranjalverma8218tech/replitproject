@@ -14,6 +14,7 @@ import {
 } from "./api";
 import { invalidateHomepageCmsCache } from "@/hooks/useHomepageCms";
 import AdminHomepageCategories from "./AdminHomepageCategories";
+import AdminFeaturedProducts from "./AdminFeaturedProducts";
 
 // ── Toasts ────────────────────────────────────────────────────────────────────
 interface Toast { id: number; text: string; ok: boolean; }
@@ -819,12 +820,22 @@ function CategoriesTab() {
   );
 }
 
+// ── Tab: Featured Products (Most Popular Picks) ─────────────────────────────────
+function FeaturedProductsTab() {
+  return (
+    <div>
+      <AdminFeaturedProducts />
+    </div>
+  );
+}
+
 // ── Tabs config ────────────────────────────────────────────────────────────────
-type Tab = "hero" | "categories" | "trust" | "why-us" | "steps" | "testimonials" | "faqs" | "cta";
+type Tab = "hero" | "categories" | "featured" | "trust" | "why-us" | "steps" | "testimonials" | "faqs" | "cta";
 
 const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
   { key: "hero",         label: "Hero",             icon: <Layout size={14}/> },
   { key: "categories",  label: "Print Categories",  icon: <Grid size={14}/> },
+  { key: "featured",    label: "Popular Picks",     icon: <Star size={14}/> },
   { key: "trust",       label: "Trust Bar",         icon: <Megaphone size={14}/> },
   { key: "why-us",      label: "Why Choose Us",     icon: <Award size={14}/> },
   { key: "steps",       label: "How It Works",      icon: <ListOrdered size={14}/> },
@@ -842,6 +853,7 @@ export default function AdminHomepageCms() {
     switch (tab) {
       case "hero":         return <HeroTab addToast={addToast}/>;
       case "categories":  return <CategoriesTab/>;
+      case "featured":    return <FeaturedProductsTab/>;
       case "trust":        return <TrustTab addToast={addToast}/>;
       case "why-us":       return <WhyUsTab addToast={addToast}/>;
       case "steps":        return <StepsTab addToast={addToast}/>;

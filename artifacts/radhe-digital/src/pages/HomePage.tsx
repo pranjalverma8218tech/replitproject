@@ -12,6 +12,7 @@ import { useApiProducts, getFrontImage, type ApiProductData } from "@/hooks/useA
 import { useLanguage } from "@/context/LanguageContext";
 import { useHomepageCategories } from "@/hooks/useHomepageCategories";
 import { useHomepageCms } from "@/hooks/useHomepageCms";
+import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
 const defaultLogoSrc = "/radhe-logo.png";
 
 /* ─── Category Icons ─── */
@@ -282,6 +283,7 @@ export default function HomePage() {
   });
 
   const { cmsData } = useHomepageCms();
+  const { items: featuredItems } = useFeaturedProducts();
 
   const trustItems = cmsData?.trust?.map(i => i.text) ?? t.trust;
 
@@ -702,50 +704,62 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {CATEGORIES.slice(0, 4).map((cat, i) => {
-              const product = featuredBySlug[cat.slug];
-              return (
+            {featuredItems.slice(0, 4).map((item, i) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
                 <motion.div
-                  key={cat.slug}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
+                  className="group bg-white border border-gray-100 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
+                  whileHover={{ y: -6 }}
+                  style={{ boxShadow: "0 2px 14px rgba(0,0,0,0.07)" }}
+                  onClick={() => { if (item.link) window.location.href = item.link; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 12px 36px rgba(196,150,42,0.18)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.3)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 14px rgba(0,0,0,0.07)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
                 >
-                  <motion.div
-                    className="group bg-white border border-gray-100 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
-                    whileHover={{ y: -6 }}
-                    style={{ boxShadow: "0 2px 14px rgba(0,0,0,0.07)" }}
-                    onClick={() => window.location.href = product ? `/categories/${cat.slug}/${product.id}` : `/categories/${cat.slug}`}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 12px 36px rgba(196,150,42,0.18)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.3)"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 14px rgba(0,0,0,0.07)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
-                  >
-                    <div className="aspect-square bg-[#f0f1f4] relative overflow-hidden">
-                      <ProductImage product={product}/>
-                      {product?.badge && (
-                        <span className="absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full bg-primary text-white">{product.badge}</span>
-                      )}
-                    </div>
-                    <div className="p-5">
-                      <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C4962A" }}>{cat.label}</span>
-                      <h3 className="text-gray-900 font-bold text-base mt-0.5 mb-1 leading-snug">{product?.name ?? cat.label}</h3>
-                      <p className="text-gray-500 text-xs mb-3 line-clamp-2">{product?.description ?? cat.description}</p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-primary font-extrabold text-lg">
-                          {product ? (product.priceLabel ?? `₹${product.price}`) : t.categoriesPage.view}
-                        </span>
-                        <button
-                          onClick={e => { e.stopPropagation(); window.location.href = `/customize/${cat.slug}`; }}
-                          className="flex items-center gap-1 text-xs font-bold px-3 py-2 rounded-xl text-white bg-primary hover:bg-red-700 transition-colors"
-                        >
-                          <Palette size={11}/> {t.nav.customize}
-                        </button>
+                  <div className="aspect-square bg-[#f0f1f4] relative overflow-hidden">
+                    {item.imageUrl ? (
+                      <>
+                        <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                          loading="lazy"
+                          draggable={false}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"/>
+                      </>
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                        <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center" style={{ color: "#9ca3af" }}>
+                          <Image size={20}/>
+                        </div>
+                        <span className="text-xs text-gray-400">No image</span>
                       </div>
+                    )}
+                    {item.badge && (
+                      <span className="absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full bg-primary text-white">{item.badge}</span>
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <h3 className="text-gray-900 font-bold text-base mb-1 leading-snug">{item.name}</h3>
+                    <p className="text-gray-500 text-xs mb-3 line-clamp-2">{item.description}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-primary font-extrabold text-lg">{item.price}</span>
+                      <button
+                        onClick={e => { e.stopPropagation(); window.location.href = item.link || "/categories"; }}
+                        className="flex items-center gap-1 text-xs font-bold px-3 py-2 rounded-xl text-white bg-primary hover:bg-red-700 transition-colors"
+                      >
+                        <Palette size={11}/> {t.nav.customize}
+                      </button>
                     </div>
-                  </motion.div>
+                  </div>
                 </motion.div>
-              );
-            })}
+              </motion.div>
+            ))}
           </div>
 
           <div className="text-center mt-8">

@@ -355,3 +355,27 @@ export const cmsWhyUs        = makeCmsArr<CmsWhyUs>("why-us");
 export const cmsSteps        = makeCmsArr<CmsStep>("steps");
 export const cmsTestimonials = makeCmsArr<CmsTestimonial>("testimonials");
 export const cmsFaqs         = makeCmsArr<CmsFaq>("faqs");
+
+// ─── Featured Products ────────────────────────────────────────────────────────
+export interface FeaturedProduct {
+  id: number;
+  name: string;
+  description: string;
+  price: string;
+  imageUrl: string | null;
+  badge: string;
+  link: string;
+  displayOrder: number;
+}
+
+export const getFeaturedProducts = () =>
+  apiFetch<FeaturedProduct[]>("/featured-products");
+
+export const createFeaturedProduct = (data: Omit<FeaturedProduct, "id" | "displayOrder">) =>
+  apiFetch<FeaturedProduct>("/featured-products", { method: "POST", body: JSON.stringify(data) });
+
+export const updateFeaturedProduct = (id: number, data: Partial<Omit<FeaturedProduct, "id">>) =>
+  apiFetch<FeaturedProduct>(`/featured-products/${id}`, { method: "PUT", body: JSON.stringify(data) });
+
+export const deleteFeaturedProduct = (id: number) =>
+  apiFetch<{ deleted: number }>(`/featured-products/${id}`, { method: "DELETE" });
