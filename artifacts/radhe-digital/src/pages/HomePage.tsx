@@ -8,7 +8,7 @@ import {
   Award, Image, Gift
 } from "lucide-react";
 import { CATEGORIES } from "@/data/products";
-import { useApiProducts, type ApiProductData } from "@/hooks/useApiProducts";
+import { useApiProducts, getFrontImage, type ApiProductData } from "@/hooks/useApiProducts";
 import { useLanguage } from "@/context/LanguageContext";
 import { useHomepageCategories } from "@/hooks/useHomepageCategories";
 import { useHomepageCms } from "@/hooks/useHomepageCms";
@@ -48,15 +48,45 @@ function CategoryImage({ slug, imageUrl }: { slug: string; imageUrl: string | nu
   );
 }
 
+/* ─── ProductImage ─── */
+function ProductImage({ product }: { product: ApiProductData | undefined }) {
+  const imgUrl = getFrontImage(product);
+  if (!imgUrl) {
+    return (
+      <div className="w-full h-full bg-[#f0f1f4] flex flex-col items-center justify-center gap-2">
+        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center" style={{ color: "#9ca3af" }}>
+          <Image size={18}/>
+        </div>
+        <span className="text-[10px] text-gray-400">No image</span>
+      </div>
+    );
+  }
+  return (
+    <>
+      <img
+        src={imgUrl}
+        alt={product?.name ?? "Product"}
+        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+        loading="lazy"
+        draggable={false}
+        style={{ willChange: "transform" }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"/>
+    </>
+  );
+}
+
 /* ─── BestSellersCarousel ─── */
-function BestSellersCarousel({ categoryImages }: { categoryImages: Record<string, string | null> }) {
+function BestSellersCarousel({ apiProducts }: { apiProducts: Record<string, ApiProductData> }) {
   const { t } = useLanguage();
   const tabs = CATEGORIES.map(c => c.label);
   const [active, setActive] = useState(0);
   const [scrollIdx, setScrollIdx] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const currentCategory = CATEGORIES[active];
-  const products = currentCategory?.products ?? [];
+  const products = Object.values(apiProducts ?? {}).filter(
+    p => p.categorySlug === currentCategory?.slug && p.status !== "Inactive"
+  );
   const [VISIBLE, setVISIBLE] = useState(() =>
     typeof window !== "undefined" ? (window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3) : 3
   );
@@ -153,8 +183,8 @@ function BestSellersCarousel({ categoryImages }: { categoryImages: Record<string
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 30px rgba(196,150,42,0.18)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.3)"; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 14px rgba(0,0,0,0.07)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
                 >
-                  <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden">
-                    <CategoryImage slug={currentCategory.slug} imageUrl={categoryImages[currentCategory.slug] ?? null}/>
+                  <div className="aspect-square bg-[#f0f1f4] relative overflow-hidden">
+                    <ProductImage product={product}/>
                     {product.badge && (
                       <span className="absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary text-white">{product.badge}</span>
                     )}
@@ -690,8 +720,8 @@ export default function HomePage() {
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 12px 36px rgba(196,150,42,0.18)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.3)"; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 14px rgba(0,0,0,0.07)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
                   >
-                    <div className="aspect-square bg-[#1a1a1a] relative overflow-hidden">
-                      <CategoryImage slug={cat.slug} imageUrl={categoryImages[cat.slug] ?? null}/>
+                    <div className="aspect-square bg-[#f0f1f4] relative overflow-hidden">
+                      <ProductImage product={product}/>
                       {product?.badge && (
                         <span className="absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full bg-primary text-white">{product.badge}</span>
                       )}
@@ -740,7 +770,7 @@ export default function HomePage() {
             </h2>
             <p className="text-gray-500 text-base max-w-xl mx-auto">{t.bestSellers.subtitle}</p>
           </div>
-          <BestSellersCarousel categoryImages={categoryImages}/>
+          <BestSellersCarousel apiProducts={apiProducts}/>
         </div>
       </section>
 
