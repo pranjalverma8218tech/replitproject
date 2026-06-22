@@ -524,77 +524,137 @@ export default function HomePage() {
       </section>
 
       {/* ── CATEGORIES ── */}
-      <section className="relative py-14 overflow-hidden" style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)" }}>
+      <section className="relative py-20 overflow-hidden" style={{ background: "linear-gradient(160deg, #f8f9fc 0%, #f1f3f8 50%, #eef0f6 100%)" }}>
 
-        {/* Decorative blurred shapes */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full" style={{ background: "radial-gradient(circle, rgba(196,150,42,0.04) 0%, transparent 70%)" }}/>
-          <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full" style={{ background: "radial-gradient(circle, rgba(239,68,68,0.03) 0%, transparent 70%)" }}/>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full" style={{ background: "radial-gradient(ellipse, rgba(196,150,42,0.025) 0%, transparent 65%)" }}/>
+        {/* Decorative background texture dots */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" style={{ opacity: 0.35 }}>
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", top: 0, left: 0 }}>
+            <defs>
+              <pattern id="catDots" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+                <circle cx="1.5" cy="1.5" r="1.5" fill="#c4962a" fillOpacity="0.13"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#catDots)"/>
+          </svg>
         </div>
 
-        {/* Top divider line */}
-        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(229,231,235,0.8), transparent)" }}/>
-        {/* Bottom divider line */}
-        <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(229,231,235,0.8), transparent)" }}/>
+        {/* Large soft glow behind heading */}
+        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[320px]" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(196,150,42,0.09) 0%, transparent 70%)", borderRadius: "0 0 50% 50%" }}/>
+        {/* Bottom accent glow */}
+        <div className="pointer-events-none absolute bottom-0 right-0 w-80 h-80 rounded-full" style={{ background: "radial-gradient(circle, rgba(239,68,68,0.04) 0%, transparent 70%)" }}/>
+
+        {/* Top border accent */}
+        <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: "linear-gradient(90deg, transparent 0%, rgba(196,150,42,0.35) 30%, rgba(196,150,42,0.5) 50%, rgba(196,150,42,0.35) 70%, transparent 100%)" }}/>
+        {/* Bottom border accent */}
+        <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(209,213,219,0.7), transparent)" }}/>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-9">
-            <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
-              {t.categories.badge}
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900" style={{ letterSpacing: "-0.01em" }}>
-              {t.categories.title}
-            </h2>
-            <p className="text-gray-500 text-base max-w-xl mx-auto leading-relaxed">{t.categories.subtitle}</p>
+
+          {/* ── Section heading ── */}
+          <div className="text-center mb-12">
+            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold tracking-[0.22em] uppercase mb-4 px-4 py-1.5 rounded-full" style={{ color: "#C4962A", border: "1px solid rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.07)", letterSpacing: "0.2em" }}>
+                <Sparkles size={11}/> {t.categories.badge}
+              </span>
+              <h2 className="text-3xl sm:text-[2.6rem] font-extrabold mb-3 mt-2 text-gray-900" style={{ letterSpacing: "-0.02em", lineHeight: 1.15 }}>
+                {t.categories.title}
+              </h2>
+              {/* Gold underline accent */}
+              <div className="flex justify-center mb-4">
+                <div className="h-1 rounded-full w-16" style={{ background: "linear-gradient(90deg, rgba(196,150,42,0.5), #C4962A, rgba(196,150,42,0.5))" }}/>
+              </div>
+              <p className="text-gray-500 text-base max-w-lg mx-auto leading-relaxed">{t.categories.subtitle}</p>
+            </motion.div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-5">
+          {/* ── Category cards grid ── */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4 sm:gap-5">
             {CATEGORIES.map((cat, i) => (
               <motion.div
                 key={cat.slug}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 28 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.06 }}
+                transition={{ delay: i * 0.07, duration: 0.45 }}
               >
                 <Link href={`/categories/${cat.slug}`}>
                   <motion.div
-                    className="group flex flex-col items-center text-center p-5 bg-white border rounded-[20px] cursor-pointer transition-all duration-300"
-                    whileHover={{ y: -6 }}
-                    style={{ borderColor: "#e5e7eb", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}
+                    className="group flex flex-col items-center text-center bg-white cursor-pointer"
+                    whileHover={{ y: -8 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    style={{
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "20px",
+                      padding: "18px 14px 16px",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04)",
+                    }}
                     onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.boxShadow = "0 16px 40px rgba(0,0,0,0.12)";
-                      (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.4)";
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.boxShadow = "0 20px 50px rgba(0,0,0,0.12), 0 8px 20px rgba(196,150,42,0.12)";
+                      el.style.borderColor = "rgba(196,150,42,0.45)";
                     }}
                     onMouseLeave={e => {
-                      (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 20px rgba(0,0,0,0.06)";
-                      (e.currentTarget as HTMLElement).style.borderColor = "#e5e7eb";
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04)";
+                      el.style.borderColor = "#e5e7eb";
                     }}
                   >
-                    <div className="w-full aspect-square rounded-xl overflow-hidden relative mb-3" style={{ background: "#fafafa" }}>
-                      <CategoryImage slug={cat.slug} imageUrl={categoryImages[cat.slug] ?? null}/>
+                    {/* Image container with tinted bg + inner shadow */}
+                    <div
+                      className="w-full aspect-square rounded-[14px] overflow-hidden relative mb-3.5"
+                      style={{
+                        background: "linear-gradient(145deg, #f0f2f7 0%, #e8eaf2 100%)",
+                        boxShadow: "inset 0 2px 8px rgba(0,0,0,0.07)",
+                      }}
+                    >
+                      <motion.div
+                        className="w-full h-full"
+                        whileHover={{ scale: 1.04 }}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
+                      >
+                        <CategoryImage slug={cat.slug} imageUrl={categoryImages[cat.slug] ?? null}/>
+                      </motion.div>
                     </div>
-                    <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-2" style={{ background: "rgba(196,150,42,0.1)", color: "#C4962A" }}>
+
+                    {/* Icon badge */}
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center mb-2"
+                      style={{ background: "rgba(196,150,42,0.09)", color: "#C4962A" }}
+                    >
                       {CAT_ICONS[cat.slug]}
                     </div>
-                    <h3 className="text-gray-900 font-bold text-[15px] leading-tight">{cat.label}</h3>
+
+                    {/* Category name */}
+                    <h3 className="text-gray-900 font-bold text-[14px] sm:text-[15px] leading-snug tracking-tight">
+                      {cat.label}
+                    </h3>
                   </motion.div>
                 </Link>
               </motion.div>
             ))}
           </div>
 
-          <div className="text-center mt-8">
+          {/* ── Browse all CTA ── */}
+          <div className="text-center mt-10">
             <Link href="/categories">
-              <button
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold border text-sm transition-all duration-200 hover:bg-[#faf7f0]"
-                style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.35)", boxShadow: "0 2px 12px rgba(196,150,42,0.1)" }}
+              <motion.button
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex items-center gap-2 px-9 py-3.5 rounded-xl font-bold text-sm transition-colors duration-200"
+                style={{
+                  color: "#C4962A",
+                  border: "1.5px solid rgba(196,150,42,0.4)",
+                  background: "rgba(196,150,42,0.04)",
+                  boxShadow: "0 4px 18px rgba(196,150,42,0.1)",
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(196,150,42,0.08)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "rgba(196,150,42,0.04)"; }}
               >
                 {t.categories.browseAll} <ArrowRight size={15}/>
-              </button>
+              </motion.button>
             </Link>
           </div>
+
         </div>
       </section>
 
