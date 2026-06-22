@@ -268,6 +268,16 @@
   }
 }
 
+@keyframes shine-sweep {
+  from { transform: translateX(-100%) skewX(-20deg); }
+  to   { transform: translateX(300%)  skewX(-20deg); }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-7px); }
+}
+
 @layer utilities {
   .premium-card {
     background: #ffffff;
@@ -282,14 +292,54 @@
     transform: translateY(-3px);
   }
 
-  .section-warm {
-    background: linear-gradient(160deg, #faf9f6 0%, #f4f2ee 100%);
+  .section-warm    { background: linear-gradient(160deg, #faf9f6 0%, #f4f2ee 100%); }
+  .section-warmer  { background: linear-gradient(160deg, #f7f5f1 0%, #eeeae3 100%); }
+  .section-white   { background: #fdfcfb; }
+
+  /* Strong elevated card — handles all hover visuals via CSS */
+  .card-elevated {
+    background: #ffffff;
+    border: 1px solid #e8e3dc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03), 0 6px 20px rgba(0,0,0,0.07), 0 14px 36px rgba(0,0,0,0.04);
+    transition: transform 0.38s cubic-bezier(0.34,1.38,0.64,1),
+                box-shadow 0.38s ease,
+                border-color 0.3s ease;
+    will-change: transform;
   }
-  .section-warmer {
-    background: linear-gradient(160deg, #f7f5f1 0%, #eeeae3 100%);
+  .card-elevated:hover {
+    transform: translateY(-8px) scale(1.015);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08), 0 20px 48px rgba(0,0,0,0.10), 0 0 0 1px rgba(196,150,42,0.2);
+    border-color: rgba(196,150,42,0.45);
   }
-  .section-white {
-    background: #fdfcfb;
+
+  /* Button shine sweep animation */
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-shine::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -80%;
+    width: 40%;
+    height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    transform: skewX(-20deg);
+    pointer-events: none;
+  }
+  .btn-shine:hover::after {
+    animation: shine-sweep 0.6s ease forwards;
+  }
+
+  /* Gradient bar under section headings */
+  .heading-gradient-bar {
+    display: block;
+    height: 3px;
+    width: 56px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #C4962A 0%, #DC2626 100%);
+    margin: 10px auto 0;
   }
 }
 

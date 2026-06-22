@@ -409,7 +409,7 @@ export default function HomePage() {
                 <Link href="/customize">
                   <motion.button
                     whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}
-                    className="flex items-center gap-3 px-9 py-4 rounded-2xl font-extrabold text-lg text-white"
+                    className="flex items-center gap-3 px-9 py-4 rounded-2xl font-extrabold text-lg text-white btn-shine"
                     style={{
                       background: "linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #B91C1C 100%)",
                       boxShadow: "0 8px 32px rgba(220,38,38,0.5), 0 2px 8px rgba(220,38,38,0.3), inset 0 1px 0 rgba(255,255,255,0.15)",
@@ -610,23 +610,23 @@ export default function HomePage() {
                 <Link href={`/categories/${cat.slug}`}>
                   <motion.div
                     className="group flex flex-col items-center text-center bg-white cursor-pointer"
-                    whileHover={{ y: -4 }}
-                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    whileHover={{ y: -8 }}
+                    transition={{ duration: 0.28, ease: "easeOut" }}
                     style={{
-                      border: "1px solid #e5e7eb",
+                      border: "1px solid #e8e3dc",
                       borderRadius: "20px",
                       padding: "18px 14px 16px",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04)",
+                      boxShadow: "0 2px 4px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.08)",
                     }}
                     onMouseEnter={e => {
                       const el = e.currentTarget as HTMLElement;
-                      el.style.boxShadow = "0 20px 50px rgba(0,0,0,0.12), 0 8px 20px rgba(196,150,42,0.12)";
-                      el.style.borderColor = "rgba(196,150,42,0.45)";
+                      el.style.boxShadow = "0 12px 28px rgba(0,0,0,0.12), 0 20px 50px rgba(196,150,42,0.12), 0 0 0 1px rgba(196,150,42,0.15)";
+                      el.style.borderColor = "rgba(196,150,42,0.5)";
                     }}
                     onMouseLeave={e => {
                       const el = e.currentTarget as HTMLElement;
-                      el.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04)";
-                      el.style.borderColor = "#e5e7eb";
+                      el.style.boxShadow = "0 2px 4px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.08)";
+                      el.style.borderColor = "#e8e3dc";
                     }}
                   >
                     {/* Image container with tinted bg + inner shadow */}
@@ -689,16 +689,19 @@ export default function HomePage() {
       </section>
 
       {/* ── FEATURED PRODUCTS ── */}
-      <section className="py-16 section-warm">
+      <section className="py-16 section-warm relative overflow-hidden">
+        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-56" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(196,150,42,0.14) 0%, transparent 65%)", filter: "blur(55px)" }}/>
+        <div className="pointer-events-none absolute bottom-0 right-0 w-96 h-96" style={{ background: "radial-gradient(circle at 100% 100%, rgba(220,38,38,0.05) 0%, transparent 65%)", filter: "blur(60px)" }}/>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
+          <div className="text-center mb-10">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
               {t.featured.badge}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900">
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-2 mt-2 text-gray-900">
               {t.featured.title}
             </h2>
-            <p className="text-gray-500 text-base max-w-xl mx-auto">{t.featured.subtitle}</p>
+            <div className="heading-gradient-bar"/>
+            <p className="text-gray-500 text-base max-w-xl mx-auto mt-4">{t.featured.subtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -711,13 +714,13 @@ export default function HomePage() {
                 transition={{ delay: i * 0.08, duration: 0.4 }}
               >
                 <motion.div
-                  className="group bg-white rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
-                  whileHover={{ y: -3 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                  style={{ border: "1px solid #ede9e3", boxShadow: "0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05)" }}
+                  className="group bg-white rounded-2xl overflow-hidden cursor-pointer"
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  transition={{ duration: 0.32, ease: [0.34, 1.38, 0.64, 1] }}
+                  style={{ border: "1px solid #e8e3dc", boxShadow: "0 2px 4px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.09)" }}
                   onClick={() => { if (item.link) window.location.href = item.link; }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 32px rgba(196,150,42,0.15), 0 2px 8px rgba(0,0,0,0.06)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.35)"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05)"; (e.currentTarget as HTMLElement).style.borderColor = "#ede9e3"; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 16px 40px rgba(0,0,0,0.12), 0 24px 56px rgba(196,150,42,0.12)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.45)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 4px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.09)"; (e.currentTarget as HTMLElement).style.borderColor = "#e8e3dc"; }}
                 >
                   <div className="aspect-square bg-[#f0f1f4] relative overflow-hidden">
                     {item.imageUrl ? (
@@ -725,7 +728,7 @@ export default function HomePage() {
                         <img
                           src={item.imageUrl}
                           alt={item.name}
-                          className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                          className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
                           loading="lazy"
                           draggable={false}
                         />
@@ -772,16 +775,19 @@ export default function HomePage() {
       </section>
 
       {/* ── BEST SELLERS CAROUSEL ── */}
-      <section className="section-white py-14">
+      <section className="section-white py-14 relative overflow-hidden">
+        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[640px] h-48" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(220,38,38,0.07) 0%, transparent 65%)", filter: "blur(50px)" }}/>
+        <div className="pointer-events-none absolute bottom-0 left-0 w-96 h-96" style={{ background: "radial-gradient(circle at 0% 100%, rgba(196,150,42,0.06) 0%, transparent 65%)", filter: "blur(60px)" }}/>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
               {t.bestSellers.badge}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900">
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-2 mt-2 text-gray-900">
               {t.bestSellers.title}
             </h2>
-            <p className="text-gray-500 text-base max-w-xl mx-auto">{t.bestSellers.subtitle}</p>
+            <div className="heading-gradient-bar"/>
+            <p className="text-gray-500 text-base max-w-xl mx-auto mt-4">{t.bestSellers.subtitle}</p>
           </div>
           <BestSellersCarousel apiProducts={apiProducts}/>
         </div>
@@ -827,16 +833,19 @@ export default function HomePage() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="py-16 section-warmer">
+      <section className="py-16 section-warmer relative overflow-hidden">
+        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[680px] h-56" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(220,38,38,0.07) 0%, transparent 65%)", filter: "blur(55px)" }}/>
+        <div className="pointer-events-none absolute bottom-0 right-0 w-80 h-80" style={{ background: "radial-gradient(circle at 100% 100%, rgba(196,150,42,0.07) 0%, transparent 65%)", filter: "blur(55px)" }}/>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
               {t.howItWorks.badge}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900">
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-2 mt-2 text-gray-900">
               {t.howItWorks.title} <span style={{ color: "#C4962A" }}>{t.howItWorks.highlight}</span>
             </h2>
-            <p className="text-gray-500 text-base max-w-xl mx-auto">{t.howItWorks.subtitle}</p>
+            <div className="heading-gradient-bar"/>
+            <p className="text-gray-500 text-base max-w-xl mx-auto mt-4">{t.howItWorks.subtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
@@ -848,8 +857,7 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.09, duration: 0.4 }}
-                className="relative z-10 rounded-2xl p-7 text-center transition-all duration-300 hover:-translate-y-1"
-                style={{ background: "#fff", border: "1px solid #ede9e3", boxShadow: "0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05)" }}
+                className="relative z-10 card-elevated rounded-2xl p-7 text-center"
               >
                 <div
                   className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -868,8 +876,8 @@ export default function HomePage() {
             <Link href="/customize">
               <motion.button
                 whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-base text-white"
-                style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 4px 20px rgba(229,62,62,0.35)" }}
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-base text-white btn-shine"
+                style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 6px 28px rgba(229,62,62,0.45)" }}
               >
                 {t.howItWorks.startNow} <ArrowRight size={18}/>
               </motion.button>
@@ -879,16 +887,19 @@ export default function HomePage() {
       </section>
 
       {/* ── TESTIMONIALS ── */}
-      <section className="py-16 section-white">
+      <section className="py-16 section-white relative overflow-hidden">
+        <div className="pointer-events-none absolute top-0 right-0 w-[500px] h-[500px]" style={{ background: "radial-gradient(circle at 100% 0%, rgba(196,150,42,0.08) 0%, transparent 60%)", filter: "blur(60px)" }}/>
+        <div className="pointer-events-none absolute bottom-0 left-0 w-[400px] h-[400px]" style={{ background: "radial-gradient(circle at 0% 100%, rgba(220,38,38,0.05) 0%, transparent 60%)", filter: "blur(60px)" }}/>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
               {t.testimonials.badge}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900">
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-2 mt-2 text-gray-900">
               {t.testimonials.title}
             </h2>
-            <div className="flex items-center justify-center gap-2">
+            <div className="heading-gradient-bar"/>
+            <div className="flex items-center justify-center gap-2 mt-4">
               {[...Array(5)].map((_, i) => <Star key={i} size={18} className="text-yellow-400 fill-yellow-400"/>)}
               <span className="text-gray-500 text-sm ml-2">{t.testimonials.rating}</span>
             </div>
@@ -902,10 +913,7 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.09, duration: 0.4 }}
-                className="group rounded-2xl p-7 flex flex-col gap-4 transition-all duration-300"
-                style={{ background: "#fff", border: "1px solid #ede9e3", boxShadow: "0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05)" }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 32px rgba(196,150,42,0.14), 0 2px 8px rgba(0,0,0,0.06)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.35)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05)"; (e.currentTarget as HTMLElement).style.borderColor = "#ede9e3"; }}
+                className="group card-elevated rounded-2xl p-7 flex flex-col gap-4"
               >
                 <Quote size={22} style={{ color: "#C4962A" }} className="opacity-70"/>
                 <p className="text-gray-700 leading-relaxed text-sm italic flex-1">"{t.text}"</p>
@@ -940,16 +948,18 @@ export default function HomePage() {
       </section>
 
       {/* ── FAQ ── */}
-      <section className="py-20 section-warm">
+      <section className="py-20 section-warm relative overflow-hidden">
+        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-48" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(196,150,42,0.11) 0%, transparent 65%)", filter: "blur(50px)" }}/>
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
               {t.faq.badge}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold mb-3 mt-2 text-gray-900">
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-2 mt-2 text-gray-900">
               {t.faq.title}
             </h2>
-            <p className="text-gray-500 text-base">{t.faq.subtitle}</p>
+            <div className="heading-gradient-bar"/>
+            <p className="text-gray-500 text-base mt-4">{t.faq.subtitle}</p>
           </div>
 
           <div className="space-y-3">
@@ -989,8 +999,8 @@ export default function HomePage() {
             <Link href="/customize">
               <motion.button
                 whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-3 px-8 py-4 rounded-2xl font-extrabold text-lg text-white"
-                style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 6px 28px rgba(229,62,62,0.4)" }}
+                className="flex items-center gap-3 px-8 py-4 rounded-2xl font-extrabold text-lg text-white btn-shine"
+                style={{ background: "linear-gradient(135deg,#e53e3e,#c53030)", boxShadow: "0 6px 28px rgba(229,62,62,0.5)" }}
               >
                 {cmsData?.cta?.btn1Text ?? t.cta.startNow} <ArrowRight size={20}/>
               </motion.button>

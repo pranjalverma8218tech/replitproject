@@ -1,0 +1,83 @@
+I do not want suggestions or placeholder styling.
+
+Actually implement the visual redesign across the entire website and modify the code directly.
+
+Current problem:
+The website still looks mostly flat, white, and template-like. The previous changes are barely noticeable.
+
+Implement these changes in the actual UI:
+
+1. Add scroll reveal animations using Intersection Observer.
+
+   * Fade Up
+   * Fade In
+   * Scale In
+   * Trigger once when section enters viewport
+
+2. Add premium backgrounds to all major sections:
+
+   * Soft gradients (#ffffff → #f8f8f8 → #f3f4f6)
+   * Subtle blurred gradient blobs behind headings
+   * Light texture pattern at very low opacity
+
+3. Upgrade all cards:
+
+   * Stronger shadows
+   * Hover translateY(-8px)
+   * Smooth transition 0.4s
+   * Slight scale on hover
+   * Premium border
+
+4. Upgrade product cards:
+
+   * Product image zoom on hover
+   * Better image container
+   * More depth and contrast
+   * Premium ecommerce look
+
+5. Upgrade buttons:
+
+   * Hover glow
+   * Shine sweep animation
+   * Better shadows
+   * Smooth transitions
+
+6. Header:
+
+   * Glassmorphism on scroll
+   * Backdrop blur
+   * Soft shadow
+   * Smooth sticky effect
+
+7. Navigation:
+
+   * Animated underline effect
+   * Smooth hover color transition
+
+8. Homepage:
+
+   * Floating animation on hero elements
+   * Category icon floating effect
+   * Micro interactions everywhere
+
+9. Section headings:
+
+   * Decorative gradient accent
+   * Better spacing
+   * Modern premium look
+
+10. Global styling:
+
+* Increase visual hierarchy
+* Increase whitespace
+* Improve section separation
+* Maintain brand colors
+
+Important:
+Do NOT tell me what you changed.
+Do NOT generate example CSS.
+Do NOT provide recommendations.
+
+Directly edit the codebase and fully apply the redesign so the difference is immediately visible when the page reloads.
+
+The final result should look like a modern premium ecommerce website rather than a basic template.
