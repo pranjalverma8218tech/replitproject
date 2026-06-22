@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Shirt, Coffee, HardHat, Gift, ArrowRight, Sparkles, Check, Loader2, AlertCircle } from "lucide-react";
+import { Shirt, Coffee, HardHat, Gift, Pen, ArrowRight, Sparkles, Check, Loader2, AlertCircle } from "lucide-react";
 import { useCustomizeCategories } from "@/hooks/useCustomizeApi";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -15,6 +15,7 @@ const CAT_META: Record<string, {
   "mugs":            { icon: Coffee,   color: "#d97706", bg: "rgba(217,119,6,0.08)",   border: "rgba(217,119,6,0.2)" },
   "caps":            { icon: HardHat,  color: "#2563eb", bg: "rgba(37,99,235,0.08)",   border: "rgba(37,99,235,0.2)" },
   "hoodies":         { icon: Shirt,    color: "#7c3aed", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.2)" },
+  "pens":            { icon: Pen,      color: "#059669", bg: "rgba(5,150,105,0.08)",   border: "rgba(5,150,105,0.2)" },
   "corporate-gifts": { icon: Gift,     color: "#DC2626", bg: "rgba(220,38,38,0.08)",   border: "rgba(220,38,38,0.2)" },
 };
 

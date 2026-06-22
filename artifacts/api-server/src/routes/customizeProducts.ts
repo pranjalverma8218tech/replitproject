@@ -9,6 +9,7 @@ const CATEGORY_TO_SLUG: Record<string, string> = {
   "Mugs":            "mugs",
   "Caps":            "caps",
   "Hoodies":         "hoodies",
+  "Pens":            "pens",
   "Corporate Gifts": "corporate-gifts",
 };
 

@@ -26,6 +26,9 @@ export const PRINT_POSITIONS: Record<string, { id: string; label: string; desc: 
     { id: "back",  label: "Back",       desc: "Full back print" },
     { id: "both",  label: "Both Sides", desc: "Front & back designs" },
   ],
+  "pens": [
+    { id: "front", label: "Barrel", desc: "Logo or text on the barrel" },
+  ],
   "corporate-gifts": [
     { id: "front", label: "Front", desc: "Logo or text on front" },
   ],
@@ -39,6 +42,7 @@ export const CATEGORY_DESCRIPTIONS: Record<string, string> = {
   "mugs":            "Premium plain mugs for stunning photo & logo prints",
   "caps":            "Plain caps ready for embroidery or print customization",
   "hoodies":         "Premium plain hoodies for bold custom designs",
+  "pens":            "Premium plain pens ready for custom logo printing and branding",
   "corporate-gifts": "Branded corporate gifting products for businesses",
 };
 
@@ -119,7 +123,7 @@ async function fetchOne(id: string): Promise<CatalogProduct> {
 }
 
 // ─── Category order ───────────────────────────────────────────────────────────
-const CAT_ORDER = ["t-shirts", "mugs", "caps", "hoodies", "corporate-gifts"];
+const CAT_ORDER = ["t-shirts", "mugs", "caps", "hoodies", "pens", "corporate-gifts"];
 
 function groupByCategory(products: CatalogProduct[]): CatalogCategory[] {
   const map = new Map<string, CatalogProduct[]>();
