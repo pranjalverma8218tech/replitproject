@@ -243,6 +243,10 @@
   html {
     overflow-x: hidden;
     max-width: 100%;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
@@ -250,11 +254,42 @@
     overflow-x: hidden;
     max-width: 100%;
     width: 100%;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
   }
 
   img {
     max-width: 100%;
     height: auto;
+  }
+
+  ::selection {
+    background-color: rgba(220, 38, 38, 0.12);
+    color: #b91c1c;
+  }
+}
+
+@layer utilities {
+  .premium-card {
+    background: #ffffff;
+    border: 1px solid #ede9e3;
+    border-radius: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  }
+  .premium-card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.09), 0 12px 40px rgba(0,0,0,0.07);
+    border-color: #d9d2c8;
+    transform: translateY(-3px);
+  }
+
+  .section-warm {
+    background: linear-gradient(160deg, #faf9f6 0%, #f4f2ee 100%);
+  }
+  .section-warmer {
+    background: linear-gradient(160deg, #f7f5f1 0%, #eeeae3 100%);
+  }
+  .section-white {
+    background: #fdfcfb;
   }
 }
 

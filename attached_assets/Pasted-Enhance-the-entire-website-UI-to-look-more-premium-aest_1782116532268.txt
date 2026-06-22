@@ -1,0 +1,63 @@
+Enhance the entire website UI to look more premium, aesthetic, modern, and conversion-focused without changing any existing text, content, product data, branding, navigation, or section structure.
+
+Important:
+- Do NOT change any text.
+- Do NOT remove any section.
+- Do NOT change logos or branding.
+- Do NOT change product information.
+- Keep all functionality exactly the same.
+
+UI Enhancements Required:
+
+1. Smooth Animations
+   - Add subtle fade-up animations when sections enter the viewport.
+   - Add smooth hover effects on cards.
+   - Add gentle image zoom on hover (very subtle).
+   - Add smooth button hover transitions.
+   - Add animated underline or glow effect on navigation links.
+
+2. Premium Backgrounds
+   - Replace flat white backgrounds with very subtle gradients.
+   - Use soft light grey, warm white, and light cream tones.
+   - Add faint background patterns or blurred gradient shapes.
+   - Keep everything clean and professional.
+
+3. Product Card Improvements
+   - Add soft shadows.
+   - Add stronger hover elevation.
+   - Smooth scaling effect.
+   - Add premium glass-like depth without overdoing it.
+
+4. Section Enhancement
+   - Add subtle decorative gradient blobs behind headings.
+   - Create better visual separation between sections.
+   - Improve spacing and breathing room.
+
+5. CTA Buttons
+   - Add smooth hover glow.
+   - Add subtle shine animation.
+   - Improve button depth using shadows.
+
+6. Header & Navigation
+   - Add glassmorphism effect while scrolling.
+   - Smooth sticky header transition.
+   - Better hover effects on menu items.
+
+7. Homepage Engagement
+   - Add gentle floating animation to hero graphics.
+   - Add subtle movement to category icons.
+   - Add micro-interactions throughout the site.
+
+8. Premium Visual Effects
+   - Use tasteful shadows.
+   - Soft gradients.
+   - Smooth transitions (300–500ms).
+   - Modern ecommerce aesthetics inspired by Apple, Stripe, and premium DTC brands.
+
+9. Performance
+   - Keep animations lightweight.
+   - Maintain fast loading speed.
+   - Ensure mobile responsiveness remains perfect.
+
+Goal:
+Make the website feel premium, trustworthy, modern, and visually engaging so users spend more time browsing products, while keeping all existing text, content, and structure unchanged.

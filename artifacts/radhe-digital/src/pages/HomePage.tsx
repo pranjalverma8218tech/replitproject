@@ -373,7 +373,7 @@ export default function HomePage() {
               </motion.div>
 
               <motion.h1
-                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.1 }}
+                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
                 className="text-[36px] sm:text-[46px] md:text-[52px] lg:text-[60px] font-extrabold leading-[1.12] tracking-tight mb-2 text-white"
                 style={{ letterSpacing: "-0.015em" }}
               >
@@ -384,7 +384,7 @@ export default function HomePage() {
                 }}>{cmsData?.hero?.brand ?? t.hero.brand}</span>
               </motion.h1>
               <motion.h1
-                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.18 }}
+                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.16 }}
                 className="text-[36px] sm:text-[46px] md:text-[52px] lg:text-[60px] font-extrabold leading-[1.12] tracking-tight mb-6 text-white"
                 style={{ letterSpacing: "-0.015em" }}
               >
@@ -470,8 +470,8 @@ export default function HomePage() {
               style={{ maxWidth: "400px" }}
             >
               <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                animate={{ y: [0, -5, 0] }}
+                transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
                 className="relative flex items-center justify-center"
               >
                 {/* Outer atmospheric glow */}
@@ -488,16 +488,14 @@ export default function HomePage() {
                   background: "radial-gradient(circle, rgba(220,38,38,0.2) 0%, rgba(196,150,42,0.08) 50%, transparent 70%)",
                   filter: "blur(20px)",
                 }}/>
-                {/* Rotating accent ring */}
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                {/* Accent ring */}
+                <div
                   className="absolute pointer-events-none"
                   style={{
                     inset: "-6%",
                     borderRadius: "50%",
                     border: "1px solid transparent",
-                    background: "linear-gradient(#1a1a1a, #1a1a1a) padding-box, linear-gradient(135deg, rgba(196,150,42,0.6), transparent, rgba(220,38,38,0.4), transparent) border-box",
+                    background: "linear-gradient(#1a1a1a, #1a1a1a) padding-box, linear-gradient(135deg, rgba(196,150,42,0.35), transparent, rgba(220,38,38,0.2), transparent) border-box",
                   }}
                 />
                 {/* Logo image */}
@@ -604,16 +602,16 @@ export default function HomePage() {
             {CATEGORIES.map((cat, i) => (
               <motion.div
                 key={cat.slug}
-                initial={{ opacity: 0, y: 28 }}
+                initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.07, duration: 0.45 }}
+                transition={{ delay: i * 0.05, duration: 0.4 }}
               >
                 <Link href={`/categories/${cat.slug}`}>
                   <motion.div
                     className="group flex flex-col items-center text-center bg-white cursor-pointer"
-                    whileHover={{ y: -8 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    whileHover={{ y: -4 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
                     style={{
                       border: "1px solid #e5e7eb",
                       borderRadius: "20px",
@@ -691,7 +689,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FEATURED PRODUCTS ── */}
-      <section className="py-14 bg-[#f7f7f5]">
+      <section className="py-16 section-warm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
@@ -707,18 +705,19 @@ export default function HomePage() {
             {featuredItems.slice(0, 4).map((item, i) => (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.08, duration: 0.4 }}
               >
                 <motion.div
-                  className="group bg-white border border-gray-100 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
-                  whileHover={{ y: -6 }}
-                  style={{ boxShadow: "0 2px 14px rgba(0,0,0,0.07)" }}
+                  className="group bg-white rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
+                  whileHover={{ y: -3 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  style={{ border: "1px solid #ede9e3", boxShadow: "0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05)" }}
                   onClick={() => { if (item.link) window.location.href = item.link; }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 12px 36px rgba(196,150,42,0.18)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.3)"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 14px rgba(0,0,0,0.07)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 32px rgba(196,150,42,0.15), 0 2px 8px rgba(0,0,0,0.06)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.35)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05)"; (e.currentTarget as HTMLElement).style.borderColor = "#ede9e3"; }}
                 >
                   <div className="aspect-square bg-[#f0f1f4] relative overflow-hidden">
                     {item.imageUrl ? (
@@ -773,7 +772,7 @@ export default function HomePage() {
       </section>
 
       {/* ── BEST SELLERS CAROUSEL ── */}
-      <section className="bg-white py-12">
+      <section className="section-white py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
@@ -805,10 +804,10 @@ export default function HomePage() {
             {whyChooseUs.map((item, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
+                transition={{ delay: i * 0.07, duration: 0.4 }}
                 className="group flex items-start gap-5 p-6 rounded-2xl border border-white/8 bg-[#111] hover:border-[#C4962A]/35 transition-all duration-300"
               >
                 <div
@@ -828,7 +827,7 @@ export default function HomePage() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="py-14 bg-[#f7f7f5]">
+      <section className="py-16 section-warmer">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
@@ -845,12 +844,12 @@ export default function HomePage() {
             {steps.map((step, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="relative z-10 bg-white border border-gray-100 rounded-2xl p-7 text-center"
-                style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.07)" }}
+                transition={{ delay: i * 0.09, duration: 0.4 }}
+                className="relative z-10 rounded-2xl p-7 text-center transition-all duration-300 hover:-translate-y-1"
+                style={{ background: "#fff", border: "1px solid #ede9e3", boxShadow: "0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05)" }}
               >
                 <div
                   className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -880,7 +879,7 @@ export default function HomePage() {
       </section>
 
       {/* ── TESTIMONIALS ── */}
-      <section className="py-14 bg-white">
+      <section className="py-16 section-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
@@ -899,14 +898,14 @@ export default function HomePage() {
             {testimonials.map((t, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="group bg-white border border-gray-100 rounded-2xl p-7 flex flex-col gap-4 transition-all duration-300"
-                style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.07)" }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 36px rgba(196,150,42,0.14)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.3)"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 16px rgba(0,0,0,0.07)"; (e.currentTarget as HTMLElement).style.borderColor = "rgb(243,244,246)"; }}
+                transition={{ delay: i * 0.09, duration: 0.4 }}
+                className="group rounded-2xl p-7 flex flex-col gap-4 transition-all duration-300"
+                style={{ background: "#fff", border: "1px solid #ede9e3", boxShadow: "0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05)" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 32px rgba(196,150,42,0.14), 0 2px 8px rgba(0,0,0,0.06)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(196,150,42,0.35)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05)"; (e.currentTarget as HTMLElement).style.borderColor = "#ede9e3"; }}
               >
                 <Quote size={22} style={{ color: "#C4962A" }} className="opacity-70"/>
                 <p className="text-gray-700 leading-relaxed text-sm italic flex-1">"{t.text}"</p>
@@ -941,7 +940,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FAQ ── */}
-      <section className="py-20 bg-[#f7f7f5]">
+      <section className="py-20 section-warm">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase mb-3 px-3 py-1 rounded-full border" style={{ color: "#C4962A", borderColor: "rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.08)" }}>
@@ -957,10 +956,10 @@ export default function HomePage() {
             {faqs.map((faq, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 8 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.06 }}
+                transition={{ delay: i * 0.04, duration: 0.35 }}
               >
                 <FAQItem q={faq.q} a={faq.a}/>
               </motion.div>
