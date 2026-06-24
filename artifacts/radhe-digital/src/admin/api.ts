@@ -386,11 +386,13 @@ export interface GalleryImage {
   imageUrl: string;
   caption: string;
   displayOrder: number;
+  visible: boolean;
   createdAt: string;
 }
 
+// Admin endpoint returns ALL images including hidden ones
 export const getGalleryImages = () =>
-  apiFetch<GalleryImage[]>("/gallery");
+  apiFetch<GalleryImage[]>("/gallery/all");
 
 export const createGalleryImage = (data: { imageUrl: string; caption?: string }) =>
   apiFetch<GalleryImage>("/gallery", { method: "POST", body: JSON.stringify(data) });

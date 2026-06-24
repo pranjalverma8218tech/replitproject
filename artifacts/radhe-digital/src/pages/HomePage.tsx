@@ -346,204 +346,308 @@ function GalleryLightbox({ images, index, onClose }: { images: GalleryImage[]; i
   );
 }
 
+/* ─── GalleryScrollRow ─── */
+function GalleryScrollRow({
+  images,
+  direction,
+  durationSec,
+  onOpen,
+}: {
+  images: GalleryImage[];
+  direction: "left" | "right";
+  durationSec: number;
+  onOpen: (img: GalleryImage) => void;
+}) {
+  // Duplicate for seamless loop: track = [img×N, img×N]
+  const track = [...images, ...images];
+
+  return (
+    <div
+      className="gallery-row-wrap relative overflow-hidden py-2"
+      style={{ maskImage: "linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%)" }}
+    >
+      <div
+        className={direction === "left" ? "gallery-track-left" : "gallery-track-right"}
+        style={{
+          display: "flex",
+          gap: "16px",
+          width: "max-content",
+          animationDuration: `${durationSec}s`,
+        }}
+      >
+        {track.map((img, i) => {
+          const origIdx = images.findIndex(x => x.id === img.id);
+          return (
+            <div
+              key={`${img.id}-${i}`}
+              className="group relative flex-shrink-0 overflow-hidden cursor-pointer"
+              style={{
+                width: "clamp(200px, 22vw, 300px)",
+                height: "clamp(150px, 16vw, 220px)",
+                borderRadius: "20px",
+                background: "rgba(255,255,255,0.04)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)",
+              }}
+              onClick={() => onOpen(img)}
+              onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(img); } }}
+              role="button"
+              tabIndex={origIdx === -1 ? -1 : 0}
+              aria-label={img.caption ? `View: ${img.caption}` : "View gallery image"}
+            >
+              {/* Image */}
+              <img
+                src={img.imageUrl}
+                alt={img.caption || "Gallery"}
+                loading="lazy"
+                draggable={false}
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+              />
+
+              {/* Gradient base overlay */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)" }}
+              />
+
+              {/* Hover overlay */}
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-350 pointer-events-none"
+                style={{ background: "linear-gradient(135deg, rgba(196,150,42,0.45) 0%, rgba(180,20,20,0.4) 100%)" }}
+              />
+
+              {/* Shine sweep on hover */}
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none overflow-hidden"
+                style={{ borderRadius: "20px" }}
+              >
+                <div
+                  className="absolute top-0 bottom-0 w-20 -skew-x-12 group-hover:animate-[shine-sweep_0.7s_ease_forwards]"
+                  style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)", left: "-80px" }}
+                />
+              </div>
+
+              {/* Zoom icon + caption on hover */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div
+                  className="w-9 h-9 rounded-full flex items-center justify-center"
+                  style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(4px)", border: "1px solid rgba(255,255,255,0.25)" }}
+                >
+                  <ZoomIn size={16} className="text-white"/>
+                </div>
+              </div>
+
+              {/* Caption bottom */}
+              {img.caption && (
+                <p className="absolute bottom-2 left-3 right-3 text-white/90 text-[11px] font-semibold leading-tight line-clamp-1 drop-shadow-md">
+                  {img.caption}
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ─── GallerySkeletonRow ─── */
+function GallerySkeletonRow() {
+  return (
+    <div className="relative overflow-hidden py-2" style={{ maskImage: "linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%)" }}>
+      <div className="flex gap-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div
+            key={i}
+            className="flex-shrink-0 rounded-[20px] animate-pulse"
+            style={{
+              width: "clamp(200px, 22vw, 300px)",
+              height: "clamp(150px, 16vw, 220px)",
+              background: "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)",
+              border: "1px solid rgba(255,255,255,0.05)",
+              animationDelay: `${i * 0.1}s`,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ─── GallerySection ─── */
 function GallerySection() {
   const { images, loading } = useGallery();
-  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+  const [lightboxImg, setLightboxImg] = useState<GalleryImage | null>(null);
+
+  // Build 3 row arrays — each starts from a different offset for visual variety
+  const buildRow = (offset: number) => {
+    if (images.length === 0) return [];
+    const n = images.length;
+    const rotated = [...images.slice(offset % n), ...images.slice(0, offset % n)];
+    // Ensure minimum of 6 items per row for smooth scroll (repeat if needed)
+    if (rotated.length < 6) {
+      const times = Math.ceil(6 / rotated.length);
+      return Array.from({ length: times }, () => rotated).flat().slice(0, 6);
+    }
+    return rotated;
+  };
+
+  const rows: Array<{ direction: "left" | "right"; duration: number; offset: number }> = [
+    { direction: "left",  duration: 28, offset: 0 },
+    { direction: "right", duration: 40, offset: 3 },
+    { direction: "left",  duration: 34, offset: 6 },
+  ];
+
+  const lightboxImages = images;
+  const lightboxIdx = lightboxImg ? lightboxImages.findIndex(x => x.id === lightboxImg.id) : -1;
 
   return (
-    <section className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(160deg, #f8f9fc 0%, #f1f3f8 50%, #eef0f6 100%)" }}>
-      {/* Decorative dots */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" style={{ opacity: 0.35 }}>
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", top: 0, left: 0 }}>
-          <defs>
-            <pattern id="galleryDots" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
-              <circle cx="1.5" cy="1.5" r="1.5" fill="#c4962a" fillOpacity="0.13"/>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#galleryDots)"/>
-        </svg>
+    <section
+      className="py-16 sm:py-20 relative overflow-hidden"
+      style={{ background: "linear-gradient(170deg, #080808 0%, #0f0a00 40%, #0a0000 70%, #0a0a0a 100%)" }}
+    >
+      {/* Ambient glows */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute top-[-10%] left-[10%] w-[500px] h-[500px] rounded-full opacity-[0.08]"
+          style={{ background: "radial-gradient(circle, #C4962A 0%, transparent 70%)", filter: "blur(80px)" }}/>
+        <div className="absolute bottom-[-10%] right-[5%] w-[400px] h-[400px] rounded-full opacity-[0.07]"
+          style={{ background: "radial-gradient(circle, #DC2626 0%, transparent 70%)", filter: "blur(80px)" }}/>
       </div>
 
-      {/* Top border accent */}
-      <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: "linear-gradient(90deg, transparent 0%, rgba(196,150,42,0.35) 30%, rgba(196,150,42,0.5) 50%, rgba(196,150,42,0.35) 70%, transparent 100%)" }}/>
+      {/* Top separator */}
+      <div className="absolute top-0 left-0 right-0 h-px"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(196,150,42,0.3) 30%, rgba(196,150,42,0.5) 50%, rgba(196,150,42,0.3) 70%, transparent)" }}/>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Section heading */}
-        <div className="text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            {/* Badge */}
-            <span
-              className="inline-flex items-center gap-1.5 text-xs font-bold tracking-[0.2em] uppercase mb-4 px-4 py-1.5 rounded-full"
-              style={{ color: "#C4962A", border: "1px solid rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.07)" }}
-            >
-              <Award size={11}/> 500+ Projects Delivered
-            </span>
-
-            <h2 className="text-3xl sm:text-[2.6rem] font-extrabold mb-3 mt-2 text-gray-900" style={{ letterSpacing: "-0.02em", lineHeight: 1.15 }}>
-              Our Recent Work
-            </h2>
-            <div className="flex justify-center mb-4">
-              <div className="h-1 rounded-full w-16" style={{ background: "linear-gradient(90deg, rgba(196,150,42,0.5), #C4962A, rgba(196,150,42,0.5))" }}/>
-            </div>
-            <p className="text-gray-500 text-base max-w-lg mx-auto leading-relaxed">
-              A glimpse of the quality and creativity we deliver.
-            </p>
-          </motion.div>
-        </div>
-
-        {/* Masonry Grid — or loading skeleton / empty state */}
-        {loading ? (
-          /* Loading skeleton */
-          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gridAutoRows: "200px" }}>
-            {[1,2,3,4,5,6].map(n => (
-              <div
-                key={n}
-                className="rounded-[18px] animate-pulse"
-                style={{
-                  gridRow: n === 2 || n === 5 ? "span 2" : "span 1",
-                  background: "linear-gradient(135deg, #e8eaf2 0%, #f0f1f8 100%)",
-                }}
-              />
-            ))}
-          </div>
-        ) : images.length === 0 ? (
-          /* Empty state — always visible so admin knows to upload */
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-col items-center justify-center py-16 rounded-2xl border-2 border-dashed"
-            style={{ borderColor: "rgba(196,150,42,0.25)", background: "rgba(196,150,42,0.03)" }}
-          >
-            <div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-              style={{ background: "rgba(196,150,42,0.1)", border: "1px solid rgba(196,150,42,0.25)" }}
-            >
-              <Image size={28} style={{ color: "#C4962A" }}/>
-            </div>
-            <h3 className="text-gray-700 font-bold text-lg mb-2">Gallery Coming Soon</h3>
-            <p className="text-gray-400 text-sm text-center max-w-xs leading-relaxed">
-              Our portfolio of recent work will appear here. Check back soon to see our latest prints and designs.
-            </p>
-          </motion.div>
-        ) : (
-          /* Masonry Grid */
-          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gridAutoRows: "200px" }}>
-            {images.map((img, i) => {
-              const spanRow = i % 5 === 1 || i % 5 === 4 ? 2 : 1;
-              const spanCol = i % 7 === 2 || i % 7 === 6 ? 2 : 1;
-              return (
-                <motion.div
-                  key={img.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: (i % 6) * 0.07, duration: 0.45 }}
-                  className="group relative overflow-hidden cursor-pointer"
-                  role="button"
-                  tabIndex={0}
-                  aria-label={img.caption ? `View: ${img.caption}` : `View gallery image ${i + 1}`}
-                  onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setLightboxIdx(i); } }}
-                  style={{
-                    gridRow: `span ${spanRow}`,
-                    gridColumn: `span ${spanCol}`,
-                    borderRadius: "18px",
-                    boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-                  }}
-                  whileHover={{ y: -5, scale: 1.02, transition: { duration: 0.3, ease: "easeOut" } }}
-                  onClick={() => setLightboxIdx(i)}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLElement).style.boxShadow = "0 16px 48px rgba(0,0,0,0.2), 0 4px 20px rgba(196,150,42,0.15)";
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 20px rgba(0,0,0,0.1)";
-                  }}
-                >
-                  <img
-                    src={img.imageUrl}
-                    alt={img.caption || `Gallery ${i + 1}`}
-                    loading="lazy"
-                    draggable={false}
-                    className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                    style={{ willChange: "transform" }}
-                  />
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2"
-                    style={{ background: "linear-gradient(135deg, rgba(196,150,42,0.6) 0%, rgba(180,20,20,0.5) 100%)" }}
-                  >
-                    <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center"
-                      style={{ background: "rgba(255,255,255,0.2)", backdropFilter: "blur(4px)", border: "1px solid rgba(255,255,255,0.3)" }}
-                    >
-                      <ZoomIn size={18} className="text-white"/>
-                    </div>
-                    {img.caption && (
-                      <p className="text-white text-xs font-semibold px-3 text-center leading-tight max-w-[150px]">{img.caption}</p>
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* CTA below gallery */}
+      {/* Header */}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-16 text-center"
+          transition={{ duration: 0.55 }}
+          className="text-center"
         >
-          <div
-            className="inline-block rounded-3xl px-8 sm:px-14 py-10 relative overflow-hidden"
-            style={{
-              background: "linear-gradient(135deg, #0e0e0e 0%, #1a0a0a 50%, #111 100%)",
-              border: "1px solid rgba(196,150,42,0.2)",
-              boxShadow: "0 8px 40px rgba(0,0,0,0.3)",
-            }}
-          >
-            {/* Glow */}
-            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(196,150,42,0.12) 0%, transparent 65%)" }}/>
-            <div className="relative z-10">
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
-                Ready to Print Your Design?
-              </h3>
-              <p className="text-gray-400 text-sm mb-6 max-w-xs mx-auto">
-                Join 10,000+ happy customers. Fast turnaround, no minimums.
-              </p>
-              <Link href="/customize">
-                <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-extrabold text-base text-white btn-shine"
-                  style={{
-                    background: "linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #B91C1C 100%)",
-                    boxShadow: "0 8px 28px rgba(220,38,38,0.45)",
-                  }}
-                >
-                  <Sparkles size={18}/> Start Your Order <ArrowRight size={18}/>
-                </motion.button>
-              </Link>
-            </div>
+          {/* Trust badges */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+            {[
+              { icon: Award,       label: "500+ Projects Delivered" },
+              { icon: Users,       label: "1000+ Happy Customers"   },
+              { icon: CheckCircle, label: "High Quality Printing"   },
+            ].map(({ icon: Icon, label }) => (
+              <span
+                key={label}
+                className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-widest uppercase px-3.5 py-1.5 rounded-full"
+                style={{
+                  color: "#C4962A",
+                  border: "1px solid rgba(196,150,42,0.28)",
+                  background: "rgba(196,150,42,0.08)",
+                  letterSpacing: "0.14em",
+                }}
+              >
+                <Icon size={11}/> {label}
+              </span>
+            ))}
           </div>
+
+          <h2
+            className="text-3xl sm:text-[2.8rem] font-extrabold text-white mb-3"
+            style={{ letterSpacing: "-0.025em", lineHeight: 1.12 }}
+          >
+            Our Recent Work
+          </h2>
+          <div className="flex justify-center mb-4">
+            <div className="h-[3px] w-16 rounded-full"
+              style={{ background: "linear-gradient(90deg, rgba(196,150,42,0.4), #C4962A, rgba(196,150,42,0.4))" }}/>
+          </div>
+          <p className="text-gray-400 text-sm sm:text-base max-w-md mx-auto leading-relaxed">
+            Premium custom printing — every order crafted with precision.
+          </p>
         </motion.div>
       </div>
 
+      {/* Scroll rows */}
+      <div className="space-y-4 mb-12">
+        {loading ? (
+          <>
+            <GallerySkeletonRow />
+            <GallerySkeletonRow />
+            <GallerySkeletonRow />
+          </>
+        ) : images.length === 0 ? (
+          /* Empty state */
+          <div className="max-w-lg mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col items-center justify-center py-16 rounded-2xl text-center"
+              style={{ border: "1px dashed rgba(196,150,42,0.2)", background: "rgba(196,150,42,0.03)" }}
+            >
+              <div
+                className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
+                style={{ background: "rgba(196,150,42,0.1)", border: "1px solid rgba(196,150,42,0.2)" }}
+              >
+                <Image size={28} style={{ color: "#C4962A" }}/>
+              </div>
+              <h3 className="text-white font-bold text-lg mb-2">Gallery Coming Soon</h3>
+              <p className="text-gray-500 text-sm max-w-xs leading-relaxed">
+                Our portfolio will appear here once images are added from the Admin Panel.
+              </p>
+            </motion.div>
+          </div>
+        ) : (
+          <>
+            {rows.map((row, ri) => (
+              <GalleryScrollRow
+                key={ri}
+                images={buildRow(row.offset)}
+                direction={row.direction}
+                durationSec={row.duration}
+                onOpen={img => setLightboxImg(img)}
+              />
+            ))}
+          </>
+        )}
+      </div>
+
+      {/* Bottom CTA strip */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="relative max-w-xl mx-auto px-4 text-center"
+      >
+        <p className="text-gray-500 text-xs mb-4 tracking-wide uppercase font-semibold">
+          Loved by 10,000+ customers across India
+        </p>
+        <Link href="/customize">
+          <motion.button
+            whileHover={{ scale: 1.04, y: -2 }}
+            whileTap={{ scale: 0.97 }}
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-extrabold text-sm text-white btn-shine"
+            style={{
+              background: "linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #B91C1C 100%)",
+              boxShadow: "0 8px 28px rgba(220,38,38,0.45)",
+            }}
+          >
+            <Sparkles size={16}/> Start Your Order <ArrowRight size={16}/>
+          </motion.button>
+        </Link>
+      </motion.div>
+
+      {/* Bottom separator */}
+      <div className="absolute bottom-0 left-0 right-0 h-px"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(196,150,42,0.2) 30%, rgba(196,150,42,0.35) 50%, rgba(196,150,42,0.2) 70%, transparent)" }}/>
+
       {/* Lightbox */}
-      {lightboxIdx !== null && (
+      {lightboxIdx >= 0 && lightboxImg && (
         <GalleryLightbox
-          images={images}
+          images={lightboxImages}
           index={lightboxIdx}
-          onClose={() => setLightboxIdx(null)}
+          onClose={() => setLightboxImg(null)}
         />
       )}
     </section>
@@ -850,6 +954,9 @@ export default function HomePage() {
           background: "linear-gradient(to bottom, transparent, rgba(10,5,5,0.6))",
         }}/>
       </section>
+
+      {/* ── GALLERY — directly below hero ── */}
+      <GallerySection />
 
       {/* ── TRUST BAR ── */}
       <section
@@ -1301,9 +1408,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* ── GALLERY ── */}
-      <GallerySection />
 
       {/* ── FINAL CTA ── */}
       <section className="py-24 relative overflow-hidden" style={{ background: "linear-gradient(135deg,#080808 0%,#0f0a00 50%,#0a0a0a 100%)" }}>

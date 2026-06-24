@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus, Trash2, Loader2, CheckCircle2, AlertCircle,
-  Camera, X, Image as ImageIcon, GripVertical, Edit2, Save, RefreshCw,
+  Camera, X, Image as ImageIcon, GripVertical, Edit2, Save,
+  RefreshCw, Eye, EyeOff, Info,
 } from "lucide-react";
 import {
   getGalleryImages, createGalleryImage, updateGalleryImage,
@@ -26,6 +27,62 @@ function useToasts() {
 const lCls = "text-gray-500 text-[11px] font-semibold uppercase tracking-wide mb-1 block";
 const iCls = "w-full bg-white/5 border border-white/10 text-white text-sm px-3 py-2.5 rounded-xl placeholder-gray-600 focus:outline-none focus:border-primary/50";
 
+/* ── Image Specs Panel ── */
+function ImageSpecsPanel() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="mb-5">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="flex items-center gap-2 text-xs text-gray-500 hover:text-gray-300 transition-colors"
+      >
+        <Info size={12}/>
+        <span className="font-semibold">Image Upload Guidelines</span>
+        <span className="text-gray-700">{open ? "▲" : "▼"}</span>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div
+              className="mt-3 p-4 rounded-2xl border text-xs space-y-3"
+              style={{ background: "rgba(196,150,42,0.04)", borderColor: "rgba(196,150,42,0.15)" }}
+            >
+              <p className="text-amber-400/80 font-bold tracking-wide uppercase text-[10px]">📐 Recommended Specs</p>
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-gray-400">
+                <div>
+                  <p className="text-gray-500 text-[10px] uppercase mb-0.5">Ideal Size</p>
+                  <p className="text-white font-semibold">1200 × 1200 px</p>
+                </div>
+                <div>
+                  <p className="text-gray-500 text-[10px] uppercase mb-0.5">Max File Size</p>
+                  <p className="text-white font-semibold">5 MB</p>
+                </div>
+                <div>
+                  <p className="text-gray-500 text-[10px] uppercase mb-0.5">Formats</p>
+                  <p className="text-white font-semibold">JPG · PNG · WEBP</p>
+                </div>
+                <div>
+                  <p className="text-gray-500 text-[10px] uppercase mb-0.5">Supported Ratios</p>
+                  <p className="text-white font-semibold">1:1 · 4:5 · 16:9</p>
+                </div>
+              </div>
+              <p className="text-gray-600 text-[10px] leading-relaxed">
+                Images are automatically compressed and optimized. Square (1:1) ratio works best in the scrolling gallery. Avoid text-heavy images as they may be cropped on smaller screens.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ── AddImageModal ── */
 function AddImageModal({
   onSave,
   onClose,
@@ -75,7 +132,6 @@ function AddImageModal({
         </div>
 
         <div className="p-5 space-y-4">
-          {/* Image upload */}
           <div>
             <label className={lCls}>Image *</label>
             <div
@@ -89,6 +145,7 @@ function AddImageModal({
                 <div className="w-full h-full flex flex-col items-center justify-center gap-2">
                   <Camera size={24} className="text-gray-600"/>
                   <span className="text-gray-600 text-xs">Click to upload image</span>
+                  <span className="text-gray-700 text-[10px]">JPG · PNG · WEBP · Max 5MB</span>
                 </div>
               )}
               <div className="absolute inset-0 bg-black/0 hover:bg-black/40 transition-colors flex items-center justify-center">
@@ -128,6 +185,7 @@ function AddImageModal({
   );
 }
 
+/* ── EditCaptionModal ── */
 function EditCaptionModal({
   item,
   onSave,
@@ -174,6 +232,7 @@ function EditCaptionModal({
   );
 }
 
+/* ── AdminGallery (main) ── */
 export default function AdminGallery() {
   const [items, setItems] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -182,13 +241,13 @@ export default function AdminGallery() {
   const [editItem, setEditItem] = useState<GalleryImage | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
   const [deleting, setDeleting] = useState<Set<number>>(new Set());
+  const [toggling, setToggling] = useState<Set<number>>(new Set());
+  const [replacing, setReplacing] = useState<Set<number>>(new Set());
 
-  // Drag state
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
-  const [replacing, setReplacing] = useState<Set<number>>(new Set());
-  const replaceRefs = useRef<Record<number, HTMLInputElement | null>>({});
 
+  const replaceRefs = useRef<Record<number, HTMLInputElement | null>>({});
   const { toasts, add: addToast } = useToasts();
 
   useEffect(() => {
@@ -217,6 +276,16 @@ export default function AdminGallery() {
     addToast("Caption updated!");
   };
 
+  const handleToggleVisible = async (id: number, currentVisible: boolean) => {
+    setToggling(s => new Set([...s, id]));
+    try {
+      const updated = await updateGalleryImage(id, { visible: !currentVisible });
+      refresh(items.map(p => p.id === id ? updated : p));
+      addToast(!currentVisible ? "Image shown on homepage." : "Image hidden from homepage.");
+    } catch { addToast("Toggle failed.", false); }
+    finally { setToggling(s => { const n = new Set(s); n.delete(id); return n; }); }
+  };
+
   const handleDelete = async (id: number) => {
     setDeleting(s => new Set([...s, id]));
     try {
@@ -228,7 +297,6 @@ export default function AdminGallery() {
     finally { setDeleting(s => { const n = new Set(s); n.delete(id); return n; }); }
   };
 
-  // Image replacement
   const handleReplaceImage = async (id: number, file: File) => {
     setReplacing(s => new Set([...s, id]));
     try {
@@ -245,7 +313,6 @@ export default function AdminGallery() {
     }
   };
 
-  // Drag-and-drop reorder
   const handleDragStart = (idx: number) => setDragIdx(idx);
   const handleDragOver = (e: React.DragEvent, idx: number) => {
     e.preventDefault();
@@ -267,7 +334,6 @@ export default function AdminGallery() {
       invalidateGalleryCache();
       addToast("Order saved!");
     } catch {
-      // Rollback on failure
       setItems(prevItems);
       addToast("Reorder failed.", false);
     }
@@ -282,6 +348,8 @@ export default function AdminGallery() {
     </div>
   );
 
+  const visibleCount = items.filter(i => i.visible !== false).length;
+
   return (
     <div className="max-w-5xl relative">
       {/* Toasts */}
@@ -295,11 +363,11 @@ export default function AdminGallery() {
       </div>
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-6 gap-4">
+      <div className="flex items-start justify-between mb-4 gap-4">
         <div>
           <h2 className="text-white font-bold text-lg">Gallery Manager</h2>
           <p className="text-gray-500 text-sm mt-1">
-            Manage the <span className="text-white font-semibold">"Our Recent Work"</span> gallery shown on the homepage.
+            Manages the <span className="text-white font-semibold">"Our Recent Work"</span> auto-scrolling showcase on the homepage.
           </p>
         </div>
         <button
@@ -310,21 +378,44 @@ export default function AdminGallery() {
         </button>
       </div>
 
+      {/* Image specs panel */}
+      <ImageSpecsPanel />
+
       {/* Stats bar */}
       {items.length > 0 && (
         <div className="flex items-center gap-4 mb-5 px-4 py-3 bg-white/3 rounded-xl border border-white/8">
-          <span className="text-gray-400 text-sm">{items.length} image{items.length !== 1 ? "s" : ""} in gallery</span>
-          <span className="text-gray-700 text-xs">• Drag rows to reorder</span>
+          <span className="text-gray-400 text-sm">{items.length} image{items.length !== 1 ? "s" : ""} total</span>
+          <span className="text-gray-700 text-xs">·</span>
+          <span className="text-green-400 text-sm font-semibold">{visibleCount} visible</span>
+          {items.length - visibleCount > 0 && (
+            <>
+              <span className="text-gray-700 text-xs">·</span>
+              <span className="text-gray-500 text-sm">{items.length - visibleCount} hidden</span>
+            </>
+          )}
+          <span className="text-gray-700 text-xs ml-auto">↕ Drag rows to reorder</span>
         </div>
       )}
 
-      {/* Grid preview */}
+      {/* Grid preview (visible images only) */}
       {items.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
           {items.map((item) => (
-            <div key={item.id} className="relative aspect-square rounded-xl overflow-hidden bg-white/5 border border-white/8">
+            <div
+              key={item.id}
+              className="relative aspect-square rounded-xl overflow-hidden bg-white/5 border border-white/8"
+              style={{ opacity: item.visible === false ? 0.35 : 1 }}
+            >
               <img src={item.imageUrl} alt={item.caption} className="w-full h-full object-cover"/>
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"/>
+              {item.visible === false && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="bg-black/60 rounded-lg px-2 py-1 flex items-center gap-1">
+                    <EyeOff size={11} className="text-gray-400"/>
+                    <span className="text-gray-400 text-[9px] font-bold">HIDDEN</span>
+                  </div>
+                </div>
+              )}
               {item.caption && (
                 <p className="absolute bottom-2 left-2 right-2 text-white text-[10px] font-semibold leading-tight line-clamp-2">{item.caption}</p>
               )}
@@ -359,20 +450,30 @@ export default function AdminGallery() {
               </div>
 
               {/* Thumbnail */}
-              <div className="flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-white/5 border border-white/8">
+              <div
+                className="flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-white/5 border border-white/8"
+                style={{ opacity: item.visible === false ? 0.4 : 1 }}
+              >
                 <img src={item.imageUrl} alt={item.caption} className="w-full h-full object-cover"/>
               </div>
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">#{idx + 1}</p>
-                <p className="text-white text-sm font-semibold truncate mt-0.5">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">#{idx + 1}</p>
+                  {item.visible === false && (
+                    <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-gray-600 bg-white/5 border border-white/8 rounded px-1.5 py-0.5">
+                      <EyeOff size={8}/> Hidden
+                    </span>
+                  )}
+                </div>
+                <p className="text-white text-sm font-semibold truncate">
                   {item.caption || <span className="text-gray-600 italic font-normal">No caption</span>}
                 </p>
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-1.5 flex-shrink-0">
+              <div className="flex items-center gap-1.5 flex-shrink-0 flex-wrap justify-end">
                 {/* Hidden file input for replace */}
                 <input
                   ref={el => { replaceRefs.current[item.id] = el; }}
@@ -381,6 +482,26 @@ export default function AdminGallery() {
                   className="hidden"
                   onChange={e => { const f = e.target.files?.[0]; if (f) handleReplaceImage(item.id, f); e.target.value = ""; }}
                 />
+
+                {/* Visibility toggle */}
+                <button
+                  onClick={() => handleToggleVisible(item.id, item.visible !== false)}
+                  disabled={toggling.has(item.id)}
+                  title={item.visible === false ? "Show on homepage" : "Hide from homepage"}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all disabled:opacity-50 ${
+                    item.visible === false
+                      ? "bg-white/5 hover:bg-green-500/15 text-gray-500 hover:text-green-400"
+                      : "bg-green-500/10 hover:bg-white/5 text-green-400 hover:text-gray-400"
+                  }`}
+                >
+                  {toggling.has(item.id)
+                    ? <Loader2 size={11} className="animate-spin"/>
+                    : item.visible === false ? <EyeOff size={11}/> : <Eye size={11}/>
+                  }
+                  {item.visible === false ? "Hidden" : "Visible"}
+                </button>
+
+                {/* Replace */}
                 <button
                   onClick={() => replaceRefs.current[item.id]?.click()}
                   disabled={replacing.has(item.id)}
@@ -388,12 +509,16 @@ export default function AdminGallery() {
                 >
                   {replacing.has(item.id) ? <Loader2 size={11} className="animate-spin"/> : <RefreshCw size={11}/>} Replace
                 </button>
+
+                {/* Edit caption */}
                 <button
                   onClick={() => setEditItem(item)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white text-xs font-bold transition-all"
                 >
                   <Edit2 size={11}/> Caption
                 </button>
+
+                {/* Delete */}
                 {deleteConfirm === item.id ? (
                   <div className="flex items-center gap-1">
                     <span className="text-red-400 text-xs mr-1">Delete?</span>
@@ -424,7 +549,7 @@ export default function AdminGallery() {
         <div className="text-center py-20 text-gray-600">
           <ImageIcon size={40} className="mx-auto mb-3 opacity-20"/>
           <p className="text-sm">No gallery images yet.</p>
-          <p className="text-xs text-gray-700 mt-1">Add your first image to showcase your work on the homepage.</p>
+          <p className="text-xs text-gray-700 mt-1">Add your first image to start the scrolling showcase on the homepage.</p>
           <button
             onClick={() => setShowAdd(true)}
             className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 text-primary text-sm font-bold border border-primary/20 hover:bg-primary/20 transition-colors"
@@ -436,11 +561,10 @@ export default function AdminGallery() {
 
       {items.length > 0 && (
         <p className="mt-4 text-gray-700 text-xs">
-          Tip: Drag rows to reorder. Images appear on the homepage in the order shown here.
+          Tip: Drag rows to reorder. Only <span className="text-green-400">Visible</span> images appear in the homepage gallery. Hidden images are stored but not shown.
         </p>
       )}
 
-      {/* Modals */}
       <AnimatePresence>
         {showAdd && (
           <AddImageModal

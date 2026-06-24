@@ -1,0 +1,39 @@
+[
+  {
+    "id": 1,
+    "imageUrl": "/api/uploads/1782289600152-qacggk7qjgd.webp",
+    "caption": "dfgdg",
+    "displayOrder": 1,
+    "createdAt": "2026-06-24T08:26:45.588Z"
+  },
+  {
+    "id": 2,
+    "imageUrl": "/api/uploads/1782289613976-ywle4mz09.webp",
+    "caption": "cap",
+    "displayOrder": 2,
+    "createdAt": "2026-06-24T08:26:57.870Z"
+  },
+  {
+    "id": 3,
+    "imageUrl": "/api/uploads/1782289624816-jdwrba6jgm.webp",
+    "caption": "",
+    "displayOrder": 3,
+    "createdAt": "2026-06-24T08:27:06.283Z"
+  },
+  {
+    "id": 4,
+    "imageUrl": "/api/uploads/1782290604612-hnafv18xlva.webp",
+    "caption": "tshirt",
+    "displayOrder": 4,
+    "visible": true,
+    "createdAt": "2026-06-24T08:43:29.781Z"
+  },
+  {
+    "id": 5,
+    "imageUrl": "/api/uploads/1782290616976-gv850wvr1st.webp",
+    "caption": "white",
+    "displayOrder": 5,
+    "visible": true,
+    "createdAt": "2026-06-24T08:43:42.657Z"
+  }
+]

@@ -1,0 +1,95 @@
+The Gallery Section is currently placed too low on the homepage (below FAQ). This placement reduces visibility and conversion.
+
+Please redesign and reposition the Gallery Section professionally.
+
+Required Changes:
+
+1. Reposition Gallery
+- Move the Gallery Section directly below the Hero Banner.
+- Gallery should appear within the first screen scroll.
+- Users should see our previous work almost immediately after landing on the homepage.
+- Do NOT place it below Testimonials, FAQ, or other lower sections.
+
+2. Replace Static Gallery with Premium Auto-Scrolling Showcase
+- Remove the current simple grid layout.
+- Create a premium continuous auto-scrolling gallery.
+- Infinite horizontal scrolling.
+- Images should move smoothly from right to left.
+- No visible jump or restart.
+- Auto-play continuously.
+- Pause on hover.
+- Touch swipe support on mobile.
+
+3. Multi-Row Premium Layout
+- Use 2 or 3 moving rows.
+- Each row scrolls at a different speed.
+- Alternate directions for a luxury effect.
+- Similar to premium portfolio websites.
+
+4. Professional Card Design
+- Glassmorphism effect.
+- Premium shadows.
+- Rounded corners (18-24px).
+- Shine animation on hover.
+- Smooth zoom effect.
+- Elegant gradient overlay.
+
+5. Lightbox Experience
+- Clicking any image opens fullscreen preview.
+- Previous/Next controls.
+- Keyboard navigation.
+- Mobile swipe navigation.
+- Background blur.
+
+6. Trust Building
+- Show:
+  "500+ Projects Delivered"
+  "1000+ Happy Customers"
+  "High Quality Printing"
+
+- Premium badges above gallery.
+
+7. Advanced Animations
+- Fade-up on scroll.
+- Stagger reveal animation.
+- Smooth hover transitions.
+- Shimmer effects.
+- Premium motion design.
+
+8. Admin-Controlled Gallery
+- All images managed from Admin Panel.
+- Add image.
+- Delete image.
+- Replace image.
+- Reorder image.
+- Toggle image visibility.
+
+9. Image Specifications
+Create a helper note in Admin Panel:
+
+Recommended Upload Size:
+- Width: 1200px
+- Height: 1200px
+- Ratio: 1:1 preferred
+
+Supported Ratios:
+- 1:1
+- 4:5
+- 16:9
+
+Formats:
+- JPG
+- PNG
+- WEBP
+
+Maximum File Size:
+- 5MB
+
+Images should be automatically optimized and cropped without distortion.
+
+10. Premium Look
+Current gallery looks basic and unfinished.
+
+Make it look like a modern premium brand portfolio section found on high-end ecommerce and printing websites.
+
+The gallery should feel luxurious, dynamic, engaging, and conversion-focused.

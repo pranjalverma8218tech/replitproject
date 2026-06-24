@@ -12,6 +12,7 @@ export interface GalleryImage {
   imageUrl: string;
   caption: string;
   displayOrder: number;
+  visible: boolean;
   createdAt: string;
 }
 
@@ -27,14 +28,23 @@ function writeLocal(data: GalleryImage[]): void {
 
 const router = Router();
 
-/* ── GET /gallery  (public) ── */
+/* ── GET /gallery  (public — only visible items) ── */
 router.get("/", (_req, res) => {
+  res.json(
+    readLocal()
+      .filter(g => g.visible !== false)
+      .sort((a, b) => a.displayOrder - b.displayOrder)
+  );
+});
+
+/* ── GET /gallery/all  (admin — all items including hidden) ── */
+router.get("/all", requireAuth, (_req, res) => {
   res.json(readLocal().sort((a, b) => a.displayOrder - b.displayOrder));
 });
 
 /* ── POST /gallery  (admin) ── */
 router.post("/", requireAuth, (req, res) => {
-  const { imageUrl, caption } = req.body as Partial<GalleryImage>;
+  const { imageUrl, caption, visible } = req.body as Partial<GalleryImage>;
   if (!imageUrl) { res.status(400).json({ error: "MISSING_FIELDS", message: "imageUrl is required" }); return; }
   const local = readLocal();
   const nextId = Math.max(0, ...local.map(p => p.id)) + 1;
@@ -44,11 +54,25 @@ router.post("/", requireAuth, (req, res) => {
     imageUrl,
     caption: caption ?? "",
     displayOrder: nextOrder,
+    visible: visible !== false,
     createdAt: new Date().toISOString(),
   };
   local.push(item);
   writeLocal(local);
   res.status(201).json(item);
+});
+
+/* ── POST /gallery/reorder  (admin) ── */
+router.post("/reorder", requireAuth, (req, res) => {
+  const { orderedIds } = req.body as { orderedIds: number[] };
+  if (!Array.isArray(orderedIds)) { res.status(400).json({ error: "INVALID" }); return; }
+  const local = readLocal();
+  orderedIds.forEach((id, idx) => {
+    const item = local.find(p => p.id === id);
+    if (item) item.displayOrder = idx + 1;
+  });
+  writeLocal(local);
+  res.json(local.sort((a, b) => a.displayOrder - b.displayOrder));
 });
 
 /* ── PUT /gallery/:id  (admin) ── */
@@ -57,7 +81,7 @@ router.put("/:id", requireAuth, (req, res) => {
   const local = readLocal();
   const idx = local.findIndex(p => p.id === id);
   if (idx === -1) { res.status(404).json({ error: "NOT_FOUND" }); return; }
-  const allowed: Array<keyof GalleryImage> = ["imageUrl", "caption", "displayOrder"];
+  const allowed: Array<keyof GalleryImage> = ["imageUrl", "caption", "displayOrder", "visible"];
   const updates: Partial<GalleryImage> = {};
   for (const k of allowed) {
     if (k in req.body) (updates as Record<string, unknown>)[k] = req.body[k];
@@ -76,19 +100,6 @@ router.delete("/:id", requireAuth, (req, res) => {
   local.splice(idx, 1);
   writeLocal(local);
   res.json({ deleted: id });
-});
-
-/* ── POST /gallery/reorder  (admin) ── */
-router.post("/reorder", requireAuth, (req, res) => {
-  const { orderedIds } = req.body as { orderedIds: number[] };
-  if (!Array.isArray(orderedIds)) { res.status(400).json({ error: "INVALID" }); return; }
-  const local = readLocal();
-  orderedIds.forEach((id, idx) => {
-    const item = local.find(p => p.id === id);
-    if (item) item.displayOrder = idx + 1;
-  });
-  writeLocal(local);
-  res.json(local.sort((a, b) => a.displayOrder - b.displayOrder));
 });
 
 export default router;

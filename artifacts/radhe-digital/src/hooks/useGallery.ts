@@ -5,6 +5,7 @@ export interface GalleryImage {
   imageUrl: string;
   caption: string;
   displayOrder: number;
+  visible: boolean;
   createdAt: string;
 }
 
