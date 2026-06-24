@@ -5,7 +5,8 @@ import {
   ArrowRight, Zap, Shield, Truck, Star, ChevronDown,
   Package, Clock, CheckCircle, Users, Sparkles, ChevronLeft,
   ChevronRight, Quote, Palette, Shirt, Coffee, HardHat, Pen,
-  Award, Image, Gift, X, ZoomIn
+  Award, Image, Gift, X, ZoomIn, Smartphone, CreditCard, Flag,
+  ShoppingBag, Monitor, Tag
 } from "lucide-react";
 import { useGallery, type GalleryImage } from "@/hooks/useGallery";
 import { CATEGORIES } from "@/data/products";
@@ -15,6 +16,186 @@ import { useHomepageCategories } from "@/hooks/useHomepageCategories";
 import { useHomepageCms } from "@/hooks/useHomepageCms";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
 const defaultLogoSrc = "/radhe-logo.png";
+
+/* ─── Hero Product Showcase ─── */
+const SHOWCASE_PRODUCTS = [
+  {
+    id: 1, name: "Custom T-Shirts", sub: "100% Cotton",
+    Icon: Shirt, color: "#3B82F6",
+    bg: "linear-gradient(145deg,#0d1b3e,#1e3a5f)",
+    glow: "rgba(59,130,246,0.4)", size: "lg",
+    top: "0%", left: "0%", w: 156, h: 170, floatY: 8, dur: 6, delay: 0,
+    px: -0.04, py: -0.03,
+  },
+  {
+    id: 2, name: "Printed Mugs", sub: "330ml Ceramic",
+    Icon: Coffee, color: "#F97316",
+    bg: "linear-gradient(145deg,#2d1200,#4a2000)",
+    glow: "rgba(249,115,22,0.4)", size: "md",
+    top: "4%", left: "54%", w: 132, h: 148, floatY: 10, dur: 7, delay: 1.2,
+    px: 0.05, py: -0.04,
+  },
+  {
+    id: 3, name: "Custom Caps", sub: "Embroidered",
+    Icon: HardHat, color: "#10B981",
+    bg: "linear-gradient(145deg,#052e16,#064e2a)",
+    glow: "rgba(16,185,129,0.4)", size: "sm",
+    top: "50%", left: "3%", w: 118, h: 128, floatY: 12, dur: 8, delay: 0.5,
+    px: -0.06, py: 0.05,
+  },
+  {
+    id: 4, name: "Mobile Covers", sub: "All Models",
+    Icon: Smartphone, color: "#A855F7",
+    bg: "linear-gradient(145deg,#1e0533,#2d0a4e)",
+    glow: "rgba(168,85,247,0.4)", size: "md",
+    top: "46%", left: "46%", w: 140, h: 154, floatY: 9, dur: 6.5, delay: 1.8,
+    px: 0.04, py: 0.06,
+  },
+  {
+    id: 5, name: "Visiting Cards", sub: "Premium Matte",
+    Icon: CreditCard, color: "#FBBF24",
+    bg: "linear-gradient(145deg,#2d1f00,#4a3300)",
+    glow: "rgba(251,191,36,0.4)", size: "sm",
+    top: "76%", left: "28%", w: 122, h: 116, floatY: 7, dur: 7.5, delay: 0.9,
+    px: -0.02, py: 0.04,
+  },
+  {
+    id: 6, name: "Flex Banners", sub: "Pan India Print",
+    Icon: Flag, color: "#EC4899",
+    bg: "linear-gradient(145deg,#2d002a,#4a0044)",
+    glow: "rgba(236,72,153,0.4)", size: "sm",
+    top: "1%", left: "30%", w: 126, h: 120, floatY: 11, dur: 9, delay: 2.1,
+    px: 0.01, py: -0.06,
+  },
+  {
+    id: 7, name: "Promo Products", sub: "Corp Gifting",
+    Icon: Gift, color: "#06B6D4",
+    bg: "linear-gradient(145deg,#001f2d,#003347)",
+    glow: "rgba(6,182,212,0.4)", size: "sm",
+    top: "72%", left: "58%", w: 116, h: 112, floatY: 13, dur: 7, delay: 1.5,
+    px: 0.05, py: 0.03,
+  },
+];
+
+function HeroProductShowcase() {
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouse = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setMouse({
+      x: e.clientX - (rect.left + rect.width / 2),
+      y: e.clientY - (rect.top + rect.height / 2),
+    });
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative select-none"
+      style={{ width: "100%", height: "clamp(340px, 44vw, 480px)" }}
+      onMouseMove={handleMouse}
+      onMouseLeave={() => setMouse({ x: 0, y: 0 })}
+    >
+      {/* Central ambient glow */}
+      <div className="absolute pointer-events-none" style={{
+        top: "20%", left: "10%", width: "80%", height: "65%",
+        background: "radial-gradient(ellipse, rgba(196,150,42,0.14) 0%, rgba(220,38,38,0.09) 55%, transparent 75%)",
+        filter: "blur(44px)",
+      }}/>
+
+      {SHOWCASE_PRODUCTS.map((p) => {
+        const fontSize = p.size === "lg" ? "text-[13px]" : p.size === "md" ? "text-[12px]" : "text-[11px]";
+        const iconSize = p.size === "lg" ? 32 : p.size === "md" ? 26 : 22;
+        const zBase = p.size === "lg" ? 3 : p.size === "md" ? 2 : 1;
+
+        return (
+          /* 1. Position anchor — absolutely placed, not animated */
+          <div
+            key={p.id}
+            className="absolute"
+            style={{ top: p.top, left: p.left, width: p.w, height: p.h, zIndex: zBase }}
+          >
+            {/* 2. Parallax layer — CSS transition, updates on mouse move */}
+            <div style={{
+              transform: `translate(${mouse.x * p.px}px, ${mouse.y * p.py}px)`,
+              transition: "transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)",
+              width: "100%", height: "100%",
+            }}>
+              {/* 3. Float layer — framer-motion y oscillation */}
+              <motion.div
+                className="w-full h-full"
+                animate={{ y: [0, -p.floatY, 0] }}
+                transition={{ duration: p.dur, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
+              >
+                {/* 4. Hover + card */}
+                <motion.div
+                  className="group w-full h-full rounded-2xl overflow-hidden relative cursor-pointer"
+                  whileHover={{ scale: 1.07 }}
+                  transition={{ duration: 0.22, ease: "easeOut" }}
+                >
+                  {/* Background */}
+                  <div className="absolute inset-0" style={{ background: p.bg }}/>
+
+                  {/* Micro glow inside card */}
+                  <div className="absolute pointer-events-none" style={{
+                    top: "-25%", left: "-15%", width: "65%", height: "65%",
+                    background: `radial-gradient(circle, ${p.glow} 0%, transparent 70%)`,
+                    filter: "blur(16px)", opacity: 0.65,
+                  }}/>
+
+                  {/* Border + shadow */}
+                  <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
+                    border: `1px solid ${p.color}28`,
+                    boxShadow: `0 14px 40px rgba(0,0,0,0.65), 0 0 18px ${p.color}18, inset 0 1px 0 rgba(255,255,255,0.06)`,
+                  }}/>
+
+                  {/* Hover glow overlay */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" style={{
+                    background: `radial-gradient(circle at 30% 30%, ${p.color}18 0%, transparent 65%)`,
+                  }}/>
+
+                  {/* Shine sweep on hover */}
+                  <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+                    <div
+                      className="absolute top-0 bottom-0 w-14 -skew-x-12 opacity-0 group-hover:opacity-100 group-hover:translate-x-[260px] transition-all duration-700"
+                      style={{ left: 0, background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent)" }}
+                    />
+                  </div>
+
+                  {/* Content */}
+                  <div className="relative z-10 flex flex-col items-start justify-between h-full p-3.5">
+                    <div className="rounded-xl flex items-center justify-center"
+                      style={{ width: iconSize + 14, height: iconSize + 14, background: `${p.color}1a`, border: `1px solid ${p.color}35` }}
+                    >
+                      <p.Icon size={iconSize} style={{ color: p.color }}/>
+                    </div>
+                    <div>
+                      <p className={`font-bold text-white leading-tight mb-0.5 ${fontSize}`}>{p.name}</p>
+                      <p className="text-[10px] font-medium" style={{ color: `${p.color}bb` }}>{p.sub}</p>
+                    </div>
+                  </div>
+
+                  {/* Bottom accent */}
+                  <div className="absolute bottom-0 left-0 right-0 h-[2px]"
+                    style={{ background: `linear-gradient(90deg, transparent, ${p.color}70, transparent)` }}/>
+                </motion.div>
+              </motion.div>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Badge */}
+      <div className="absolute bottom-0 right-0 z-10 text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full"
+        style={{ color: "rgba(196,150,42,0.65)", border: "1px solid rgba(196,150,42,0.18)", background: "rgba(0,0,0,0.35)", backdropFilter: "blur(8px)" }}
+      >
+        7+ Categories
+      </div>
+    </div>
+  );
+}
 
 /* ─── Category Icons ─── */
 const CAT_ICONS: Record<string, JSX.Element> = {
@@ -746,7 +927,7 @@ export default function HomePage() {
 
       {/* ── HERO ── */}
       <section
-        className="relative overflow-hidden sm:min-h-[85vh] flex items-center"
+        className="relative sm:min-h-[88vh] flex items-center"
         style={{
           background: "linear-gradient(145deg, #0e0e0e 0%, #161010 25%, #1f0a0a 50%, #2a0d0d 70%, #1a1010 85%, #111111 100%)",
         }}
@@ -889,61 +1070,15 @@ export default function HomePage() {
               </motion.div>
             </div>
 
-            {/* ── Right: Circular Brand Logo with spotlight ── */}
+            {/* ── Right: Product Showcase ── */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
-              className="flex-shrink-0 flex items-center justify-center w-full lg:w-auto order-1 lg:order-2"
-              style={{ maxWidth: "400px" }}
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+              className="flex-shrink-0 flex items-center justify-center order-1 lg:order-2"
+              style={{ width: "clamp(300px, 42vw, 480px)" }}
             >
-              <motion.div
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                className="relative flex items-center justify-center"
-              >
-                {/* Outer atmospheric glow */}
-                <div className="absolute pointer-events-none" style={{
-                  inset: "-40%",
-                  borderRadius: "50%",
-                  background: "radial-gradient(circle, rgba(220,38,38,0.3) 0%, rgba(196,150,42,0.12) 35%, transparent 65%)",
-                  filter: "blur(40px)",
-                }}/>
-                {/* Mid spotlight ring */}
-                <div className="absolute pointer-events-none" style={{
-                  inset: "-18%",
-                  borderRadius: "50%",
-                  background: "radial-gradient(circle, rgba(220,38,38,0.2) 0%, rgba(196,150,42,0.08) 50%, transparent 70%)",
-                  filter: "blur(20px)",
-                }}/>
-                {/* Accent ring */}
-                <div
-                  className="absolute pointer-events-none"
-                  style={{
-                    inset: "-6%",
-                    borderRadius: "50%",
-                    border: "1px solid transparent",
-                    background: "linear-gradient(#1a1a1a, #1a1a1a) padding-box, linear-gradient(135deg, rgba(196,150,42,0.35), transparent, rgba(220,38,38,0.2), transparent) border-box",
-                  }}
-                />
-                {/* Logo image */}
-                <div
-                  className="relative z-10 w-52 h-52 sm:w-68 sm:h-68 lg:w-80 lg:h-80"
-                  style={{
-                    width: "clamp(200px, 28vw, 320px)",
-                    height: "clamp(200px, 28vw, 320px)",
-                    borderRadius: "50%",
-                    overflow: "hidden",
-                    boxShadow: "0 12px 60px rgba(0,0,0,0.8), 0 0 40px rgba(220,38,38,0.25), 0 0 80px rgba(196,150,42,0.1)",
-                  }}
-                >
-                  <img
-                    src={cmsData?.hero?.heroImageUrl || defaultLogoSrc}
-                    alt="Radhe Digital"
-                    style={{ display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-                  />
-                </div>
-              </motion.div>
+              <HeroProductShowcase />
             </motion.div>
 
           </div>
