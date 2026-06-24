@@ -351,13 +351,6 @@ function GallerySection() {
   const { images, loading } = useGallery();
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
-  if (loading) return null;
-  if (images.length === 0) return null;
-
-  // Build masonry-like layout: assign span classes for variety
-  const spanClasses = ["", "row-span-2", "", "", "row-span-2", "", "row-span-2", "", "", "row-span-2"];
-  const colSpanClasses = ["", "", "col-span-2", "", "", "", "", "col-span-2", "", ""];
-
   return (
     <section className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(160deg, #f8f9fc 0%, #f1f3f8 50%, #eef0f6 100%)" }}>
       {/* Decorative dots */}
@@ -405,73 +398,102 @@ function GallerySection() {
           </motion.div>
         </div>
 
-        {/* Masonry Grid */}
-        <div
-          className="grid gap-4"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-            gridAutoRows: "200px",
-          }}
-        >
-          {images.map((img, i) => {
-            const spanRow = i % 5 === 1 || i % 5 === 4 ? 2 : 1;
-            const spanCol = i % 7 === 2 || i % 7 === 6 ? 2 : 1;
-            return (
-              <motion.div
-                key={img.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: (i % 6) * 0.07, duration: 0.45 }}
-                className="group relative overflow-hidden cursor-pointer"
-                role="button"
-                tabIndex={0}
-                aria-label={img.caption ? `View: ${img.caption}` : `View gallery image ${i + 1}`}
-                onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setLightboxIdx(i); } }}
+        {/* Masonry Grid — or loading skeleton / empty state */}
+        {loading ? (
+          /* Loading skeleton */
+          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gridAutoRows: "200px" }}>
+            {[1,2,3,4,5,6].map(n => (
+              <div
+                key={n}
+                className="rounded-[18px] animate-pulse"
                 style={{
-                  gridRow: `span ${spanRow}`,
-                  gridColumn: `span ${spanCol}`,
-                  borderRadius: "18px",
-                  boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+                  gridRow: n === 2 || n === 5 ? "span 2" : "span 1",
+                  background: "linear-gradient(135deg, #e8eaf2 0%, #f0f1f8 100%)",
                 }}
-                whileHover={{ y: -5, scale: 1.02, transition: { duration: 0.3, ease: "easeOut" } }}
-                onClick={() => setLightboxIdx(i)}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.boxShadow = "0 16px 48px rgba(0,0,0,0.2), 0 4px 20px rgba(196,150,42,0.15)";
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 20px rgba(0,0,0,0.1)";
-                }}
-              >
-                {/* Image */}
-                <img
-                  src={img.imageUrl}
-                  alt={img.caption || `Gallery ${i + 1}`}
-                  loading="lazy"
-                  draggable={false}
-                  className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                  style={{ willChange: "transform" }}
-                />
-
-                {/* Hover overlay */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2"
-                  style={{ background: "linear-gradient(135deg, rgba(196,150,42,0.6) 0%, rgba(180,20,20,0.5) 100%)" }}
+              />
+            ))}
+          </div>
+        ) : images.length === 0 ? (
+          /* Empty state — always visible so admin knows to upload */
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center justify-center py-16 rounded-2xl border-2 border-dashed"
+            style={{ borderColor: "rgba(196,150,42,0.25)", background: "rgba(196,150,42,0.03)" }}
+          >
+            <div
+              className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
+              style={{ background: "rgba(196,150,42,0.1)", border: "1px solid rgba(196,150,42,0.25)" }}
+            >
+              <Image size={28} style={{ color: "#C4962A" }}/>
+            </div>
+            <h3 className="text-gray-700 font-bold text-lg mb-2">Gallery Coming Soon</h3>
+            <p className="text-gray-400 text-sm text-center max-w-xs leading-relaxed">
+              Our portfolio of recent work will appear here. Check back soon to see our latest prints and designs.
+            </p>
+          </motion.div>
+        ) : (
+          /* Masonry Grid */
+          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gridAutoRows: "200px" }}>
+            {images.map((img, i) => {
+              const spanRow = i % 5 === 1 || i % 5 === 4 ? 2 : 1;
+              const spanCol = i % 7 === 2 || i % 7 === 6 ? 2 : 1;
+              return (
+                <motion.div
+                  key={img.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: (i % 6) * 0.07, duration: 0.45 }}
+                  className="group relative overflow-hidden cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={img.caption ? `View: ${img.caption}` : `View gallery image ${i + 1}`}
+                  onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setLightboxIdx(i); } }}
+                  style={{
+                    gridRow: `span ${spanRow}`,
+                    gridColumn: `span ${spanCol}`,
+                    borderRadius: "18px",
+                    boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+                  }}
+                  whileHover={{ y: -5, scale: 1.02, transition: { duration: 0.3, ease: "easeOut" } }}
+                  onClick={() => setLightboxIdx(i)}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLElement).style.boxShadow = "0 16px 48px rgba(0,0,0,0.2), 0 4px 20px rgba(196,150,42,0.15)";
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 20px rgba(0,0,0,0.1)";
+                  }}
                 >
+                  <img
+                    src={img.imageUrl}
+                    alt={img.caption || `Gallery ${i + 1}`}
+                    loading="lazy"
+                    draggable={false}
+                    className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                    style={{ willChange: "transform" }}
+                  />
                   <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center"
-                    style={{ background: "rgba(255,255,255,0.2)", backdropFilter: "blur(4px)", border: "1px solid rgba(255,255,255,0.3)" }}
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2"
+                    style={{ background: "linear-gradient(135deg, rgba(196,150,42,0.6) 0%, rgba(180,20,20,0.5) 100%)" }}
                   >
-                    <ZoomIn size={18} className="text-white"/>
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center"
+                      style={{ background: "rgba(255,255,255,0.2)", backdropFilter: "blur(4px)", border: "1px solid rgba(255,255,255,0.3)" }}
+                    >
+                      <ZoomIn size={18} className="text-white"/>
+                    </div>
+                    {img.caption && (
+                      <p className="text-white text-xs font-semibold px-3 text-center leading-tight max-w-[150px]">{img.caption}</p>
+                    )}
                   </div>
-                  {img.caption && (
-                    <p className="text-white text-xs font-semibold px-3 text-center leading-tight max-w-[150px]">{img.caption}</p>
-                  )}
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
 
         {/* CTA below gallery */}
         <motion.div
