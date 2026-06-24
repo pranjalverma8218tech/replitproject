@@ -10,6 +10,7 @@ import uploadRouter                from "./upload";
 import homepageCategoriesRouter    from "./homepageCategories";
 import homepageCmsRouter           from "./homepageCms";
 import featuredProductsRouter      from "./featuredProducts";
+import galleryRouter               from "./gallery";
 
 const router: IRouter = Router();
 
@@ -24,5 +25,6 @@ router.use("/upload",                uploadRouter);
 router.use("/homepage-categories",   homepageCategoriesRouter);
 router.use("/homepage-cms",          homepageCmsRouter);
 router.use("/featured-products",     featuredProductsRouter);
+router.use("/gallery",               galleryRouter);
 
 export default router;

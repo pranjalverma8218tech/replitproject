@@ -1,0 +1,84 @@
+Create a premium, modern, conversion-focused Gallery Section on the homepage without changing any existing content or layout.
+
+Purpose:
+Showcase previous completed print projects immediately to build trust, social proof, and attract new customers.
+
+Requirements:
+
+1. Section Title
+- Add a premium heading:
+  "Our Recent Work"
+- Add a short elegant subtitle:
+  "A glimpse of the quality and creativity we deliver."
+
+2. Premium Layout
+- Use a modern masonry/grid gallery layout.
+- Different image sizes for a dynamic premium look.
+- Maintain perfect spacing and alignment.
+- Fully responsive for desktop, tablet, and mobile.
+
+3. Admin Controlled Images
+- All gallery images must be uploaded and managed from the Admin Panel.
+- Admin can:
+  - Add new images
+  - Delete images
+  - Replace images
+  - Reorder images via drag-and-drop
+- No hardcoded images.
+
+4. Image Presentation
+- Rounded corners (16px–20px)
+- Soft premium shadows
+- Smooth image loading
+- High-quality display without distortion
+- Maintain original aspect ratio
+
+5. Hover Effects
+- Elegant zoom-in effect
+- Subtle lift animation
+- Soft shadow enhancement
+- Premium overlay gradient
+
+6. Lightbox Preview
+- Clicking an image opens a fullscreen lightbox.
+- Smooth open/close animations.
+- Previous/Next navigation.
+- Mobile swipe support.
+- Background blur while viewing images.
+
+7. Trust Building Elements
+- Display a small badge above the gallery:
+  "500+ Projects Delivered"
+- Premium styling matching website theme.
+
+8. Scroll Animation
+- Fade-up animation when the section enters viewport.
+- Stagger image animations for premium appearance.
+
+9. Performance Optimization
+- Lazy loading images.
+- Optimized image rendering.
+- Fast loading on mobile devices.
+
+10. Design Style
+- Luxury, premium, professional.
+- Modern printing brand aesthetic.
+- High-end portfolio showcase feel.
+- Match existing website color palette.
+- Keep the UI clean and elegant.
+
+11. Conversion Enhancement
+- Below gallery add a CTA section:
+  Heading:
+  "Ready to Print Your Design?"
+  
+  Button:
+  "Start Your Order"
+
+- Button should use existing website styling and link to order/contact section.
+
+Important:
+- Do not change any existing sections.
+- Do not remove any content.
+- Do not modify branding.
+- Only add this premium Gallery Section and Admin Management functionality.

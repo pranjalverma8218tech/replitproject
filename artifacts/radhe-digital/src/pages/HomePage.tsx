@@ -1,12 +1,13 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight, Zap, Shield, Truck, Star, ChevronDown,
   Package, Clock, CheckCircle, Users, Sparkles, ChevronLeft,
   ChevronRight, Quote, Palette, Shirt, Coffee, HardHat, Pen,
-  Award, Image, Gift
+  Award, Image, Gift, X, ZoomIn
 } from "lucide-react";
+import { useGallery, type GalleryImage } from "@/hooks/useGallery";
 import { CATEGORIES } from "@/data/products";
 import { useApiProducts, getFrontImage, type ApiProductData } from "@/hooks/useApiProducts";
 import { useLanguage } from "@/context/LanguageContext";
@@ -223,6 +224,307 @@ function BestSellersCarousel({ apiProducts }: { apiProducts: Record<string, ApiP
         </div>
       )}
     </div>
+  );
+}
+
+/* ─── GalleryLightbox ─── */
+function GalleryLightbox({ images, index, onClose }: { images: GalleryImage[]; index: number; onClose: () => void }) {
+  const [current, setCurrent] = useState(index);
+
+  const prev = useCallback(() => setCurrent(i => (i - 1 + images.length) % images.length), [images.length]);
+  const next = useCallback(() => setCurrent(i => (i + 1) % images.length), [images.length]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handle = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") prev();
+      else if (e.key === "ArrowRight") next();
+      else if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handle);
+    return () => window.removeEventListener("keydown", handle);
+  }, [prev, next, onClose]);
+
+  // Touch swipe
+  const touchStartX = useRef<number | null>(null);
+  const handleTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+    touchStartX.current = null;
+  };
+
+  const img = images[current];
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[999] flex items-center justify-center"
+        style={{ backdropFilter: "blur(16px)", background: "rgba(0,0,0,0.92)" }}
+        onClick={onClose}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Close */}
+        <button
+          onClick={onClose}
+          aria-label="Close lightbox"
+          className="absolute top-5 right-5 z-10 w-10 h-10 rounded-full flex items-center justify-center text-white/70 hover:text-white transition-colors"
+          style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)" }}
+        >
+          <X size={18}/>
+        </button>
+
+        {/* Prev */}
+        {images.length > 1 && (
+          <button
+            onClick={e => { e.stopPropagation(); prev(); }}
+            aria-label="Previous image"
+            className="absolute left-4 z-10 w-11 h-11 rounded-full flex items-center justify-center text-white/80 hover:text-white transition-all"
+            style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)" }}
+          >
+            <ChevronLeft size={22}/>
+          </button>
+        )}
+
+        {/* Image */}
+        <motion.div
+          key={current}
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.22 }}
+          className="relative max-w-4xl w-full mx-16 flex flex-col items-center"
+          onClick={e => e.stopPropagation()}
+        >
+          <img
+            src={img.imageUrl}
+            alt={img.caption}
+            className="max-h-[80vh] w-auto max-w-full object-contain"
+            style={{ borderRadius: "16px", boxShadow: "0 24px 80px rgba(0,0,0,0.7)" }}
+            draggable={false}
+          />
+          {img.caption && (
+            <p className="mt-4 text-white/70 text-sm text-center px-4">{img.caption}</p>
+          )}
+          {images.length > 1 && (
+            <p className="mt-2 text-white/40 text-xs">{current + 1} / {images.length}</p>
+          )}
+        </motion.div>
+
+        {/* Next */}
+        {images.length > 1 && (
+          <button
+            onClick={e => { e.stopPropagation(); next(); }}
+            aria-label="Next image"
+            className="absolute right-4 z-10 w-11 h-11 rounded-full flex items-center justify-center text-white/80 hover:text-white transition-all"
+            style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)" }}
+          >
+            <ChevronRight size={22}/>
+          </button>
+        )}
+
+        {/* Dots */}
+        {images.length > 1 && (
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-1.5">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={e => { e.stopPropagation(); setCurrent(i); }}
+                aria-label={`Go to image ${i + 1}`}
+                aria-current={i === current ? "true" : undefined}
+                className={`rounded-full transition-all ${i === current ? "w-5 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/30 hover:bg-white/60"}`}
+              />
+            ))}
+          </div>
+        )}
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+/* ─── GallerySection ─── */
+function GallerySection() {
+  const { images, loading } = useGallery();
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+
+  if (loading) return null;
+  if (images.length === 0) return null;
+
+  // Build masonry-like layout: assign span classes for variety
+  const spanClasses = ["", "row-span-2", "", "", "row-span-2", "", "row-span-2", "", "", "row-span-2"];
+  const colSpanClasses = ["", "", "col-span-2", "", "", "", "", "col-span-2", "", ""];
+
+  return (
+    <section className="py-20 relative overflow-hidden" style={{ background: "linear-gradient(160deg, #f8f9fc 0%, #f1f3f8 50%, #eef0f6 100%)" }}>
+      {/* Decorative dots */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" style={{ opacity: 0.35 }}>
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", top: 0, left: 0 }}>
+          <defs>
+            <pattern id="galleryDots" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+              <circle cx="1.5" cy="1.5" r="1.5" fill="#c4962a" fillOpacity="0.13"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#galleryDots)"/>
+        </svg>
+      </div>
+
+      {/* Top border accent */}
+      <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: "linear-gradient(90deg, transparent 0%, rgba(196,150,42,0.35) 30%, rgba(196,150,42,0.5) 50%, rgba(196,150,42,0.35) 70%, transparent 100%)" }}/>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Section heading */}
+        <div className="text-center mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            {/* Badge */}
+            <span
+              className="inline-flex items-center gap-1.5 text-xs font-bold tracking-[0.2em] uppercase mb-4 px-4 py-1.5 rounded-full"
+              style={{ color: "#C4962A", border: "1px solid rgba(196,150,42,0.3)", background: "rgba(196,150,42,0.07)" }}
+            >
+              <Award size={11}/> 500+ Projects Delivered
+            </span>
+
+            <h2 className="text-3xl sm:text-[2.6rem] font-extrabold mb-3 mt-2 text-gray-900" style={{ letterSpacing: "-0.02em", lineHeight: 1.15 }}>
+              Our Recent Work
+            </h2>
+            <div className="flex justify-center mb-4">
+              <div className="h-1 rounded-full w-16" style={{ background: "linear-gradient(90deg, rgba(196,150,42,0.5), #C4962A, rgba(196,150,42,0.5))" }}/>
+            </div>
+            <p className="text-gray-500 text-base max-w-lg mx-auto leading-relaxed">
+              A glimpse of the quality and creativity we deliver.
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Masonry Grid */}
+        <div
+          className="grid gap-4"
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+            gridAutoRows: "200px",
+          }}
+        >
+          {images.map((img, i) => {
+            const spanRow = i % 5 === 1 || i % 5 === 4 ? 2 : 1;
+            const spanCol = i % 7 === 2 || i % 7 === 6 ? 2 : 1;
+            return (
+              <motion.div
+                key={img.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: (i % 6) * 0.07, duration: 0.45 }}
+                className="group relative overflow-hidden cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label={img.caption ? `View: ${img.caption}` : `View gallery image ${i + 1}`}
+                onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setLightboxIdx(i); } }}
+                style={{
+                  gridRow: `span ${spanRow}`,
+                  gridColumn: `span ${spanCol}`,
+                  borderRadius: "18px",
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+                }}
+                whileHover={{ y: -5, scale: 1.02, transition: { duration: 0.3, ease: "easeOut" } }}
+                onClick={() => setLightboxIdx(i)}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.boxShadow = "0 16px 48px rgba(0,0,0,0.2), 0 4px 20px rgba(196,150,42,0.15)";
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 20px rgba(0,0,0,0.1)";
+                }}
+              >
+                {/* Image */}
+                <img
+                  src={img.imageUrl}
+                  alt={img.caption || `Gallery ${i + 1}`}
+                  loading="lazy"
+                  draggable={false}
+                  className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                  style={{ willChange: "transform" }}
+                />
+
+                {/* Hover overlay */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2"
+                  style={{ background: "linear-gradient(135deg, rgba(196,150,42,0.6) 0%, rgba(180,20,20,0.5) 100%)" }}
+                >
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center"
+                    style={{ background: "rgba(255,255,255,0.2)", backdropFilter: "blur(4px)", border: "1px solid rgba(255,255,255,0.3)" }}
+                  >
+                    <ZoomIn size={18} className="text-white"/>
+                  </div>
+                  {img.caption && (
+                    <p className="text-white text-xs font-semibold px-3 text-center leading-tight max-w-[150px]">{img.caption}</p>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* CTA below gallery */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-16 text-center"
+        >
+          <div
+            className="inline-block rounded-3xl px-8 sm:px-14 py-10 relative overflow-hidden"
+            style={{
+              background: "linear-gradient(135deg, #0e0e0e 0%, #1a0a0a 50%, #111 100%)",
+              border: "1px solid rgba(196,150,42,0.2)",
+              boxShadow: "0 8px 40px rgba(0,0,0,0.3)",
+            }}
+          >
+            {/* Glow */}
+            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(196,150,42,0.12) 0%, transparent 65%)" }}/>
+            <div className="relative z-10">
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
+                Ready to Print Your Design?
+              </h3>
+              <p className="text-gray-400 text-sm mb-6 max-w-xs mx-auto">
+                Join 10,000+ happy customers. Fast turnaround, no minimums.
+              </p>
+              <Link href="/customize">
+                <motion.button
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-extrabold text-base text-white btn-shine"
+                  style={{
+                    background: "linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #B91C1C 100%)",
+                    boxShadow: "0 8px 28px rgba(220,38,38,0.45)",
+                  }}
+                >
+                  <Sparkles size={18}/> Start Your Order <ArrowRight size={18}/>
+                </motion.button>
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Lightbox */}
+      {lightboxIdx !== null && (
+        <GalleryLightbox
+          images={images}
+          index={lightboxIdx}
+          onClose={() => setLightboxIdx(null)}
+        />
+      )}
+    </section>
   );
 }
 
@@ -977,6 +1279,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── GALLERY ── */}
+      <GallerySection />
 
       {/* ── FINAL CTA ── */}
       <section className="py-24 relative overflow-hidden" style={{ background: "linear-gradient(135deg,#080808 0%,#0f0a00 50%,#0a0a0a 100%)" }}>

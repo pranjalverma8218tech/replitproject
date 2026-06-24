@@ -379,3 +379,27 @@ export const updateFeaturedProduct = (id: number, data: Partial<Omit<FeaturedPro
 
 export const deleteFeaturedProduct = (id: number) =>
   apiFetch<{ deleted: number }>(`/featured-products/${id}`, { method: "DELETE" });
+
+// ─── Gallery ──────────────────────────────────────────────────────────────────
+export interface GalleryImage {
+  id: number;
+  imageUrl: string;
+  caption: string;
+  displayOrder: number;
+  createdAt: string;
+}
+
+export const getGalleryImages = () =>
+  apiFetch<GalleryImage[]>("/gallery");
+
+export const createGalleryImage = (data: { imageUrl: string; caption?: string }) =>
+  apiFetch<GalleryImage>("/gallery", { method: "POST", body: JSON.stringify(data) });
+
+export const updateGalleryImage = (id: number, data: Partial<Omit<GalleryImage, "id" | "createdAt">>) =>
+  apiFetch<GalleryImage>(`/gallery/${id}`, { method: "PUT", body: JSON.stringify(data) });
+
+export const deleteGalleryImage = (id: number) =>
+  apiFetch<{ deleted: number }>(`/gallery/${id}`, { method: "DELETE" });
+
+export const reorderGalleryImages = (orderedIds: number[]) =>
+  apiFetch<GalleryImage[]>("/gallery/reorder", { method: "POST", body: JSON.stringify({ orderedIds }) });
