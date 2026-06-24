@@ -5,8 +5,7 @@ import {
   ArrowRight, Zap, Shield, Truck, Star, ChevronDown,
   Package, Clock, CheckCircle, Users, Sparkles, ChevronLeft,
   ChevronRight, Quote, Palette, Shirt, Coffee, HardHat, Pen,
-  Award, Image, Gift, X, ZoomIn, Smartphone, CreditCard, Flag,
-  ShoppingBag, Monitor, Tag
+  Award, Image, Gift, X, ZoomIn
 } from "lucide-react";
 import { useGallery, type GalleryImage } from "@/hooks/useGallery";
 import { CATEGORIES } from "@/data/products";
@@ -17,181 +16,249 @@ import { useHomepageCms } from "@/hooks/useHomepageCms";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
 const defaultLogoSrc = "/radhe-logo.png";
 
-/* ─── Hero Product Showcase ─── */
-const SHOWCASE_PRODUCTS = [
-  {
-    id: 1, name: "Custom T-Shirts", sub: "100% Cotton",
-    Icon: Shirt, color: "#3B82F6",
-    bg: "linear-gradient(145deg,#0d1b3e,#1e3a5f)",
-    glow: "rgba(59,130,246,0.4)", size: "lg",
-    top: "0%", left: "0%", w: 156, h: 170, floatY: 8, dur: 6, delay: 0,
-    px: -0.04, py: -0.03,
-  },
-  {
-    id: 2, name: "Printed Mugs", sub: "330ml Ceramic",
-    Icon: Coffee, color: "#F97316",
-    bg: "linear-gradient(145deg,#2d1200,#4a2000)",
-    glow: "rgba(249,115,22,0.4)", size: "md",
-    top: "4%", left: "54%", w: 132, h: 148, floatY: 10, dur: 7, delay: 1.2,
-    px: 0.05, py: -0.04,
-  },
-  {
-    id: 3, name: "Custom Caps", sub: "Embroidered",
-    Icon: HardHat, color: "#10B981",
-    bg: "linear-gradient(145deg,#052e16,#064e2a)",
-    glow: "rgba(16,185,129,0.4)", size: "sm",
-    top: "50%", left: "3%", w: 118, h: 128, floatY: 12, dur: 8, delay: 0.5,
-    px: -0.06, py: 0.05,
-  },
-  {
-    id: 4, name: "Mobile Covers", sub: "All Models",
-    Icon: Smartphone, color: "#A855F7",
-    bg: "linear-gradient(145deg,#1e0533,#2d0a4e)",
-    glow: "rgba(168,85,247,0.4)", size: "md",
-    top: "46%", left: "46%", w: 140, h: 154, floatY: 9, dur: 6.5, delay: 1.8,
-    px: 0.04, py: 0.06,
-  },
-  {
-    id: 5, name: "Visiting Cards", sub: "Premium Matte",
-    Icon: CreditCard, color: "#FBBF24",
-    bg: "linear-gradient(145deg,#2d1f00,#4a3300)",
-    glow: "rgba(251,191,36,0.4)", size: "sm",
-    top: "76%", left: "28%", w: 122, h: 116, floatY: 7, dur: 7.5, delay: 0.9,
-    px: -0.02, py: 0.04,
-  },
-  {
-    id: 6, name: "Flex Banners", sub: "Pan India Print",
-    Icon: Flag, color: "#EC4899",
-    bg: "linear-gradient(145deg,#2d002a,#4a0044)",
-    glow: "rgba(236,72,153,0.4)", size: "sm",
-    top: "1%", left: "30%", w: 126, h: 120, floatY: 11, dur: 9, delay: 2.1,
-    px: 0.01, py: -0.06,
-  },
-  {
-    id: 7, name: "Promo Products", sub: "Corp Gifting",
-    Icon: Gift, color: "#06B6D4",
-    bg: "linear-gradient(145deg,#001f2d,#003347)",
-    glow: "rgba(6,182,212,0.4)", size: "sm",
-    top: "72%", left: "58%", w: 116, h: 112, floatY: 13, dur: 7, delay: 1.5,
-    px: 0.05, py: 0.03,
-  },
-];
+/* ─── Hero Premium Showcase ─── */
+function HeroPremiumShowcase() {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const ref = useRef<HTMLDivElement>(null);
 
-function HeroProductShowcase() {
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const handleMouse = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    setMouse({
-      x: e.clientX - (rect.left + rect.width / 2),
-      y: e.clientY - (rect.top + rect.height / 2),
+  const handleMouse = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r) return;
+    setTilt({
+      x: ((e.clientX - r.left) / r.width - 0.5) * 2,
+      y: ((e.clientY - r.top) / r.height - 0.5) * 2,
     });
-  };
+  }, []);
 
   return (
     <div
-      ref={containerRef}
-      className="relative select-none"
-      style={{ width: "100%", height: "clamp(340px, 44vw, 480px)" }}
+      ref={ref}
+      className="relative w-full select-none"
+      style={{ maxWidth: "500px" }}
       onMouseMove={handleMouse}
-      onMouseLeave={() => setMouse({ x: 0, y: 0 })}
+      onMouseLeave={() => setTilt({ x: 0, y: 0 })}
     >
-      {/* Central ambient glow */}
-      <div className="absolute pointer-events-none" style={{
-        top: "20%", left: "10%", width: "80%", height: "65%",
-        background: "radial-gradient(ellipse, rgba(196,150,42,0.14) 0%, rgba(220,38,38,0.09) 55%, transparent 75%)",
-        filter: "blur(44px)",
-      }}/>
+      {/* 3-D tilt wrapper */}
+      <div style={{
+        transform: `perspective(900px) rotateX(${tilt.y * -2.5}deg) rotateY(${tilt.x * 3.5}deg)`,
+        transition: "transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94)",
+        borderRadius: "24px",
+        overflow: "hidden",
+        background: "linear-gradient(145deg,#0e0a0a,#150e0e)",
+        border: "1px solid rgba(255,255,255,0.055)",
+        boxShadow: "0 32px 80px rgba(0,0,0,0.75), 0 0 80px rgba(220,38,38,0.1), 0 0 40px rgba(196,150,42,0.06), inset 0 1px 0 rgba(255,255,255,0.04)",
+        padding: "22px 18px 14px",
+      }}>
 
-      {SHOWCASE_PRODUCTS.map((p) => {
-        const fontSize = p.size === "lg" ? "text-[13px]" : p.size === "md" ? "text-[12px]" : "text-[11px]";
-        const iconSize = p.size === "lg" ? 32 : p.size === "md" ? 26 : 22;
-        const zBase = p.size === "lg" ? 3 : p.size === "md" ? 2 : 1;
+        {/* Atmospheric glows */}
+        <div style={{ position:"absolute", inset:0, pointerEvents:"none", overflow:"hidden" }}>
+          <div style={{ position:"absolute", top:"-15%", right:"-5%", width:"55%", height:"65%",
+            background:"radial-gradient(circle,rgba(220,38,38,0.24) 0%,transparent 68%)", filter:"blur(48px)" }}/>
+          <div style={{ position:"absolute", bottom:"-5%", left:"2%", width:"45%", height:"50%",
+            background:"radial-gradient(circle,rgba(196,150,42,0.13) 0%,transparent 65%)", filter:"blur(40px)" }}/>
+          <div style={{ position:"absolute", top:"30%", left:"35%", width:"40%", height:"40%",
+            background:"radial-gradient(circle,rgba(220,38,38,0.08) 0%,transparent 65%)", filter:"blur(30px)" }}/>
+        </div>
 
-        return (
-          /* 1. Position anchor — absolutely placed, not animated */
-          <div
-            key={p.id}
-            className="absolute"
-            style={{ top: p.top, left: p.left, width: p.w, height: p.h, zIndex: zBase }}
-          >
-            {/* 2. Parallax layer — CSS transition, updates on mouse move */}
-            <div style={{
-              transform: `translate(${mouse.x * p.px}px, ${mouse.y * p.py}px)`,
-              transition: "transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)",
-              width: "100%", height: "100%",
-            }}>
-              {/* 3. Float layer — framer-motion y oscillation */}
-              <motion.div
-                className="w-full h-full"
-                animate={{ y: [0, -p.floatY, 0] }}
-                transition={{ duration: p.dur, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
-              >
-                {/* 4. Hover + card */}
-                <motion.div
-                  className="group w-full h-full rounded-2xl overflow-hidden relative cursor-pointer"
-                  whileHover={{ scale: 1.07 }}
-                  transition={{ duration: 0.22, ease: "easeOut" }}
-                >
-                  {/* Background */}
-                  <div className="absolute inset-0" style={{ background: p.bg }}/>
+        {/* SVG Composition */}
+        <svg viewBox="0 0 460 370" xmlns="http://www.w3.org/2000/svg"
+          style={{ width:"100%", height:"auto", position:"relative", zIndex:1, display:"block" }}>
+          <defs>
+            {/* Grid */}
+            <pattern id="hGrid" width="22" height="22" patternUnits="userSpaceOnUse">
+              <path d="M 22 0 L 0 0 0 22" fill="none" stroke="rgba(255,255,255,0.022)" strokeWidth="0.8"/>
+            </pattern>
+            {/* Gradients */}
+            <linearGradient id="gTS" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#f9f9f9"/><stop offset="100%" stopColor="#e0e0e0"/>
+            </linearGradient>
+            <linearGradient id="gTSSh" x1="30%" y1="0%" x2="70%" y2="100%">
+              <stop offset="0%" stopColor="rgba(0,0,0,0)" stopOpacity="0"/>
+              <stop offset="100%" stopColor="rgba(0,0,0,0.13)" stopOpacity="1"/>
+            </linearGradient>
+            <linearGradient id="gHD" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#2c2c42"/><stop offset="100%" stopColor="#18182a"/>
+            </linearGradient>
+            <linearGradient id="gMG" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#f2f2f2"/><stop offset="40%" stopColor="#ffffff"/>
+              <stop offset="100%" stopColor="#c2c2c2"/>
+            </linearGradient>
+            <linearGradient id="gCP" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#202020"/><stop offset="100%" stopColor="#0a0a0a"/>
+            </linearGradient>
+            <linearGradient id="gTB" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#cbb89a"/><stop offset="100%" stopColor="#a89274"/>
+            </linearGradient>
+            <linearGradient id="gVC" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff"/><stop offset="100%" stopColor="#f5f0ea"/>
+            </linearGradient>
+            <linearGradient id="gPF" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#1e1008"/><stop offset="100%" stopColor="#0c0602"/>
+            </linearGradient>
+            <linearGradient id="gPN" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#28284e"/><stop offset="48%" stopColor="#5c5c98"/>
+              <stop offset="52%" stopColor="#5c5c98"/><stop offset="100%" stopColor="#18183a"/>
+            </linearGradient>
+            <linearGradient id="gPNT" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#888"/><stop offset="100%" stopColor="#444"/>
+            </linearGradient>
+            <linearGradient id="gPhP" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="rgba(220,38,38,0.07)"/>
+              <stop offset="100%" stopColor="rgba(196,150,42,0.07)"/>
+            </linearGradient>
+            {/* Filters */}
+            <filter id="fSh" x="-25%" y="-25%" width="150%" height="150%">
+              <feDropShadow dx="0" dy="5" stdDeviation="9" floodColor="#000" floodOpacity="0.55"/>
+            </filter>
+            <filter id="fGR" x="-40%" y="-40%" width="180%" height="180%">
+              <feDropShadow dx="0" dy="0" stdDeviation="7" floodColor="#DC2626" floodOpacity="0.5"/>
+            </filter>
+            <filter id="fGG" x="-40%" y="-40%" width="180%" height="180%">
+              <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#C4962A" floodOpacity="0.55"/>
+            </filter>
+          </defs>
 
-                  {/* Micro glow inside card */}
-                  <div className="absolute pointer-events-none" style={{
-                    top: "-25%", left: "-15%", width: "65%", height: "65%",
-                    background: `radial-gradient(circle, ${p.glow} 0%, transparent 70%)`,
-                    filter: "blur(16px)", opacity: 0.65,
-                  }}/>
+          {/* Background grid */}
+          <rect width="460" height="370" fill="url(#hGrid)"/>
 
-                  {/* Border + shadow */}
-                  <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
-                    border: `1px solid ${p.color}28`,
-                    boxShadow: `0 14px 40px rgba(0,0,0,0.65), 0 0 18px ${p.color}18, inset 0 1px 0 rgba(255,255,255,0.06)`,
-                  }}/>
+          {/* ══ HOODIE — dark navy behind t-shirt ══ */}
+          <g filter="url(#fSh)" opacity="0.82">
+            <path d="M 161,88 L 135,78 L 115,82 L 108,136 L 156,146 L 158,98 Z" fill="url(#gHD)"/>
+            <path d="M 299,88 L 325,78 L 345,82 L 352,136 L 304,146 L 302,98 Z" fill="url(#gHD)"/>
+            <rect x="156" y="94" width="148" height="162" rx="2" fill="url(#gHD)"/>
+            <path d="M 185,88 Q 230,70 275,88 Q 254,74 230,72 Q 206,74 185,88 Z" fill="#1a1a2e"/>
+          </g>
 
-                  {/* Hover glow overlay */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" style={{
-                    background: `radial-gradient(circle at 30% 30%, ${p.color}18 0%, transparent 65%)`,
-                  }}/>
+          {/* ══ T-SHIRT — centre hero ══ */}
+          <g filter="url(#fSh)">
+            <path
+              d="M 182,90 L 152,84 L 122,76 L 116,134 L 162,142 L 162,270 L 318,270 L 318,142 L 364,134 L 358,76 L 328,84 L 298,90 Q 286,124 230,127 Q 174,124 182,90 Z"
+              fill="url(#gTS)"
+            />
+            <path
+              d="M 182,90 L 152,84 L 122,76 L 116,134 L 162,142 L 162,270 L 318,270 L 318,142 L 364,134 L 358,76 L 328,84 L 298,90 Q 286,124 230,127 Q 174,124 182,90 Z"
+              fill="url(#gTSSh)"
+            />
+            {/* Collar shadow */}
+            <path d="M 182,90 Q 200,112 230,117 Q 260,112 298,90 Q 264,102 230,105 Q 196,102 182,90 Z" fill="rgba(0,0,0,0.09)"/>
+            {/* Seam lines */}
+            <line x1="162" y1="142" x2="162" y2="270" stroke="rgba(0,0,0,0.06)" strokeWidth="1.5"/>
+            <line x1="318" y1="142" x2="318" y2="270" stroke="rgba(0,0,0,0.06)" strokeWidth="1.5"/>
+            {/* Sleeve highlight */}
+            <path d="M 122,76 L 152,84 L 162,142 L 116,134 Z" fill="rgba(255,255,255,0.08)"/>
+          </g>
+          {/* Print area + logo */}
+          <rect x="196" y="152" width="68" height="68" rx="4" fill="none"
+            stroke="rgba(220,38,38,0.28)" strokeWidth="1.2" strokeDasharray="4,3"/>
+          <circle cx="230" cy="184" r="26" fill="#DC2626" filter="url(#fGR)"/>
+          <circle cx="230" cy="184" r="22" fill="#DC2626"/>
+          <circle cx="230" cy="184" r="17" fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="1"/>
+          <text x="230" y="189" textAnchor="middle" fill="white" fontSize="13"
+            fontWeight="800" fontFamily="system-ui,sans-serif" letterSpacing="0.5">RD</text>
 
-                  {/* Shine sweep on hover */}
-                  <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-                    <div
-                      className="absolute top-0 bottom-0 w-14 -skew-x-12 opacity-0 group-hover:opacity-100 group-hover:translate-x-[260px] transition-all duration-700"
-                      style={{ left: 0, background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent)" }}
-                    />
-                  </div>
+          {/* ══ MUG — right ══ */}
+          <g transform="translate(348,90)" filter="url(#fSh)">
+            <ellipse cx="40" cy="4" rx="40" ry="11" fill="#e0e0e0"/>
+            <ellipse cx="40" cy="8" rx="33" ry="8.5" fill="rgba(180,180,180,0.35)"/>
+            <path d="M 0,14 Q 0,0 8,0 L 72,0 Q 80,0 80,14 L 80,100 Q 80,114 72,114 L 8,114 Q 0,114 0,100 Z" fill="url(#gMG)"/>
+            <path d="M 80,26 Q 108,26 108,56 Q 108,86 80,86" fill="none" stroke="#c8c8c8" strokeWidth="10" strokeLinecap="round"/>
+            <path d="M 80,26 Q 100,26 100,56 Q 100,86 80,86" fill="none" stroke="#f0f0f0" strokeWidth="5.5" strokeLinecap="round"/>
+            <rect x="11" y="28" width="58" height="55" rx="3" fill="rgba(235,235,235,0.5)"/>
+            <circle cx="40" cy="58" r="20" fill="#DC2626"/>
+            <text x="40" y="63" textAnchor="middle" fill="white" fontSize="10" fontWeight="800" fontFamily="system-ui,sans-serif">RD</text>
+            <line x1="19" y1="10" x2="19" y2="104" stroke="rgba(255,255,255,0.45)" strokeWidth="4" strokeLinecap="round"/>
+          </g>
 
-                  {/* Content */}
-                  <div className="relative z-10 flex flex-col items-start justify-between h-full p-3.5">
-                    <div className="rounded-xl flex items-center justify-center"
-                      style={{ width: iconSize + 14, height: iconSize + 14, background: `${p.color}1a`, border: `1px solid ${p.color}35` }}
-                    >
-                      <p.Icon size={iconSize} style={{ color: p.color }}/>
-                    </div>
-                    <div>
-                      <p className={`font-bold text-white leading-tight mb-0.5 ${fontSize}`}>{p.name}</p>
-                      <p className="text-[10px] font-medium" style={{ color: `${p.color}bb` }}>{p.sub}</p>
-                    </div>
-                  </div>
+          {/* ══ CAP — top right ══ */}
+          <g transform="translate(292,6)" filter="url(#fSh)">
+            <path d="M 8,57 Q 5,18 68,15 Q 131,18 155,57 L 132,58 Q 120,34 68,32 Q 16,34 8,57 Z" fill="url(#gCP)"/>
+            <path d="M 8,57 Q 16,48 68,46 Q 120,48 132,58 Q 120,52 68,50 Q 16,52 8,57 Z" fill="rgba(0,0,0,0.45)"/>
+            <path d="M 1,59 L 163,59 Q 163,70 153,70 L 1,70 Q -7,70 -7,64 Q -7,59 1,59 Z" fill="#141414"/>
+            <path d="M 8,57 Q 16,52 68,50 Q 120,52 132,57" fill="none" stroke="rgba(196,150,42,0.5)" strokeWidth="2.5"/>
+            <circle cx="68" cy="34" r="15" fill="#DC2626" filter="url(#fGR)"/>
+            <circle cx="68" cy="34" r="12" fill="#DC2626"/>
+            <text x="68" y="38" textAnchor="middle" fill="white" fontSize="7.5" fontWeight="800" fontFamily="system-ui,sans-serif">RD</text>
+          </g>
 
-                  {/* Bottom accent */}
-                  <div className="absolute bottom-0 left-0 right-0 h-[2px]"
-                    style={{ background: `linear-gradient(90deg, transparent, ${p.color}70, transparent)` }}/>
-                </motion.div>
-              </motion.div>
-            </div>
-          </div>
-        );
-      })}
+          {/* ══ TOTE BAG — left ══ */}
+          <g transform="translate(12,72)" filter="url(#fSh)">
+            <path d="M 23,30 Q 16,6 20,-3 Q 27,-14 40,-12 Q 53,-14 60,-3 Q 64,6 58,30" fill="none" stroke="#8a7050" strokeWidth="7.5" strokeLinecap="round"/>
+            <path d="M 42,30 Q 35,6 39,-3 Q 46,-14 59,-12 Q 72,-14 79,-3 Q 83,6 77,30" fill="none" stroke="#8a7050" strokeWidth="7.5" strokeLinecap="round"/>
+            <path d="M 3,43 L 0,158 Q 0,170 14,170 L 87,170 Q 100,170 100,158 L 97,43 Z" fill="url(#gTB)"/>
+            <rect x="3" y="30" width="94" height="17" rx="2" fill="#b09878"/>
+            <line x1="50" y1="47" x2="50" y2="170" stroke="rgba(0,0,0,0.07)" strokeWidth="1.5" strokeDasharray="5,4"/>
+            <rect x="17" y="70" width="66" height="64" rx="4" fill="rgba(255,255,255,0.14)"/>
+            <circle cx="50" cy="103" r="22" fill="#DC2626"/>
+            <text x="50" y="108" textAnchor="middle" fill="white" fontSize="11" fontWeight="800" fontFamily="system-ui,sans-serif">RD</text>
+          </g>
 
-      {/* Badge */}
-      <div className="absolute bottom-0 right-0 z-10 text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full"
-        style={{ color: "rgba(196,150,42,0.65)", border: "1px solid rgba(196,150,42,0.18)", background: "rgba(0,0,0,0.35)", backdropFilter: "blur(8px)" }}
-      >
-        7+ Categories
+          {/* ══ VISITING CARD — bottom left, angled ══ */}
+          <g transform="translate(55,292) rotate(-7,72,41)" filter="url(#fSh)">
+            <rect width="148" height="84" rx="7" fill="url(#gVC)"/>
+            <rect x="0" y="0" width="52" height="84" rx="7" fill="#DC2626"/>
+            <rect x="46" y="0" width="6" height="84" fill="#C81010"/>
+            <circle cx="26" cy="34" r="17" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.28)" strokeWidth="1.2"/>
+            <text x="26" y="39" textAnchor="middle" fill="white" fontSize="9" fontWeight="800" fontFamily="system-ui,sans-serif">RD</text>
+            <text x="26" y="56" textAnchor="middle" fill="rgba(255,255,255,0.75)" fontSize="5" fontFamily="system-ui,sans-serif" letterSpacing="1">RADHE</text>
+            <rect x="64" y="18" width="74" height="5.5" rx="2.5" fill="#1a1a1a"/>
+            <rect x="64" y="28" width="54" height="4" rx="2" fill="#888"/>
+            <line x1="64" y1="43" x2="136" y2="43" stroke="#ddd" strokeWidth="0.8"/>
+            <rect x="64" y="50" width="66" height="3.5" rx="1.5" fill="#aaa"/>
+            <rect x="64" y="58" width="50" height="3.5" rx="1.5" fill="#ccc"/>
+            <rect x="64" y="66" width="56" height="3.5" rx="1.5" fill="#ccc"/>
+          </g>
+
+          {/* ══ PHOTO FRAME — bottom right, angled ══ */}
+          <g transform="translate(313,282) rotate(7,60,48)" filter="url(#fSh)">
+            <rect width="122" height="98" rx="5" fill="url(#gPF)"/>
+            <rect x="9" y="8" width="104" height="72" rx="3" fill="#1e0e06"/>
+            <rect x="13" y="11" width="96" height="66" rx="2" fill="#f5f1ec"/>
+            <rect x="13" y="11" width="96" height="66" rx="2" fill="url(#gPhP)"/>
+            <circle cx="61" cy="44" r="19" fill="#DC2626"/>
+            <text x="61" y="49" textAnchor="middle" fill="white" fontSize="10" fontWeight="800" fontFamily="system-ui,sans-serif">RD</text>
+            <rect x="18" y="20" width="40" height="16" rx="2" fill="rgba(196,150,42,0.1)"/>
+            <rect x="64" y="20" width="40" height="16" rx="2" fill="rgba(196,150,42,0.1)"/>
+            <rect x="18" y="58" width="86" height="14" rx="2" fill="rgba(0,0,0,0.05)"/>
+            <rect x="30" y="83" width="62" height="9" rx="2.5" fill="rgba(255,255,255,0.06)"/>
+            <text x="61" y="91" textAnchor="middle" fill="rgba(255,255,255,0.28)" fontSize="6" fontFamily="system-ui,sans-serif" letterSpacing="1.5">PHOTO PRINT</text>
+          </g>
+
+          {/* ══ PEN — accent, diagonal ══ */}
+          <g transform="translate(446,142) rotate(30)" filter="url(#fGG)">
+            <rect x="10" y="2" width="3.5" height="92" rx="1.5" fill="rgba(196,150,42,0.88)"/>
+            <rect x="0" y="0" width="14" height="118" rx="7" fill="url(#gPN)"/>
+            <rect x="0" y="97" width="14" height="7" rx="1" fill="rgba(196,150,42,0.45)"/>
+            <rect x="2" y="118" width="10" height="14" rx="2" fill="url(#gPNT)"/>
+            <path d="M 3,132 L 7,145 L 11,132 Z" fill="#555"/>
+            <text x="7" y="64" textAnchor="middle" fill="rgba(196,150,42,0.75)" fontSize="5.5" fontWeight="700" fontFamily="system-ui,sans-serif">RD</text>
+          </g>
+
+          {/* Floor shadows */}
+          <ellipse cx="230" cy="278" rx="108" ry="9" fill="rgba(0,0,0,0.22)"/>
+          <ellipse cx="395" cy="208" rx="44" ry="7" fill="rgba(0,0,0,0.18)"/>
+          <ellipse cx="60" cy="246" rx="50" ry="6.5" fill="rgba(0,0,0,0.18)"/>
+          <ellipse cx="387" cy="95" rx="36" ry="6" fill="rgba(0,0,0,0.18)"/>
+          <ellipse cx="386" cy="377" rx="36" ry="5" fill="rgba(0,0,0,0.18)"/>
+          <ellipse cx="90" cy="378" rx="42" ry="5" fill="rgba(0,0,0,0.18)"/>
+
+          {/* Tagline strip */}
+          <rect x="95" y="306" width="270" height="30" rx="15"
+            fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.065)" strokeWidth="0.8"/>
+          <text x="230" y="325" textAnchor="middle" fill="rgba(255,255,255,0.38)"
+            fontSize="9" fontFamily="system-ui,sans-serif" letterSpacing="2.8" fontWeight="600">
+            PRINT YOUR BRAND ON ANYTHING
+          </text>
+        </svg>
+
+        {/* Product label strip */}
+        <div style={{ display:"flex", justifyContent:"space-between", paddingTop:"8px", paddingBottom:"2px", paddingLeft:"2px", paddingRight:"2px" }}>
+          {["T-Shirt","Hoodie","Mug","Cap","Tote Bag","Card","Frame","Pen"].map(lbl => (
+            <span key={lbl} style={{ fontSize:"8px", fontWeight:700, color:"rgba(255,255,255,0.22)",
+              letterSpacing:"0.7px", textTransform:"uppercase" }}>
+              {lbl}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -1078,7 +1145,7 @@ export default function HomePage() {
               className="flex-shrink-0 flex items-center justify-center order-1 lg:order-2"
               style={{ width: "clamp(300px, 42vw, 480px)" }}
             >
-              <HeroProductShowcase />
+              <HeroPremiumShowcase />
             </motion.div>
 
           </div>
